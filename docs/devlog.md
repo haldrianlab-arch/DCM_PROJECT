@@ -6,7 +6,30 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Plan selesai. Berikutnya: Design (PRD).
+**Status saat ini:** Tahap Design berjalan. PRD draft v0.1 selesai, menunggu review. Berikutnya: Design Spec.
+
+---
+
+## Sesi 3: Brainstorming dan penulisan PRD (Tahap Design)
+
+**Dikerjakan**
+- Membahas 17 keputusan yang membentuk isi PRD, masing-masing dengan pilihan, trade-off, dan rekomendasi.
+- Menulis `specs/prd.md` v0.1: glosarium, persona dan matriks hak akses, prioritas MoSCoW, user stories dengan acceptance criteria Given/When/Then, aturan bisnis, kebutuhan non-fungsional, risiko, rencana rilis, dan skenario data demo.
+
+**Keputusan penting**
+- Posisi rak memakai U + sisi depan/belakang + full-depth, karena realistis dan validasinya menunjukkan pemahaman domain.
+- Model perangkat memakai template (Device Type) agar port terbentuk otomatis.
+- Kabel port ke port langsung (desain Top-of-Rack); kabel daya ikut dicatat agar impact analysis bisa menjawab "PDU ini mati, server mana yang terdampak?".
+- QR berisi asset tag permanen (bukan nama) agar label fisik tidak perlu dicetak ulang.
+- Maintenance: rencana berulang → cron harian membuat work order preventif; work order korektif dibuat manual (termasuk penggantian unit).
+- Status "Terlambat" dihitung saat ditampilkan, tidak disimpan, agar selalu akurat.
+- Penugasan teknisi difilter berdasarkan kategori role device (IT/Fasilitas) dan keahlian teknisi.
+- Foto bukti (Cloudinary), vendor eksternal, persetujuan WO, dan graf topologi menjadi fitur bonus (Could).
+
+**Istilah baru yang dipelajari:** patch panel, trace, cron, MoSCoW, work order, asset tag. Lihat glosarium di PRD.
+
+**Berikutnya**
+- Review PRD, lalu menulis Design Spec (sitemap, alur pengguna, wireframe, use case, flowchart).
 
 ---
 
