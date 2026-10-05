@@ -6,7 +6,34 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design berjalan. PRD v0.2 disetujui, Design Spec v0.1 selesai. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+**Status saat ini:** Tahap Design berjalan. PRD v0.2 disetujui, Design Spec v0.2 selesai direvisi. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+
+---
+
+## Sesi 6: Revisi Design Spec menjadi v0.2 (Tahap Design)
+
+**Dikerjakan**
+- Memisahkan isi yang bukan Design Spec ke file sendiri: flowchart dan use case ke `docs/diagrams/`, naskah demo ke `docs/demo-script.md`, prompt Claude Design ke `docs/claude-design-brief.md`.
+- Menambahkan deskripsi tertulis yang detail untuk setiap sketsa ASCII, karena AI (dan manusia) lebih mudah memahami aturan yang ditulis dengan kata-kata. Bila sketsa dan deskripsi berbeda, deskripsi yang berlaku.
+- Pemeriksaan silang design.md terhadap PRD.
+
+**Temuan pemeriksaan silang (sudah diperbaiki)**
+- Tiga warna status ternyata tidak memenuhi kontras 4.5:1 yang diklaim dokumen. Setelah dihitung, warnanya diganti dan rasio kontras dicantumkan.
+- "Tugas saya" dan notifikasi sempat tersedia untuk Admin, padahal PRD hanya menugaskan WO dan mengirim notifikasi ke Teknisi.
+- Menu "profil" muncul padahal tidak ada di PRD (dihapus).
+- Sitemap belum lengkap (halaman ubah, form model dan pengguna, pencarian).
+- Form device belum mengatur status Maintenance, perangkat 0U, dan perangkat di ruangan tanpa rak.
+- Label "(uplink)" di panel dampak tidak ada di model data (dihapus).
+
+**Pertanyaan terbuka**
+- Apakah Admin perlu notifikasi (WO terlambat/selesai)? Bila ya, PRD perlu user story baru.
+- Perangkat di ruangan tanpa rak (UPS, CRAC) perlu ditegaskan di PRD US-DEV-02.
+
+**Pelajaran**
+- Dokumen buatan AI tetap harus diperiksa silang: klaim seperti "kontras sudah memenuhi standar" perlu dibuktikan, bukan dipercaya.
+
+**Berikutnya**
+- Menjawab dua pertanyaan terbuka, lalu membuat mockup di Claude Design.
 
 ---
 

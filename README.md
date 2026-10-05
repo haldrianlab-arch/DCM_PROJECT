@@ -36,7 +36,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 | Tahap | Artefak | Status |
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
-| Design | [`specs/prd.md`](specs/prd.md) ✅, [`specs/design.md`](specs/design.md) ⏳, `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
+| Design | [`specs/prd.md`](specs/prd.md) ✅, [`specs/design.md`](specs/design.md) ⏳ v0.2, `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
 | Build | `plans/*.md`, `CLAUDE.md`, source code | — |
 | Test | Test suite + tabel blackbox testing | — |
 | Deploy | Vercel | — |
@@ -52,7 +52,10 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 ├── plans/         # Tahap Build: rencana per fitur
 └── docs/
     ├── devlog.md                          # Jurnal proses pengembangan per sesi
-    └── rangkuman-diskusi-proyek-dcim.md   # Rangkuman riset dan keputusan awal
+    ├── rangkuman-diskusi-proyek-dcim.md   # Rangkuman riset dan keputusan awal
+    ├── diagrams/                          # Flowchart dan use case
+    ├── demo-script.md                     # Naskah demo
+    └── claude-design-brief.md             # Prompt mockup Claude Design
 ```
 
 ## Untuk anggota tim
