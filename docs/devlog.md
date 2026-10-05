@@ -6,7 +6,34 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design berjalan. PRD v0.2 disetujui. Berikutnya: Design Spec.
+**Status saat ini:** Tahap Design berjalan. PRD v0.2 disetujui, Design Spec v0.1 selesai. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+
+---
+
+## Sesi 5: Design Spec (Tahap Design)
+
+**Dikerjakan**
+- Membahas 16 keputusan desain dan menulis `specs/design.md` v0.1: identitas visual, sitemap, navigasi, pola antarmuka, isi setiap halaman, komponen kunci, 6 flowchart (Mermaid), diagram use case (PlantUML), naskah demo, dan prompt untuk Claude Design.
+- Membuat `specs/README.md` sebagai indeks yang menjelaskan bahwa prd + design + tech bersama-sama adalah `spec.md` versi kita.
+- Memeriksa bahwa semua diagram valid secara sintaks dan diagram use case bisa dirender.
+
+**Keputusan**
+- Nama aplikasi: **SIRAMA** (Sistem Informasi Rak, Aset & Maintenance).
+- Warna merek biru-teal tua ("air") hanya untuk elemen yang bisa diklik atau aktif. Status WO Terjadwal memakai ungu-indigo agar tidak tertukar dengan warna merek.
+- Navigasi: sidebar di desktop, bar bawah di HP (Dasbor, Tugas, Cari, Notif).
+- Teknisi langsung mendarat di "Tugas saya"; Admin dan Viewer di Dashboard.
+- Elevation rak menjadi elemen paling khas: blok warna per fungsi perangkat, lencana status, slot kosong bisa diklik untuk memasang device.
+- Pola "cegah di tampilan, tolak di server": pilihan yang tidak sah tidak ditampilkan di form.
+- Pindai QR memakai kamera bawaan HP.
+- Diagram laporan: Mermaid untuk flowchart, PlantUML untuk use case (notasi UML yang benar).
+- Naskah demo 7 menit disusun sekarang agar data seed dan halaman prioritas mengikutinya.
+
+**Kaitan dengan playbook**
+- Playbook menyebut mockup frontend dibuat di Claude Design dari intent, diiterasi, lalu diekspor ke Claude Code. Mockup yang disetujui menjadi acuan perbandingan screenshot di tahap Test.
+
+**Berikutnya**
+- Review design.md, lalu membuat mockup di Claude Design dengan prompt di bagian 11.
+- Menulis Technical Spec.
 
 ---
 

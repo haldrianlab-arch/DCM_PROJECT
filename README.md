@@ -1,4 +1,4 @@
-# DCM Project: Server Room Asset & Maintenance Management System
+# SIRAMA: Sistem Informasi Rak, Aset & Maintenance
 
 Aplikasi web untuk mengelola aset fisik ruang server data center kampus: rak, perangkat, perkabelan, dan jadwal maintenance dalam satu sistem.
 
@@ -36,7 +36,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 | Tahap | Artefak | Status |
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
-| Design | [`specs/prd.md`](specs/prd.md) ✅, `specs/design.md`, `specs/tech.md` | ⏳ Berjalan |
+| Design | [`specs/prd.md`](specs/prd.md) ✅, [`specs/design.md`](specs/design.md) ⏳, `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
 | Build | `plans/*.md`, `CLAUDE.md`, source code | — |
 | Test | Test suite + tabel blackbox testing | — |
 | Deploy | Vercel | — |
