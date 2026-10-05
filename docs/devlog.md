@@ -6,7 +6,32 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design berjalan. PRD draft v0.1 selesai, menunggu review. Berikutnya: Design Spec.
+**Status saat ini:** Tahap Design berjalan. PRD v0.2 disetujui. Berikutnya: Design Spec.
+
+---
+
+## Sesi 4: Review PRD menjadi v0.2 (Tahap Design)
+
+**Dikerjakan**
+- Review PRD v0.1 oleh Product Owner; 12 revisi diterapkan menjadi v0.2 (lihat bagian "Riwayat revisi" di PRD).
+
+**Keputusan**
+- "Role" perangkat diganti menjadi **Fungsi Perangkat** agar tidak tertukar dengan peran pengguna (Admin/Teknisi/Viewer).
+- Status device disederhanakan: Stok, Aktif, Maintenance, Pensiun. "Dipesan" dihapus karena pengadaan di luar scope.
+- Kebijakan hapus: device dan rencana yang punya riwayat WO diarsipkan, bukan dihapus; master data hanya bisa dihapus jika tidak dipakai.
+- Admin dapat memproses WO mana pun; Teknisi hanya WO miliknya.
+- Dashboard ikut dioptimalkan untuk HP karena Viewer sering memantau dari HP.
+- Metrik SUS tidak dipakai; ditambah metrik waktu penyelesaian WO dari HP.
+- Fitur bonus baru: simulasi "agen pembaca perangkat" yang mendeteksi ketidaksesuaian kabel (Could).
+
+**Yang dipelajari**
+- Metrik sukses mengukur hasil bagi pengguna; kebutuhan non-fungsional mengukur kualitas sistem.
+- Persona = tokoh fiktif untuk membantu merancang; peran pengguna = hak akses teknis.
+- Desain jaringan Top-of-Rack vs End-of-Row, dan kenapa ToR tidak butuh trace patch panel.
+- Hak akses wajib diperiksa di server, bukan hanya dengan menyembunyikan tombol.
+
+**Berikutnya**
+- Menulis Design Spec: sitemap, alur pengguna, wireframe, diagram use case, flowchart.
 
 ---
 
