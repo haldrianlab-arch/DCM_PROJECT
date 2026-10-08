@@ -36,7 +36,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 | Tahap | Artefak | Status |
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
-| Design | [`specs/prd.md`](specs/prd.md) ✅, [`specs/design.md`](specs/design.md) ⏳ v0.2, `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
+| Design | [`specs/PRD.md`](specs/PRD.md) v0.3, [`specs/design.md`](specs/design.md) v0.3, `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
 | Build | `plans/*.md`, `CLAUDE.md`, source code | — |
 | Test | Test suite + tabel blackbox testing | — |
 | Deploy | Vercel | — |

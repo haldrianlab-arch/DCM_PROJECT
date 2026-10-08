@@ -6,11 +6,11 @@ Playbook menghasilkan satu file `spec.md` yang menggabungkan kebutuhan dan desai
 
 | File | Menjawab | Status | Dipakai untuk |
 |---|---|---|---|
-| [`prd.md`](prd.md) | **Apa** yang dibangun dan bagaimana tahu sudah benar | v0.2 ✅ disetujui | Bab I, analisis kebutuhan, test case blackbox |
-| [`design.md`](design.md) | **Bagaimana pengguna mengalaminya** | v0.2 ⏳ review | Mockup Claude Design, build tampilan, manual book |
+| [`PRD.md`](PRD.md) | **Apa** yang dibangun dan bagaimana tahu sudah benar | v0.3 ⏳ review | Bab I, analisis kebutuhan, test case blackbox |
+| [`design.md`](design.md) | **Bagaimana user mengalaminya** | v0.3 ⏳ review | Mockup Claude Design, build tampilan, manual book |
 | `tech.md` | **Bagaimana dibangun** | Belum dibuat | Architecture & topology diagram, plan mode |
 
-**Urutan:** `intent/asset-maintenance.md` → `prd.md` → `design.md` → mockup di Claude Design → `tech.md` → tahap Build.
+**Urutan:** `intent/asset-maintenance.md` → `PRD.md` → `design.md` → mockup di Claude Design → `tech.md` → tahap Build.
 
 **Dokumen pendukung tahap Design** (di folder `docs/`):
 - [`docs/diagrams/`](../docs/diagrams/): flowchart dan diagram use case (deliverable perancangan)

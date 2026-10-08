@@ -13,7 +13,7 @@ cara cepat mengetahui perangkat lain yang ikut terdampak.
 Satu aplikasi web tempat pengelola dan teknisi dapat:
 - menemukan lokasi perangkat dan sambungan kabelnya dalam hitungan detik,
 - melihat sisa kapasitas rak sebelum memasang perangkat baru,
-- menjadwalkan, mengerjakan, dan mencatat maintenance, dengan pengingat sebelum jatuh tempo,
+- menjadwalkan, mengerjakan, dan mencatat maintenance, dengan pengingat sebelum tenggat,
 - memindai QR code di perangkat untuk membuka detail dan riwayatnya dari HP,
 - melihat perangkat yang terdampak sebelum maintenance dimulai (impact analysis).
 
@@ -35,7 +35,7 @@ Masuk:
 - QR code label aset; impact analysis berbasis data kabel.
 
 Tidak masuk:
-- IPAM penuh (cukup satu kolom IP management per device), virtualisasi, VPN, wireless, circuits.
+- IPAM penuh, virtualisasi, VPN, wireless, circuits. (Kolom IP management per device menjadi fitur bonus; lihat PRD.)
 - Discovery otomatis perangkat dan monitoring real-time (data dimasukkan manual atau impor CSV).
 
 ## Constraints
@@ -50,7 +50,7 @@ Tidak masuk:
 ## Success looks like
 - Lokasi perangkat ditemukan kurang dari 30 detik lewat pencarian atau pemindaian QR.
 - Sistem menolak 100% pemasangan device yang bertabrakan posisi U atau melebihi tinggi rak.
-- Setiap maintenance yang jatuh tempo memunculkan pengingat paling lambat H-3.
+- Setiap maintenance memunculkan pengingat paling lambat 3 hari sebelum tenggat.
 - Impact analysis menampilkan seluruh perangkat yang terhubung langsung ke perangkat
   yang akan di-maintenance.
 - Seluruh test case blackbox di laporan berstatus valid saat demo.

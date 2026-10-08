@@ -6,7 +6,37 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design berjalan. PRD v0.2 disetujui, Design Spec v0.2 selesai direvisi. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+**Status saat ini:** Tahap Design berjalan. PRD v0.3 dan Design Spec v0.3 menunggu review. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+
+---
+
+## Sesi 7: PRD v0.3 dan Design Spec v0.3 (Tahap Design)
+
+**Dikerjakan**
+- Brainstorming 17 keputusan (K1-K17) dari review design.md v0.2, lalu revisi PRD, design.md, flowchart, dan diagram use case.
+- PRD: konvensi penamaan, Lampiran C (daftar field per entitas, satu-satunya acuan field), nomor WO, notifikasi Admin, device tanpa rack, dan aturan BR-15 s.d. BR-17.
+- design.md ditulis ulang: konvensi rujukan (§, TPL, KOM, HAL, MOD), inventaris 6 template, 46 komponen, 30 halaman, dan 10 modal. Semua sketsa ASCII dihapus; komponen khusus dijelaskan dengan bagian "Wajib" dan "Bebas" agar Claude Design boleh berkreasi tanpa melanggar aturan domain.
+- Flowchart F2 dibuat ulang (satu langkah "Isi atau perbaiki form", satu aturan per belah ketupat, pemeriksaan di pratinjau dan saat simpan); F4 ditambah notifikasi Admin. Use case ditambah "Melihat notifikasi" dan "Membatalkan work order".
+
+**Keputusan**
+- **Penamaan:** nama entitas bahasa Inggris (Site, Room, Rack, Device, Device function, Cable, Maintenance plan, Work order, User); selebihnya bahasa Indonesia. URL juga bahasa Inggris.
+- **Rencana vs work order:** maintenance plan adalah aturan berulang yang *menghasilkan* WO preventif; WO korektif dibuat manual. Keduanya ada di satu daftar WO, dibedakan oleh jenis (mengikuti standar EN 13306: satu WO satu jenis).
+- **Tenggat** = tanggal paling lambat WO selesai. WO preventif dibuat cron saat tenggat tinggal 3 hari atau kurang.
+- **Nomor WO** (`WO-0001`) untuk rujukan; **judul** WO korektif diisi Admin.
+- **Data pembelian** tetap ada sebagai atribut aset (tanggal beli, vendor, garansi), semuanya opsional. Yang dibuang sebelumnya adalah proses pengadaan.
+- **WO hanya untuk device Aktif/Maintenance;** memindah device ke Stok/Pensiun membatalkan WO Terjadwal-nya (menutup celah logika status device).
+- **Notifikasi Admin:** WO preventif tanpa teknisi dan WO terlambat.
+- **Lokasi:** tetap tiga tingkat, satu halaman pohon; tambah room/rack dari baris induknya dengan induk terisi otomatis.
+- **Ikon:** Lucide, tanpa emoji. **Sidebar:** semua grup tertutup, grup halaman aktif terbuka otomatis.
+- IP management per device dipindah ke Could (penulisan lama di baris Won't ambigu).
+
+**Pelajaran**
+- Kebingungan pembaca adalah tanda dokumen yang ambigu, bukan pembaca yang kurang paham. Contoh: "rencana vs work order", "jatuh tempo vs tanggal target", dan kurung IP management di baris Won't.
+- Membuat daftar field per entitas (Lampiran C) memperlihatkan celah yang tidak terlihat dari user story, misalnya WO korektif yang tidak punya judul.
+
+**Berikutnya**
+- Review PRD v0.3 dan design.md v0.3, lalu membuat mockup di Claude Design dengan prompt di `docs/claude-design-brief.md`.
+- Menulis Technical Spec.
 
 ---
 
