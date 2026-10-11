@@ -97,6 +97,19 @@ Varian "Aktifkan" memakai tombol utama (`[# Aktifkan ]`), bukan merah.
 └──────────────────────────────────────────────────────┘
 ```
 
+## Hapus port (Should)
+
+```
+┌──────────────────────────────────────────────────────┐
+│ Hapus port eth2 dari srv-db-01?                  [x] │
+├──────────────────────────────────────────────────────┤
+│ Port dihapus permanen dari device ini. Model dan     │
+│ device lain tidak berubah.                           │
+├──────────────────────────────────────────────────────┤
+│                        [ Batal ] [! Hapus port ]     │
+└──────────────────────────────────────────────────────┘
+```
+
 ---
 
 ## Varian informasi (aksi ditolak aturan)
@@ -125,6 +138,17 @@ Tidak ada tombol merah, hanya "Mengerti".
 │ Server tidak dapat dihapus                       [x] │
 ├──────────────────────────────────────────────────────┤
 │ Device function ini masih dipakai 12 device.         │
+├──────────────────────────────────────────────────────┤
+│                                    [# Mengerti ]     │
+└──────────────────────────────────────────────────────┘
+```
+
+```
+┌──────────────────────────────────────────────────────┐
+│ Port eth0 tidak dapat dihapus                    [x] │
+├──────────────────────────────────────────────────────┤
+│ Port eth0 masih tersambung cable C-0012. Lepas cable │
+│ terlebih dahulu.                                     │
 ├──────────────────────────────────────────────────────┤
 │                                    [# Mengerti ]     │
 └──────────────────────────────────────────────────────┘

@@ -116,8 +116,24 @@ Dibuka dari `[≡]`, meluncur dari kiri. Isinya sama dengan sidebar.
 ├──────────────────────┤░░░░░░░│
 │ Rina                 │░░░░░░░│
 │ Teknisi · IT         │░░░░░░░│
+│ Akun saya            │░░░░░░░│
 │ [ Keluar ]           │░░░░░░░│
 └──────────────────────┴───────┘
+```
+
+---
+
+### Menu user di header (desktop)
+
+```
+                                              Notif(2)   Andi v
+                                        ┌──────────────────────┐
+                                        │ Andi                 │
+                                        │ Admin                │
+                                        ├──────────────────────┤
+                                        │ Akun saya            │
+                                        │ Keluar               │
+                                        └──────────────────────┘
 ```
 
 ---

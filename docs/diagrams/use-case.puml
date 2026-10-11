@@ -16,6 +16,7 @@ rectangle SIRAMA {
   usecase "Mencari device" as UC03
   usecase "Melihat elevation rack" as UC04
   usecase "Melihat detail device" as UC05
+  usecase "Mengganti password sendiri" as UC07
 
   usecase "Memindai QR device" as UC06
   usecase "Mengerjakan work order" as UC10
@@ -47,6 +48,7 @@ Viewer --> UC02
 Viewer --> UC03
 Viewer --> UC04
 Viewer --> UC05
+Viewer --> UC07
 
 Teknisi --> UC06
 Teknisi --> UC10

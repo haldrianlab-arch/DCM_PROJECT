@@ -6,7 +6,32 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design berjalan. PRD v0.3 dan Design Spec v0.3 menunggu review. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+**Status saat ini:** Tahap Design berjalan. PRD v0.4 dan Design Spec v0.4 menunggu review akhir. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+
+---
+
+## Sesi 9: Review PRD v0.3 menjadi v0.4 (Tahap Design)
+
+**Dikerjakan**
+- Membahas 14 komentar review (P1-P14), lalu menerapkannya ke PRD v0.4, design.md v0.4, flowchart F4, diagram use case, dan wireframe.
+- Membandingkan tiga opsi tata letak dashboard untuk banyak room dengan wireframe ASCII sebelum memutuskan.
+
+**Keputusan**
+- **Panel dampak** dihitung langsung dari data cable (tidak disimpan), dan kini juga tampil di form maintenance plan dan detail semua WO, karena WO preventif dibuat otomatis tanpa form sehingga sebelumnya dampaknya tidak pernah dilihat siapa pun.
+- **Label jalur daya** diubah menjadi kalimat hipotesis ("Bila pdu-a01-a dimatikan: tetap menyala lewat jalur cadangan / ikut mati, tanpa jalur cadangan") dengan warna peringatan, karena maintenance preventif bukan kerusakan.
+- **WO preventif dibuat 7 hari sebelum tenggat, pengingat 3 hari.** Sebelumnya satu angka (3 hari) dipakai untuk dua hal, sehingga daftar "7 hari ke depan" di dashboard tidak pernah berisi WO preventif.
+- **Daya:** estimasi daya per rack (Must) dari daya maksimum model; kapasitas daya rack dengan peringatan, bukan penolakan (Should).
+- **Port:** port template tetap dibuat di dalam model, dibantu pola rentang `port[1-48]` dan duplikat model (Should); port device bisa ditambah, diubah, dihapus per device (Should).
+- **Password:** Admin bisa mengatur ulang password (Must, celah yang sebelumnya tidak ada); user mengganti password sendiri lewat halaman Akun saya (Should).
+- **Dashboard:** peta room menampilkan satu room sekaligus dengan pemilih room dan site, sehingga tinggi dashboard tetap berapa pun jumlah room; rack banyak turun ke baris berikutnya di desktop dan digeser di HP.
+- Tetap: WO per device (rack/room = Could), login dengan email, "Terlambat" dihitung (alasannya kini ditulis di BR-10).
+
+**Pelajaran**
+- Satu angka yang dipakai untuk dua tujuan berbeda (waktu pembuatan WO dan waktu pengingat) adalah sumber inkonsistensi yang sulit terlihat.
+- Untuk keputusan tata letak, menggambar opsi lebih cepat dipahami daripada menjelaskannya dengan kata-kata.
+
+**Berikutnya**
+- Review akhir PRD v0.4 dan design.md v0.4, lalu mockup di Claude Design, lalu Technical Spec.
 
 ---
 

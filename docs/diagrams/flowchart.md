@@ -2,14 +2,14 @@
 
 Dokumen perancangan: **Flowchart Sistem** (deliverable mata kuliah).
 
-Diturunkan dari [`specs/PRD.md`](../../specs/PRD.md) v0.3 dan [`specs/design.md`](../../specs/design.md) v0.3. Diagram ditulis dengan Mermaid sehingga tampil langsung di GitHub dan dapat direvisi sebagai teks. Untuk laporan, buka file ini di GitHub lalu ambil gambarnya, atau ekspor lewat [mermaid.live](https://mermaid.live).
+Diturunkan dari [`specs/PRD.md`](../../specs/PRD.md) v0.4 dan [`specs/design.md`](../../specs/design.md) v0.4. Diagram ditulis dengan Mermaid sehingga tampil langsung di GitHub dan dapat direvisi sebagai teks. Untuk laporan, buka file ini di GitHub lalu ambil gambarnya, atau ekspor lewat [mermaid.live](https://mermaid.live).
 
 | Kode | Alur | Aktor | Referensi PRD |
 |---|---|---|---|
 | F1 | Login dan pengalihan per peran | Semua | US-AUTH-01, US-QR-02 |
 | F2 | Memasang device ke rack | Admin | US-DEV-01, US-DEV-02 |
 | F3 | Menyambung cable | Admin | US-CAB-01 |
-| F4 | Jadwal otomatis harian | Penjadwal harian (cron) | US-WO-01, US-NOTIF-01, US-NOTIF-02 |
+| F4 | Jadwal otomatis harian | Penjadwal harian (cron) | US-WO-01, US-NOTIF-01, US-NOTIF-02, BR-18 |
 | F5 | Mengerjakan work order | Teknisi | US-WO-04 |
 | F6 | Memindai QR | Teknisi | US-QR-02 |
 
@@ -81,13 +81,13 @@ flowchart TD
 
 ### F4. Jadwal otomatis harian
 
-Berjalan setiap hari pukul 07.00 WIB. Bagian pertama membuat WO preventif; bagian kedua mengirim pengingat dan peringatan. Setiap notifikasi dikirim sekali per WO, sehingga menjalankan ulang di hari yang sama tidak menghasilkan WO atau notifikasi ganda.
+Berjalan setiap hari pukul 07.00 WIB. Bagian pertama membuat WO preventif 7 hari sebelum tenggat (BR-18); bagian kedua mengirim pengingat 3 hari sebelum tenggat dan peringatan terlambat. Setiap notifikasi dikirim sekali per WO, sehingga menjalankan ulang di hari yang sama tidak menghasilkan WO atau notifikasi ganda.
 
 ```mermaid
 flowchart TD
     A([Setiap hari 07.00 WIB]) --> B[Ambil semua maintenance plan aktif]
     B --> C{"Masih ada maintenance plan yang belum diperiksa?"}
-    C -- Ya --> D{"Tenggat berikutnya 3 hari lagi atau kurang?"}
+    C -- Ya --> D{"Tenggat berikutnya 7 hari lagi atau kurang?"}
     D -- Tidak --> C
     D -- Ya --> E{"Sudah punya WO terbuka?"}
     E -- Ya --> C

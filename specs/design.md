@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| Versi | 0.3 (direvisi setelah review) |
-| Tanggal | 8 Oktober 2026 |
-| Sumber | [`intent/asset-maintenance.md`](../intent/asset-maintenance.md), [`specs/PRD.md`](PRD.md) v0.3 |
+| Versi | 0.4 (direvisi setelah review) |
+| Tanggal | 11 Oktober 2026 |
+| Sumber | [`intent/asset-maintenance.md`](../intent/asset-maintenance.md), [`specs/PRD.md`](PRD.md) v0.4 |
 | Tahap SDLC | Design |
 | Dipakai oleh | Claude Design (mockup), Claude Code (build), tahap Test (acuan visual) |
 
@@ -197,6 +197,7 @@ URL memakai bahasa Inggris karena merupakan identitas teknis, sama seperti kode 
 | `/users/[id]/edit` | HAL-26 Form user (ubah) | Admin |
 | `/audit-log` | HAL-27 Audit log | Admin |
 | `/labels/print` | HAL-28 Cetak label (Should) | Admin |
+| `/account` | HAL-31 Akun saya (Should) | Semua |
 | `/a/[asset-tag]` | Tujuan QR; dialihkan ke HAL-10 device tersebut | Semua |
 | — | HAL-29 Akses ditolak, HAL-30 Tidak ditemukan | Semua |
 
@@ -227,7 +228,7 @@ Bila login dipicu oleh pemindaian QR, user dikembalikan ke detail device yang di
 
 **Menu aktif:** latar `air-soft`, teks `air`, dan garis tebal `air` di sisi kiri. Setiap menu memiliki ikon di kiri teksnya. Sidebar dapat diciutkan menjadi 64 px (hanya ikon); nama menu muncul sebagai keterangan saat ikon disorot.
 
-**Header** setinggi 56 px, dari kiri ke kanan: pencarian global (KOM-31), lonceng notifikasi (KOM-30; Admin dan Teknisi), dan menu user berisi nama, peran, dan pilihan "Keluar".
+**Header** setinggi 56 px, dari kiri ke kanan: pencarian global (KOM-31), lonceng notifikasi (KOM-30; Admin dan Teknisi), dan menu user berisi nama, peran, "Akun saya" (HAL-31, Should), dan "Keluar".
 
 Di bawah header: breadcrumb (§5.5), lalu isi halaman.
 
@@ -412,7 +413,7 @@ Menampilkan isi satu rack seperti tampak fisiknya. Dipakai di HAL-07.
 
 **Wajib**
 - Dua kolom berdampingan: **Depan di kiri, Belakang di kanan**, masing-masing berjudul.
-- Baris ringkasan di atas: nama rack, tinggi, U terpakai, U kosong, persentase utilisasi.
+- Baris ringkasan di atas: nama rack, tinggi, U terpakai, U kosong, persentase utilisasi, dan **estimasi daya** (BR-19), misalnya *"Estimasi daya 3.450 W"*. Bila ada device yang modelnya tanpa data daya, tambahkan *"(2 device tanpa data daya)"*. *(Should, US-RAK-03)* Bila rack punya kapasitas daya: *"3.450 / 5.000 W (69%)"* dengan batang kemajuan (KOM-15); batang berwarna kuning-oranye bila di atas 100%.
 - Setiap kolom dibagi menjadi slot setinggi 22 px per U, disusun dari **U tertinggi di atas sampai U1 di bawah**. Nomor U (angka tabular, `ink-muted`) di sebelah kiri kolom Depan, sejajar slotnya.
 - Device tampil sebagai blok yang menutupi semua slot yang ditempatinya (device 2U di posisi U39 menutupi U39 dan U40). Blok memakai warna device function (§4.3), berisi nama device dan lencana status.
 - Device **half-depth** hanya tampil di kolom sisinya. Device **full-depth** tampil di kedua kolom: di sisi pemasangan sebagai blok biasa, di sisi lain sebagai blok berarsir garis miring tipis tanpa lencana, dengan nama ditulis kecil, menandakan bagian belakang device yang sama.
@@ -433,42 +434,48 @@ Versi kecil elevation untuk menunjukkan posisi. Dipakai di HAL-09 (pratinjau), H
 - Satu kolom (sisi yang relevan), slot setinggi 4-6 px, tanpa teks di dalam blok, hanya warna device function.
 - Device yang sedang dibahas disorot dengan garis tepi `air`.
 - **Mode pratinjau** (di form device): slot yang akan ditempati disorot `air` bila kosong; merah bila bertabrakan atau melebihi tinggi rack, disertai teks di bawahnya yang menyebut device yang bertabrakan atau alasannya. Pratinjau diperbarui setiap kali rack, sisi, posisi, atau model berubah.
+- *(Should, US-RAK-03)* Di bawah pratinjau: estimasi daya rack setelah device dipasang. Bila melebihi kapasitas daya rack, tampil peringatan kuning-oranye (bukan merah) *"Estimasi daya menjadi 5.250 W, melebihi kapasitas 5.000 W. Device tetap dapat disimpan."*
 
 #### KOM-34 Peta room
 
-Ringkasan seluruh rack dalam satu pandangan. Dipakai di HAL-02.
+Ringkasan isi rack **satu room sekaligus**. Dipakai di HAL-02. Melihat semua lokasi sekaligus dilakukan di HAL-06.
 
 **Wajib**
-- Setiap room menjadi satu baris berjudul nama room.
-- Di dalamnya deretan kolom vertikal sempit, satu per rack, masing-masing berupa elevation mini (gabungan sisi depan dan belakang), dengan nama rack dan persentase utilisasi di bawahnya. Klik kolom membuka HAL-07.
-- Di bawah deretan rack: baris "Tanpa rack" berisi device tanpa rack di room itu sebagai label kecil dengan lencana status (misalnya ups-01, crac-01). Klik membuka HAL-10. Baris ini tidak tampil bila kosong.
-- Di HP baris rack dapat digeser ke samping.
+- **Pemilih site:** dropdown (KOM-06) di bagian atas, hanya tampil bila ada lebih dari satu site.
+- **Pemilih room:** deretan chip, satu per room di site terpilih, berisi nama room dan jumlah rack (*"Gedung A · 4 rack"*); chip terpilih bergaya aktif (`air-soft`, teks `air`). Hanya tampil bila site punya lebih dari satu room. Bila chip tidak muat satu baris, chip turun ke baris berikutnya.
+- **Room bawaan:** pilihan terakhir user (diingat di browser); bila belum ada, room dengan rack terbanyak.
+- Mengganti site atau room hanya mengganti isi kotak; tinggi bagian lain dashboard tidak berubah dan halaman tidak dimuat ulang.
+- **Isi room:** deretan kolom vertikal sempit, satu per rack, masing-masing berupa elevation mini (gabungan sisi depan dan belakang), dengan nama rack, persentase utilisasi U, dan estimasi daya di bawahnya (*"21% · 3,4 kW"*). Klik kolom membuka HAL-07.
+- **Rack banyak:** di desktop kolom rack **turun ke baris berikutnya** (wrap) sehingga semua rack terlihat tanpa geser; di HP rack berada dalam **satu baris yang digeser ke samping**.
+- Di bawah rack: baris "Tanpa rack" berisi device tanpa rack di room itu sebagai label kecil dengan lencana status (misalnya ups-01, crac-01). Klik membuka HAL-10. Tidak tampil bila kosong.
+- Room tanpa rack menampilkan *"Belum ada rack di room ini."* dengan tautan ke HAL-06.
 
-**Bebas:** jarak antarkolom, cara menampilkan banyak room.
+**Bebas:** jarak antarkolom, gaya chip, posisi pemilih site terhadap chip.
 
 #### KOM-35 Pohon lokasi
 
 Struktur site → room → rack dalam satu halaman. Dipakai di HAL-06.
 
 **Wajib**
-- Setiap site adalah blok buka-tutup berjudul nama site dengan jumlah room. Di dalamnya, setiap room adalah blok buka-tutup berjudul nama room dengan jumlah rack dan jumlah device tanpa rack. Bawaan: semua terbuka.
-- Di dalam room: tabel rack (nama, tinggi, U terpakai, utilisasi dengan batang kemajuan); klik baris membuka HAL-07. Di bawah tabel: baris "Tanpa rack" seperti KOM-34.
-- Untuk Admin: baris site punya tombol "+ Tambah room" (membuka MOD-02 dengan site terisi); baris room punya tombol "+ Tambah rack" (membuka MOD-03 dengan room terisi); setiap baris site, room, dan rack punya menu titik tiga berisi Ubah dan Hapus.
+- Setiap site adalah blok buka-tutup berjudul nama site dengan jumlah room. Di dalamnya, setiap room adalah blok buka-tutup berjudul nama room dengan jumlah rack dan jumlah device tanpa rack. Bawaan: semua terbuka, kecuali bila jumlah room di sebuah site lebih dari 5; room di site itu tertutup secara bawaan agar halaman tidak terlalu panjang.
+- Di dalam room: tabel rack (nama, tinggi, U terpakai, utilisasi dengan batang kemajuan, estimasi daya; *(Should)* persentase terhadap kapasitas daya); klik baris membuka HAL-07. Di bawah tabel: baris "Tanpa rack" seperti KOM-34.
+- Untuk Admin: baris site punya tombol "+ Tambah room" (membuka MOD-02 dengan site terisi); baris room punya tombol "+ Tambah rack" (membuka MOD-03 dengan room terisi); setiap baris site, room, dan rack punya menu titik tiga berisi Ubah dan Hapus. Memindah room ke site lain atau rack ke room lain dilakukan lewat Ubah (mengganti induk).
 - Site tanpa room menampilkan *"Belum ada room"*; room tanpa rack menampilkan *"Belum ada rack"*, masing-masing dengan tombol tambah untuk Admin.
 
 #### KOM-36 Panel dampak
 
-Menunjukkan device yang terhubung langsung ke sebuah device. Dipakai di HAL-14 (setelah device dipilih), HAL-15 (ringkas), dan HAL-10 tab Port & cable.
+Menunjukkan device yang terhubung langsung ke sebuah device, yaitu device yang terdampak bila device itu dimatikan. Dipakai di HAL-14 dan HAL-17 (setelah device dipilih), HAL-15 (ringkas, untuk WO preventif maupun korektif), dan HAL-10 tab Port & cable.
 
 **Wajib**
 - Kotak berlatar kuning-oranye sangat pucat dengan garis tepi kiri tebal kuning-oranye, ikon peringatan, dan judul *"[jumlah] device terhubung ke [nama device]"*.
 - Dua kelompok berurutan, **Data** lalu **Daya**, masing-masing berjudul dengan jumlahnya. Kelompok kosong tidak ditampilkan.
 - Setiap baris: nama device terhubung (tautan ke HAL-10), port di device itu, simbol penghubung, lalu port di device yang dibahas.
 - Mencakup semua cable dari arah mana pun (satu lompatan).
+- Selalu dihitung dari data cable saat halaman dibuka; tidak disimpan pada WO (US-IMP-02 AC4).
 - Bila tidak ada device terhubung: kotak abu-abu pucat tanpa ikon peringatan, teks *"Tidak ada device terhubung."*
 - Panel hanya informasi; tidak menghalangi penyimpanan form.
 - Versi ringkas (HAL-15): hanya judul dan jumlah; diklik membuka daftar lengkap.
-- *(Should, US-IMP-03)* Di kelompok Daya, setiap device yang menerima daya diberi label di ujung baris: "Masih punya jalur daya cadangan" (abu) atau "Kehilangan seluruh daya" (merah).
+- *(Should, US-IMP-03)* Kelompok Daya diberi keterangan *"Bila [nama device] dimatikan:"* di bawah judulnya. Setiap device yang menerima daya diberi label di ujung baris: **"Tetap menyala lewat jalur cadangan"** (abu, ikon `circle-check`) atau **"Ikut mati, tanpa jalur cadangan"** (kuning-oranye, ikon `triangle-alert`). Label ini menggambarkan akibat bila device dimatikan, bukan kondisi saat ini, sehingga tidak memakai merah.
 
 Referensi: US-IMP-01, US-IMP-02, US-IMP-03.
 
@@ -506,6 +513,8 @@ Menyusun daftar item checklist di form. Dipakai di HAL-14 dan HAL-17.
 Menyusun port template sebuah model. Dipakai di HAL-23.
 
 **Wajib:** tabel yang bisa diedit; setiap baris berisi nama, jenis (KOM-09: Data, Power inlet, Power outlet), dan tipe konektor (opsional), serta tombol hapus baris. Tombol "Tambah port" di bawah. Nama ganda dalam satu model ditandai error di barisnya.
+
+*(Should, US-CAT-03)* **Pola rentang:** kolom nama menerima pola seperti `port[1-48]` atau `eth[0-3]`. Saat pola diketik, di bawah baris tampil keterangan *"Akan menjadi 48 port: port1 sampai port48"*. Saat disimpan atau saat kolom ditinggalkan, satu baris pola dijabarkan menjadi baris-baris terpisah dengan jenis dan tipe konektor yang sama. Teks bantuan di atas tabel menjelaskan cara penulisan pola.
 
 #### KOM-40 Pemilih port
 
@@ -557,7 +566,7 @@ Menunjukkan perubahan data. Dipakai di MOD-09.
 
 #### KOM-46 Kalender bulanan (Should)
 
-Dipakai di HAL-19. **Wajib:** grid bulan; setiap WO tampil sebagai label kecil di tanggal tenggatnya dengan nomor WO dan warna status; klik label membuka HAL-15; tombol bulan sebelumnya/berikutnya dan "Hari ini". Bila satu tanggal punya lebih dari 3 WO, tampil "+n lainnya" yang membuka daftar.
+Dipakai di HAL-19. **Wajib:** grid bulan; setiap WO tampil sebagai label kecil di tanggal tenggatnya dengan nomor WO dan warna status; klik label membuka HAL-15; tombol bulan sebelumnya/berikutnya dan "Hari ini". Bila satu tanggal punya lebih dari 3 WO, tampil "+n lainnya" yang membuka daftar. Tenggat maintenance plan aktif yang belum menjadi WO (sampai 6 bulan ke depan) tampil sebagai label bergaris tepi putus-putus tanpa isian warna, berisi judul plan dan keterangan "terjadwal otomatis"; klik membuka HAL-18. Keterangan arti kedua gaya label tampil di bawah kalender.
 
 ---
 
@@ -575,11 +584,12 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 - **URL:** `/dashboard`. **Template:** khusus. **Peran:** semua.
 - **Isi desktop, dari atas:**
   1. **Ringkasan device per status:** satu baris lencana dengan jumlah (*Aktif 18 · Maintenance 1 · Stok 2 · Pensiun 1*). Setiap lencana membuka HAL-08 terfilter.
-  2. **Peta room** (KOM-34), lebar penuh.
+  2. **Peta room** (KOM-34), lebar penuh, satu room sekaligus dengan pemilih room dan site.
   3. Dua kolom berdampingan: **Perlu perhatian** (WO terlambat, lalu WO dengan tenggat 7 hari ke depan; maksimal 8 item, tautan "Lihat semua" ke HAL-13 terfilter) dan **Garansi** (device dengan garansi habis atau habis dalam 30 hari; maksimal 8 item).
-- **Isi HP:** Perlu perhatian, ringkasan status, peta room (digeser ke samping), Garansi.
+- **Isi HP:** Perlu perhatian, ringkasan status, peta room (chip room dapat digeser; rack digeser ke samping), Garansi.
+- Karena peta room hanya menampilkan satu room, tinggi dashboard tidak bertambah seiring jumlah room.
 - **Database kosong:** langkah awal (§6.4) menggantikan seluruh isi.
-- **Referensi:** US-DASH-01.
+- **Referensi:** US-DASH-01 (AC3: satu room sekaligus).
 
 ### HAL-03 Tugas saya 📱
 - **URL:** `/my-tasks`. **Template:** khusus. **Peran:** Teknisi.
@@ -629,9 +639,9 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 
 ### HAL-07 Detail rack
 - **URL:** `/racks/[id]`. **Template:** TPL-02 (tanpa tab). **Peran:** semua.
-- **Isi:** judul nama rack; lokasi (site / room) sebagai tautan; elevation rack (KOM-32).
+- **Isi:** judul nama rack; lokasi (site / room) sebagai tautan; elevation rack (KOM-32), termasuk ringkasan estimasi daya.
 - **Aksi Admin:** Ubah (MOD-03), Hapus (MOD-06), dan *(Should)* "Cetak label semua device" (HAL-28 dengan device di rack ini terpilih).
-- **Referensi:** US-RAK-01, US-RAK-02, US-DEV-02, US-QR-03.
+- **Referensi:** US-RAK-01, US-RAK-02, US-RAK-03, US-DEV-02, US-QR-03.
 
 ### HAL-08 Daftar device
 - **URL:** `/devices`. **Template:** TPL-01. **Peran:** semua.
@@ -651,13 +661,14 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 | HAL-10 "Ubah" | Data device (mode ubah) |
 
 - **Bagian 1, Identitas:** nama; model (KOM-06; terkunci pada mode ubah dengan keterangan *"Model tidak dapat diubah karena port sudah terbentuk"*); device function; serial number (opsional); status (KOM-09: Stok, Aktif, Pensiun). Pada mode ubah, asset tag tampil sebagai teks tetap di bawah judul. Bila device berstatus Maintenance, status tampil sebagai teks tetap *"Maintenance (diatur oleh work order)"* dan tidak bisa diubah.
-- **Bagian 2, Penempatan** (hanya tampil bila status Aktif atau Maintenance): room (KOM-06); rack (opsional, KOM-06, hanya rack di room terpilih; pilihan paling atas *"Tanpa rack (berdiri di lantai room)"*); sisi (KOM-09) dan posisi U (KOM-06 berisi U1 sampai tinggi rack), keduanya hanya tampil bila rack dipilih dan model bukan 0U. Bila model 0U dan rack dipilih, tampil keterangan *"Device 0U dipasang tanpa posisi U."* Di samping kolom (di HP: di bawahnya) tampil KOM-33 mode pratinjau.
+- **Bagian 2, Penempatan** (hanya tampil bila status Aktif atau Maintenance): room (KOM-06); rack (opsional, KOM-06, hanya rack di room terpilih; pilihan paling atas *"Tanpa rack (berdiri di lantai room)"*); sisi (KOM-09) dan posisi U (KOM-06 berisi U1 sampai tinggi rack), keduanya hanya tampil bila rack dipilih dan model bukan 0U. Bila model 0U dan rack dipilih, tampil keterangan *"Device 0U dipasang tanpa posisi U."* Di samping kolom (di HP: di bawahnya) tampil KOM-33 mode pratinjau, termasuk estimasi daya rack dan peringatan kapasitas daya (Should).
 - **Bagian 3, Pembelian & garansi:** tanggal beli, vendor, akhir garansi, semuanya opsional, dengan teks bantuan *"Boleh dikosongkan bila data pembelian tidak tersedia."*
 - **Saat menyimpan:**
   - Mengubah status dari Aktif ke Stok atau Pensiun memunculkan MOD-06 (varian pindah status) sebelum disimpan.
   - Tabrakan atau melebihi tinggi rack sudah terlihat di pratinjau; bila tetap disimpan, pesan muncul di kolom posisi.
+  - Melebihi kapasitas daya rack hanya peringatan; penyimpanan tetap berjalan.
 - **Tombol:** "Simpan device", "Batal".
-- **Referensi:** US-DEV-01, 02, 03; PRD Lampiran C (Device).
+- **Referensi:** US-DEV-01, 02, 03, US-RAK-03; PRD Lampiran C (Device).
 
 ### HAL-10 Detail device 📱
 - **URL:** `/devices/[id]` (juga tujuan `/a/[asset-tag]`). **Template:** TPL-02. **Peran:** semua.
@@ -667,12 +678,12 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 | Tab | Isi |
 |---|---|
 | Ringkasan | Lokasi lengkap (site, room, rack, U, sisi) dengan KOM-33 bila di rack; model, device function, serial number; tanggal beli, vendor, akhir garansi; QR code |
-| Port & cable | Tabel port: nama, jenis, tipe konektor, tersambung ke (device · port, tautan), label cable. Aksi Admin per baris: port kosong → "Sambungkan" (HAL-12 dengan Ujung A terisi); port tersambung → menu titik tiga berisi "Ubah cable" (HAL-12) dan "Lepas cable" (MOD-06). Di bawah tabel: KOM-36 |
+| Port & cable | Tabel port: nama, jenis, tipe konektor, tersambung ke (device · port, tautan), label cable. Port yang ditambahkan manual diberi keterangan kecil *"manual"*. Aksi Admin per baris: port kosong → "Sambungkan" (HAL-12 dengan Ujung A terisi); port tersambung → menu titik tiga berisi "Ubah cable" (HAL-12) dan "Lepas cable" (MOD-06). *(Should, US-DEV-06)* Tombol "Tambah port" di atas tabel (MOD-11), dan menu titik tiga setiap port berisi "Ubah port" (MOD-11) dan "Hapus port" (MOD-06; varian informasi bila port tersambung). Di bawah tabel: KOM-36 |
 | Maintenance | WO terbuka (KOM-42), maintenance plan aktif (judul, interval, tenggat berikutnya), riwayat WO (nomor, judul, jenis, teknisi, tenggat, status). Aksi Admin: "Tambah maintenance plan" (HAL-17 dengan device terisi) |
 | Riwayat | Audit log khusus device ini (waktu, pelaku, aksi); klik baris membuka MOD-09 |
 
 - **HP (tanpa tab), dari atas:** header; KOM-43 kartu lokasi; **tugas aktif** (KOM-42 untuk setiap WO terbuka, atau *"Tidak ada tugas aktif"*); lalu blok buka-tutup tertutup: Detail, Port & cable, Maintenance, Riwayat.
-- **Referensi:** US-DEV-04, 05, US-IMP-01, US-QR-01, 02, US-AUD-01 AC4.
+- **Referensi:** US-DEV-04, 05, 06, US-IMP-01, US-QR-01, 02, US-AUD-01 AC4.
 
 ### HAL-11 Daftar cable
 - **URL:** `/cables`. **Template:** TPL-01. **Peran:** semua.
@@ -712,12 +723,12 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 - **Isi, dari atas:**
   1. **Info:** device (tautan) dan lokasi singkat, teknisi, tenggat, deskripsi masalah (korektif).
   2. **Belum ada teknisi:** bila teknisi kosong, tampil pemberitahuan *"WO ini belum punya teknisi dan belum dapat dimulai."* dengan tombol Admin "Tugaskan teknisi" (MOD-08).
-  3. KOM-36 versi ringkas.
+  3. KOM-36 versi ringkas (untuk WO preventif dan korektif; dihitung dari data cable saat ini).
   4. KOM-37 checklist pengerjaan.
   5. KOM-44 info asal WO.
 - **Tombol aksi utama** ("Mulai pekerjaan" atau "Selesaikan pekerjaan", dari KOM-37) menempel di bawah layar di HP (di atas bar navigasi). Hanya tampil untuk teknisi yang ditugaskan dan Admin.
 - **Aksi Admin di header:** "Ganti teknisi" (MOD-08; untuk Terjadwal dan Dikerjakan), "Batalkan" (MOD-07; untuk Terjadwal dan Dikerjakan).
-- **Referensi:** US-WO-03, 04, 06.
+- **Referensi:** US-WO-03, 04, 06, US-IMP-02 AC3.
 
 ### HAL-16 Daftar maintenance plan
 - **URL:** `/maintenance-plans`. **Template:** TPL-01. **Peran:** semua.
@@ -729,10 +740,10 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 ### HAL-17 Form maintenance plan
 - **URL:** `/maintenance-plans/new`, `/maintenance-plans/[id]/edit`. **Template:** TPL-03. **Peran:** Admin.
 - **Pintu masuk:** HAL-16 (kosong); HAL-10 tab Maintenance (device terisi); "Ubah" dari HAL-18.
-- **Field:** judul; device (hanya device Aktif atau Maintenance); interval (KOM-05 angka + KOM-09 satuan: Hari, Minggu, Bulan); tenggat (label *"Tenggat pertama"* pada mode tambah, *"Tenggat berikutnya"* pada mode ubah); teknisi bawaan (opsional, tersaring sesuai keahlian setelah device dipilih); checklist (KOM-38, minimal satu item).
-- **Teks bantuan di bawah tenggat:** *"WO preventif dibuat otomatis 3 hari sebelum tenggat."*
+- **Field:** judul; device (hanya device Aktif atau Maintenance), diikuti **KOM-36 panel dampak** setelah device dipilih, karena WO preventif nantinya dibuat otomatis tanpa form; interval (KOM-05 angka + KOM-09 satuan: Hari, Minggu, Bulan); tenggat (label *"Tenggat pertama"* pada mode tambah, *"Tenggat berikutnya"* pada mode ubah); teknisi bawaan (opsional, tersaring sesuai keahlian setelah device dipilih); checklist (KOM-38, minimal satu item).
+- **Teks bantuan di bawah tenggat:** *"WO preventif dibuat otomatis 7 hari sebelum tenggat. Teknisi diingatkan 3 hari sebelum tenggat."*
 - **Tombol:** "Simpan maintenance plan", "Batal".
-- **Referensi:** US-MP-01; PRD Lampiran C (Maintenance plan).
+- **Referensi:** US-MP-01, US-IMP-02 AC3, BR-18; PRD Lampiran C (Maintenance plan).
 
 ### HAL-18 Detail maintenance plan
 - **URL:** `/maintenance-plans/[id]`. **Template:** TPL-02 (seksi berurutan). **Peran:** semua.
@@ -742,7 +753,7 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 
 ### HAL-19 Kalender (Should)
 - **URL:** `/calendar`. **Template:** khusus. **Peran:** semua.
-- **Isi:** KOM-46, dengan filter teknisi dan jenis.
+- **Isi:** KOM-46 (WO dan tenggat maintenance plan yang belum menjadi WO), dengan filter teknisi dan jenis.
 - **Referensi:** US-CAL-01.
 
 ### HAL-20 Daftar manufacturer
@@ -761,22 +772,23 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 - **URL:** `/models`. **Template:** TPL-01. **Peran:** semua.
 - **Kolom:** manufacturer, nama, tinggi (U), full-depth, daya maksimum, jumlah port, jumlah device.
 - **Filter:** manufacturer.
-- **Aksi Admin:** "Tambah model" (HAL-23).
-- **Referensi:** US-CAT-02.
+- **Aksi Admin:** "Tambah model" (HAL-23); *(Should)* per baris di menu titik tiga: "Duplikat model".
+- **Referensi:** US-CAT-02, US-CAT-03.
 
 ### HAL-23 Form model
 - **URL:** `/models/new`, `/models/[id]/edit`. **Template:** TPL-03. **Peran:** Admin.
+- **Pintu masuk:** HAL-22 "Tambah model" (kosong); "Ubah" dari HAL-24 (mode ubah); *(Should)* "Duplikat model" dari HAL-22 atau HAL-24 (mode tambah berisi salinan spesifikasi dan port template, nama terisi *"[nama asal] (salinan)"* dan disorot agar diganti, dengan pemberitahuan *"Salinan dari [nama model]. Ganti nama sebelum menyimpan."*).
 - **Bagian 1, Spesifikasi:** manufacturer; nama; tinggi (KOM-05, U; 0 untuk device 0U); full-depth (KOM-08; disembunyikan bila tinggi 0); daya maksimum (opsional, watt).
 - **Bagian 2, Port template:** KOM-39.
 - **Pada mode ubah, bila model sudah dipakai device:** pemberitahuan di atas bagian 2: *"Perubahan port template hanya berlaku untuk device yang dibuat setelah ini. [n] device yang sudah ada tidak berubah."*
 - **Tombol:** "Simpan model", "Batal".
-- **Referensi:** US-CAT-02; PRD Lampiran C (Model, Port template).
+- **Referensi:** US-CAT-02, US-CAT-03; PRD Lampiran C (Model, Port template).
 
 ### HAL-24 Detail model
 - **URL:** `/models/[id]`. **Template:** TPL-02 (seksi berurutan). **Peran:** semua.
 - **Isi:** spesifikasi; tabel port template; daftar device yang memakai model ini (tautan).
-- **Aksi Admin:** Ubah (HAL-23), Hapus (MOD-06).
-- **Referensi:** US-CAT-02.
+- **Aksi Admin:** Ubah (HAL-23), *(Should)* Duplikat model (HAL-23), Hapus (MOD-06).
+- **Referensi:** US-CAT-02, US-CAT-03.
 
 ### HAL-25 Daftar user
 - **URL:** `/users`. **Template:** TPL-01. **Peran:** Admin.
@@ -788,8 +800,9 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 ### HAL-26 Form user
 - **URL:** `/users/new`, `/users/[id]/edit`. **Template:** TPL-03. **Peran:** Admin.
 - **Field:** nama; email; password awal (hanya mode tambah); peran (KOM-09: Admin, Teknisi, Viewer); keahlian (KOM-09: IT, Fasilitas, Keduanya; hanya tampil bila peran Teknisi).
+- **Mode ubah:** tombol sekunder "Atur ulang password" di bagian bawah form, membuka MOD-12.
 - **Tombol:** "Simpan user", "Batal".
-- **Referensi:** US-AUTH-02; PRD Lampiran C (User).
+- **Referensi:** US-AUTH-02 (AC5); PRD Lampiran C (User).
 
 ### HAL-27 Audit log
 - **URL:** `/audit-log`. **Template:** TPL-01 (tanpa tombol tambah). **Peran:** Admin.
@@ -804,6 +817,13 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 - **Isi:** pratinjau lembar A4 berisi KOM-41 dalam grid 3 kolom × 8 baris (24 label per lembar, ukuran umum kertas label A4 isi 24). Lebih dari 24 device menambah lembar.
 - **Aksi:** "Cetak" membuka dialog cetak browser. Tampilan cetak menyembunyikan sidebar, header, dan tombol.
 - **Referensi:** US-QR-03.
+
+### HAL-31 Akun saya (Should)
+- **URL:** `/account`. **Template:** TPL-02 (seksi berurutan). **Peran:** semua.
+- **Pintu masuk:** menu user di header (desktop) atau MOD-10 (HP).
+- **Isi:** nama, email, peran, dan keahlian (Teknisi) sebagai teks yang hanya dibaca; lalu seksi **Ganti password** berisi password lama, password baru, dan ulangi password baru, dengan tombol "Simpan password".
+- **Pesan error:** di kolom terkait, misalnya *"Password lama salah."* atau *"Password baru tidak sama."*
+- **Referensi:** US-AUTH-04.
 
 ### HAL-29 Akses ditolak
 - **Template:** TPL-06. Judul *"Akses ditolak"*, penjelasan *"Halaman ini tidak tersedia untuk peran Anda."*
@@ -822,10 +842,12 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 ### MOD-02 Room
 - **Template:** TPL-04. **Dibuka dari:** HAL-06 (tombol umum atau baris site).
 - **Field:** nama; site (KOM-06; terisi bila dibuka dari baris site).
+- **Mode ubah:** mengganti site memindahkan room beserta semua rack dan device di dalamnya; di bawah kolom site tampil keterangan *"4 rack dan 3 device ikut pindah."*
 
 ### MOD-03 Rack
 - **Template:** TPL-04. **Dibuka dari:** HAL-06 (tombol umum atau baris room), HAL-07 (Ubah).
-- **Field:** nama; room (KOM-06; terisi bila dibuka dari baris room); tinggi (KOM-05, bawaan 42U).
+- **Field:** nama; room (KOM-06; terisi bila dibuka dari baris room); tinggi (KOM-05, bawaan 42U); *(Should)* kapasitas daya (opsional, KOM-05, watt) dengan teks bantuan *"Dipakai untuk peringatan saat memasang device. Kosongkan bila tidak diketahui."*
+- **Mode ubah:** mengganti room memindahkan rack beserta semua device di dalamnya dengan posisi yang sama; di bawah kolom room tampil keterangan *"9 device ikut pindah."*
 - **Validasi tampilan:** pada mode ubah, mengecilkan tinggi di bawah U tertinggi yang terpakai menampilkan pesan di kolom tinggi: *"Rack ini berisi device sampai U40. Tinggi minimal 40U."*
 
 ### MOD-04 Manufacturer
@@ -848,7 +870,8 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 | Hapus maintenance plan | *"Hapus [judul]?"* | Dihapus permanen (hanya bila belum punya riwayat WO) | Hapus |
 | Nonaktifkan / aktifkan user | *"Nonaktifkan Rina?"* | User tidak dapat login dan sesinya berakhir; n WO terbuka miliknya perlu ditugaskan ulang | Nonaktifkan / Aktifkan |
 | Hapus master data | *"Hapus room Ruang Server Gedung B?"* | Dihapus permanen | Hapus |
-| **Informasi** (ditolak aturan) | *"srv-web-01 tidak dapat dihapus"* | Alasan dan langkah yang bisa dilakukan, misalnya *"Device ini punya riwayat work order. Ubah statusnya menjadi Pensiun."* atau *"Room ini masih berisi 4 rack dan 3 device."* | Mengerti |
+| Hapus port (Should) | *"Hapus port eth2 dari srv-db-01?"* | Port dihapus permanen dari device ini; model dan device lain tidak berubah | Hapus port |
+| **Informasi** (ditolak aturan) | *"srv-web-01 tidak dapat dihapus"* | Alasan dan langkah yang bisa dilakukan, misalnya *"Device ini punya riwayat work order. Ubah statusnya menjadi Pensiun."* atau *"Room ini masih berisi 4 rack dan 3 device."* atau *"Port eth0 masih tersambung cable C-0012. Lepas cable terlebih dahulu."* | Mengerti |
 
 - Tombol "Aktifkan" pada varian aktifkan berwarna utama (`air`), bukan merah, karena tidak berbahaya.
 
@@ -869,7 +892,19 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 
 ### MOD-10 Menu navigasi HP
 - **Jenis:** panel yang meluncur dari kiri. **Dibuka dari:** tombol menu di header ringkas HP.
-- **Isi:** sama dengan sidebar (§5.3), ditambah nama dan peran user serta tombol "Keluar" di bawah.
+- **Isi:** sama dengan sidebar (§5.3), ditambah nama dan peran user, tautan "Akun saya" (HAL-31, Should), dan tombol "Keluar" di bawah.
+
+### MOD-11 Port (Should)
+- **Template:** TPL-04. **Dibuka dari:** HAL-10 tab Port & cable ("Tambah port" atau "Ubah port").
+- **Field:** nama; jenis (KOM-09: Data, Power inlet, Power outlet; terkunci pada mode ubah bila port tersambung, dengan keterangan *"Jenis tidak dapat diubah selama port tersambung cable."*); tipe konektor (opsional).
+- **Teks bantuan:** *"Perubahan hanya berlaku untuk device ini. Model dan device lain tidak berubah."*
+- **Referensi:** US-DEV-06.
+
+### MOD-12 Atur ulang password
+- **Template:** TPL-04 bergaya konfirmasi. **Dibuka dari:** HAL-26 mode ubah.
+- **Judul:** *"Atur ulang password Rina?"*. **Isi:** keterangan *"Password lama tidak berlaku dan Rina akan keluar dari semua perangkat."*, lalu kolom password baru (KOM-03 dengan tombol tampilkan).
+- **Tombol:** "Atur ulang password" (merah), "Batal".
+- **Referensi:** US-AUTH-02 AC5.
 
 ---
 
@@ -900,7 +935,8 @@ Berdasarkan [naskah demo](../docs/demo-script.md), halaman berikut dipoles palin
 
 - Library komponen UI, autentikasi, dan pembuat QR; versi pustaka ikon Lucide.
 - Pemeriksaan hak akses dan validasi di server (pasangan "tolak di server" dari prinsip 3; PRD US-AUTH-03, NFR-04).
-- Cara menyimpan pilihan buka/tutup sidebar dan cara mengisi awal form dari pintu masuk (misalnya lewat parameter URL).
+- Cara menyimpan pilihan buka/tutup sidebar dan pilihan room di peta room, serta cara mengisi awal form dari pintu masuk (misalnya lewat parameter URL).
+- Cara menjabarkan pola rentang port dan menghitung estimasi daya.
 - Struktur folder dan komponen di kode.
 - Pembuatan skill `.claude/skills/ui-guidelines/` dari §3, §4, §6, §7, dan §8 (awal tahap Build).
 
@@ -934,6 +970,12 @@ Berdasarkan [naskah demo](../docs/demo-script.md), halaman berikut dipoles palin
 | 22 | Grup sidebar | Semua tertutup secara bawaan; grup halaman aktif terbuka otomatis; pilihan diingat |
 | 23 | Lepas cable | Dari daftar cable dan tab Port & cable detail device; tidak dari form ubah |
 | 24 | URL | Bahasa Inggris (identitas teknis) |
+| 25 | Panel dampak (P1, P2) | Dihitung langsung; tampil juga di form maintenance plan dan detail semua WO; label daya berupa kalimat hipotesis, warna peringatan |
+| 26 | Daya (P5) | Estimasi daya di elevation, pohon lokasi, dan peta room; kapasitas daya dan peringatan (Should) |
+| 27 | Port (P6, P7) | Pola rentang dan duplikat model; tambah/ubah/hapus port per device lewat MOD-11 (Should) |
+| 28 | Password (P10) | MOD-12 atur ulang oleh Admin; HAL-31 Akun saya (Should) |
+| 29 | Kalender (P13) | Tenggat maintenance plan tampil sebagai label bergaris putus-putus |
+| 30 | Peta room (P14) | Satu room sekaligus dengan pemilih site dan chip room; rack wrap di desktop, geser di HP |
 
 ---
 
@@ -944,3 +986,4 @@ Berdasarkan [naskah demo](../docs/demo-script.md), halaman berikut dipoles palin
 | 0.1 | 5 Okt 2026 | Draft awal |
 | 0.2 | 5 Okt 2026 | Flowchart, use case, naskah demo, dan brief Claude Design dipindah ke `docs/`. Semua sketsa diberi deskripsi tertulis. Perbaikan kontras warna status, akses Tugas saya dan notifikasi, sitemap, form device, dan panel dampak |
 | 0.3 | 8 Okt 2026 | **Struktur:** bagian cara membaca dengan konvensi rujukan (§1); inventaris template (§7), komponen (§8), halaman (§9), dan modal (§10) dengan ID; setiap halaman menyebut template, peran, pintu masuk, dan referensi. **Sketsa:** semua sketsa ASCII dan emoji dihapus; komponen khusus dideskripsikan dengan bagian Wajib dan Bebas. **Prinsip:** "Cegah di tampilan, tolak di server" menjadi "Cegah kesalahan sebelum terjadi"; "Lapangan dulu" diperjelas menjadi "Mudah dipakai teknisi di ruang server"; prinsip konsistensi ditambahkan. **Ikon:** Lucide. **Penamaan:** mengikuti PRD v0.3 (nama entitas bahasa Inggris, "tenggat"); URL bahasa Inggris. **Dari PRD v0.3:** notifikasi Admin (lonceng, bar bawah, jenis notifikasi, MOD-08 dari notifikasi); device tanpa rack (form device, peta room, pohon lokasi, filter); nomor WO; info asal WO (KOM-44); judul WO korektif; data pembelian opsional dengan nama bagian "Pembelian & garansi"; status device terkunci saat Maintenance; pindah ke stok; WO tanpa teknisi tidak dapat dimulai. **Lainnya:** alur tambah lokasi (HAL-06); grup sidebar tertutup secara bawaan; "Lepas cable" dari daftar dan tab Port & cable; "Sambungkan" dari port kosong; "Buat WO korektif" dan "Tambah maintenance plan" dari detail device; pemberitahuan perubahan port template; validasi tinggi rack di MOD-03; kelompok Tugas saya "7 hari ke depan"; keadaan standar komponen (§8.1) |
+| 0.4 | 11 Okt 2026 | Mengikuti PRD v0.4 (P1-P14). **Baru:** HAL-31 Akun saya (Should), MOD-11 Port (Should), MOD-12 Atur ulang password, varian MOD-06 hapus port. **Diubah:** KOM-34 peta room menampilkan satu room sekaligus dengan pemilih site dan chip room, rack wrap di desktop dan geser di HP; KOM-36 dihitung langsung, tampil juga di HAL-17 dan semua WO, label jalur daya diganti kalimat hipotesis berwarna peringatan; KOM-32, KOM-33, KOM-35 menampilkan estimasi daya dan kapasitas daya (Should); KOM-35 room tertutup bila lebih dari 5; KOM-39 pola rentang; KOM-46 tenggat maintenance plan; HAL-17 teks waktu pembuatan WO (7 hari) dan pengingat (3 hari); HAL-22/23/24 duplikat model; HAL-10 tambah/ubah/hapus port; HAL-26 atur ulang password; MOD-02/03 keterangan pindah induk dan kapasitas daya; menu user dan MOD-10 berisi Akun saya |

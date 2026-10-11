@@ -16,20 +16,23 @@ v Kampus Utama  · 2 room                                                       
 
   v Ruang Server Gedung A  · 4 rack · 3 device tanpa rack                       [...]
     [ + Tambah rack ]
-    ┌──────────┬────────┬────────────┬──────────────────────────┬───────┐
-    │ Nama     │ Tinggi │ U terpakai │ Utilisasi                │       │
-    ├──────────┼────────┼────────────┼──────────────────────────┼───────┤
-    │ RK-A01   │ 42U    │ 9U         │ ████░░░░░░░░░░░░  21%    │ [...] │
-    │ RK-A02   │ 42U    │ 7U         │ ███░░░░░░░░░░░░░  17%    │ [...] │
-    │ RK-A03   │ 42U    │ 8U         │ ███░░░░░░░░░░░░░  19%    │ [...] │
-    │ RK-A04   │ 42U    │ 10U        │ ████░░░░░░░░░░░░  24%    │ [...] │
-    └──────────┴────────┴────────────┴──────────────────────────┴───────┘
+    ┌──────────┬────────┬────────────┬──────────────────────────┬─────────────────────┬───────┐
+    │ Nama     │ Tinggi │ U terpakai │ Utilisasi                │ Estimasi daya       │       │
+    ├──────────┼────────┼────────────┼──────────────────────────┼─────────────────────┼───────┤
+    │ RK-A01   │ 42U    │ 9U         │ ████░░░░░░░░░░░░  21%    │ 3.450 / 5.000 W 69% │ [...] │
+    │ RK-A02   │ 42U    │ 7U         │ ███░░░░░░░░░░░░░  17%    │ 2.100 W             │ [...] │
+    │ RK-A03   │ 42U    │ 8U         │ ███░░░░░░░░░░░░░  19%    │ 2.600 W             │ [...] │
+    │ RK-A04   │ 42U    │ 10U        │ ████░░░░░░░░░░░░  24%    │ 3.000 W             │ [...] │
+    └──────────┴────────┴────────────┴──────────────────────────┴─────────────────────┴───────┘
+    "3.450 / 5.000 W 69%" bila rack punya kapasitas daya (Should); selain itu hanya estimasi.
     Tanpa rack:  ups-01 {Aktif}   crac-01 {Aktif}   crac-02 {Aktif}      
 
   v Ruang Server Gedung B  · 0 rack                                              [...]
     Belum ada rack.  [ + Tambah rack ]
 
   [...] berisi: Ubah, Hapus
+  Pindah room ke site lain / rack ke room lain: lewat Ubah (ganti induk).
+  Bila room di satu site lebih dari 5, room tertutup secara bawaan.
 ```
 
 ### Viewer dan Teknisi
@@ -80,10 +83,18 @@ MOD-03 (ubah, tinggi dikecilkan terlalu kecil)
 │ Room                                     │
 │ [ Ruang Server Gedung A               v] │
 │                                          │
+│ (i) 9 device ikut pindah bila room       │
+│     diganti.                             │
+│                                          │
 │ Tinggi                                   │
 │ [ 38                               U ]   │
 │ (!) Rack ini berisi device sampai U42.   │
 │     Tinggi minimal 42U.                  │
+│                                          │
+│ Kapasitas daya (opsional)                │
+│ [ 5000                             W ]   │
+│ Dipakai untuk peringatan saat memasang   │
+│ device. Kosongkan bila tidak diketahui.  │
 ├──────────────────────────────────────────┤
 │                    [ Batal ] [# Simpan ] │
 └──────────────────────────────────────────┘
@@ -104,6 +115,7 @@ RK-A01                                  [ Cetak label semua device ] [ Ubah ] [.
 _Kampus Utama_ / _Ruang Server Gedung A_
 
 42U · 9U terpakai · 33U kosong · 21%
+Estimasi daya 3.450 / 5.000 W (69%)  ███████████░░░░░   (1 device tanpa data daya)
 
             Depan                                  Belakang
      ┌──────────────────────────────┐      ┌──────────────────────────────┐
@@ -246,6 +258,10 @@ Penempatan                                         Pratinjau RK-A02 · depan
       sw-tor-02. Pilih posisi lain.                    berbagi U dengan device
                                                        di sisi belakang).
 
+                                                   Estimasi daya rack:
+                                                   2.100 W → 2.900 W
+                                                   (tanpa kapasitas daya)
+
 Pembelian & garansi
   Boleh dikosongkan bila data pembelian tidak tersedia.
   Tanggal beli (opsional)   Vendor (opsional)            Akhir garansi (opsional)
@@ -255,6 +271,14 @@ Pembelian & garansi
 ```
 
 Setelah posisi diganti ke U39, sorotan pratinjau berubah warna `air` di U39-U40 dan pesan hilang.
+
+Bila rack punya kapasitas daya dan pemasangan melewatinya (Should), di bawah pratinjau tampil peringatan kuning-oranye, bukan merah, dan tombol Simpan tetap aktif:
+
+```
+  (!) Estimasi daya menjadi 5.250 W, melebihi
+      kapasitas 5.000 W. Device tetap dapat
+      disimpan.
+```
 
 ### Variasi bagian Penempatan
 
@@ -332,15 +356,19 @@ QR code
  Ringkasan │ Port & cable │ Maintenance │ Riwayat
 ───────────┴──────────────┴─────────────┴──────────────────────────────────────────────
 
-┌────────┬──────────────┬───────────┬────────────────────────┬────────┬─────────────────┐
-│ Port   │ Jenis        │ Konektor  │ Tersambung ke          │ Cable  │                 │
-├────────┼──────────────┼───────────┼────────────────────────┼────────┼─────────────────┤
-│ eth0   │ Data         │ RJ45      │ _sw-tor-01_ · port 3   │ C-0012 │ [...]           │
-│ eth1   │ Data         │ RJ45      │ —                      │ —      │ [ Sambungkan ]  │
-│ PSU1   │ Power inlet  │ C14       │ _pdu-a01-a_ · outlet 4 │ C-0031 │ [...]           │
-│ PSU2   │ Power inlet  │ C14       │ _pdu-a01-b_ · outlet 4 │ C-0032 │ [...]           │
-└────────┴──────────────┴───────────┴────────────────────────┴────────┴─────────────────┘
-  [...] berisi: Ubah cable, Lepas cable
+                                                                       [ Tambah port ]
+┌─────────────────┬──────────────┬───────────┬────────────────────────┬────────┬─────────────────────┐
+│ Port            │ Jenis        │ Konektor  │ Tersambung ke          │ Cable  │                     │
+├─────────────────┼──────────────┼───────────┼────────────────────────┼────────┼─────────────────────┤
+│ eth0            │ Data         │ RJ45      │ _sw-tor-01_ · port 3   │ C-0012 │ [...]               │
+│ eth1            │ Data         │ RJ45      │ —                      │ —      │ [ Sambungkan ] [...]│
+│ eth2  (manual)  │ Data         │ SFP+      │ —                      │ —      │ [ Sambungkan ] [...]│
+│ PSU1            │ Power inlet  │ C14       │ _pdu-a01-a_ · outlet 4 │ C-0031 │ [...]               │
+│ PSU2            │ Power inlet  │ C14       │ _pdu-a01-b_ · outlet 4 │ C-0032 │ [...]               │
+└─────────────────┴──────────────┴───────────┴────────────────────────┴────────┴─────────────────────┘
+  [...] port tersambung: Ubah cable, Lepas cable, Ubah port, Hapus port (ditolak: lepas cable dulu)
+  [...] port kosong:     Ubah port, Hapus port
+  (manual) = port ditambahkan Admin, bukan dari port template model (Should)
 
 ┌─ (!) 3 device terhubung ke srv-db-01 ───────────────────────────────────────────┐
 │ Data (1)                                                                        │
@@ -354,14 +382,15 @@ QR code
 ### Panel dampak untuk PDU, dengan indikator jalur daya cadangan (Should)
 
 ```
-┌─ (!) 5 device terhubung ke pdu-a01-a ───────────────────────────────────────────┐
-│ Daya (5)                                                                        │
-│   _srv-web-01_   PSU1   ⟷  pdu-a01-a outlet 1   Masih punya jalur daya cadangan │
-│   _srv-db-01_    PSU1   ⟷  pdu-a01-a outlet 4   Masih punya jalur daya cadangan │
-│   _core-sw-01_   PSU1   ⟷  pdu-a01-a outlet 6   Masih punya jalur daya cadangan │
-│   _fw-01_        PSU    ⟷  pdu-a01-a outlet 8   {Kehilangan seluruh daya}       │
-│   ...                                                                           │
-└─────────────────────────────────────────────────────────────────────────────────┘
+┌─ (!) 5 device terhubung ke pdu-a01-a ───────────────────────────────────────────────────┐
+│ Daya (5)                                                                                │
+│ Bila pdu-a01-a dimatikan:                                                               │
+│   _srv-web-01_   PSU1   ⟷  pdu-a01-a outlet 1   [ok] Tetap menyala lewat jalur cadangan │
+│   _srv-db-01_    PSU1   ⟷  pdu-a01-a outlet 4   [ok] Tetap menyala lewat jalur cadangan │
+│   _core-sw-01_   PSU1   ⟷  pdu-a01-a outlet 6   [ok] Tetap menyala lewat jalur cadangan │
+│   _fw-01_        PSU    ⟷  pdu-a01-a outlet 8   (!) Ikut mati, tanpa jalur cadangan     │
+│   ...                                                    ↑ kuning-oranye, bukan merah   │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Tab Maintenance
@@ -437,6 +466,31 @@ Riwayat WO
 ├──────┬──────┬──────┬─────┤
 │Tugas │Dash- │ Cari │Notif│
 └──────┴──────┴──────┴─────┘
+```
+
+### MOD-11 Port (Should)
+
+```
+Tambah port                                  Ubah port (port tersambung)
+┌──────────────────────────────────────┐     ┌──────────────────────────────────────┐
+│ Tambah port ke srv-db-01         [x] │     │ Ubah port eth0                   [x] │
+├──────────────────────────────────────┤     ├──────────────────────────────────────┤
+│ Nama                                 │     │ Nama                                 │
+│ [ eth2                             ] │     │ [ eth0                             ] │
+│                                      │     │                                      │
+│ Jenis                                │     │ Jenis                                │
+│ (•) Data ( ) Power inlet             │     │ Data (terkunci)                      │
+│ ( ) Power outlet                     │     │ Jenis tidak dapat diubah selama port │
+│                                      │     │ tersambung cable.                    │
+│ Tipe konektor (opsional)             │     │                                      │
+│ [ SFP+                             ] │     │ Tipe konektor (opsional)             │
+│                                      │     │ [ RJ45                             ] │
+│ Perubahan hanya berlaku untuk device │     │                                      │
+│ ini. Model dan device lain tidak     │     │ Perubahan hanya berlaku untuk device │
+│ berubah.                             │     │ ini.                                 │
+├──────────────────────────────────────┤     ├──────────────────────────────────────┤
+│                  [ Batal ] [# Simpan ]│     │                  [ Batal ] [# Simpan ]│
+└──────────────────────────────────────┘     └──────────────────────────────────────┘
 ```
 
 ---

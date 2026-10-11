@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Versi | 0.3 (direview Product Owner) |
-| Tanggal | 8 Oktober 2026 |
+| Versi | 0.4 (direview Product Owner) |
+| Tanggal | 11 Oktober 2026 |
 | Sumber | [`intent/asset-maintenance.md`](../intent/asset-maintenance.md) |
 | Tahap SDLC | Design |
 | Dokumen berikutnya | [`specs/design.md`](design.md) (Design Spec), `specs/tech.md` (Technical Spec) |
@@ -53,14 +53,17 @@ Aplikasi web untuk mengelola aset fisik ruang server data center kampus: lokasi 
 | **Patch panel** | Papan berisi port untuk merapikan cable. Port depan tembus ke port belakang dengan nomor yang sama. |
 | **Trace** | Menelusuri jalur cable dari ujung ke ujung. |
 | **Asset tag** | Kode unik permanen tiap device (misalnya `DCM-0001`), dicetak di QR. |
-| **Maintenance plan** | Jadwal maintenance preventif berulang untuk satu device, misalnya "Cek baterai UPS-01 setiap 3 bulan". Bukan pekerjaan, melainkan aturan yang menghasilkan work order preventif. |
-| **Work order (WO)** | Satu pekerjaan maintenance untuk satu device, ditugaskan ke teknisi. Setiap WO punya satu jenis: Preventif atau Korektif. |
+| **Maintenance plan** | Jadwal maintenance preventif berulang untuk satu device, misalnya "Cek baterai UPS-01 setiap 3 bulan". Bukan pekerjaan, melainkan aturan yang menghasilkan work order preventif 7 hari sebelum tenggatnya. |
+| **Work order (WO)** | Satu pekerjaan maintenance untuk satu device, ditugaskan ke teknisi. Setiap WO punya satu jenis: Preventif atau Korektif. Pekerjaan tingkat room atau rack dicatat lewat device yang mewakilinya (Asumsi 7). |
 | **Nomor WO** | Kode unik permanen setiap WO (misalnya `WO-0012`), untuk dirujuk. Berbeda dengan judul WO, yang menjelaskan isi pekerjaan. |
 | **Preventif / Korektif** | Mengikuti standar terminologi maintenance EN 13306. Preventif = dilakukan sebelum kerusakan pada interval tertentu (di sini: dari maintenance plan). Korektif = dilakukan setelah kerusakan terdeteksi, untuk memulihkan fungsi device (termasuk penggantian unit). |
 | **Tenggat** | Tanggal paling lambat sebuah WO harus selesai. |
 | **Checklist** | Daftar langkah yang dicentang teknisi saat mengerjakan WO. |
 | **Cron** | Program yang berjalan otomatis sesuai jadwal (di sini: setiap hari pukul 07.00 WIB). |
-| **Impact analysis** | Daftar device yang ikut terdampak bila satu device dimatikan atau di-maintenance. |
+| **Impact analysis** | Daftar device yang ikut terdampak bila satu device dimatikan atau di-maintenance. Bersifat hipotesis ("bila dimatikan") dan selalu dihitung dari data cable saat ini. |
+| **Estimasi daya** | Jumlah daya maksimum (dari model) semua device di sebuah rack. Angka label pabrik ini biasanya jauh di atas pemakaian nyata, sehingga hanya dipakai untuk perencanaan kasar. |
+| **Kapasitas daya rack** | Batas daya yang direncanakan untuk satu rack (watt), diisi Admin. |
+| **Pola rentang** | Penulisan nama port seperti `port[1-48]` yang otomatis dijabarkan menjadi `port1` sampai `port48`. |
 | **Least privilege** | Prinsip keamanan: setiap orang hanya diberi akses sebatas yang dibutuhkan pekerjaannya. |
 | **CMMS** | Computerized Maintenance Management System, software khusus manajemen maintenance. |
 | **Discovery / telemetri** | Pembacaan data langsung dari device lewat jaringan (misalnya SNMP, IPMI, LLDP), tanpa diketik manual. |
@@ -92,7 +95,7 @@ Aplikasi web untuk mengelola aset fisik ruang server data center kampus: lokasi 
 |---|---|---|---|
 | M1 | Waktu menemukan lokasi device | < 30 detik | Demo: pencarian atau pindai QR → halaman detail menampilkan site, room, rack, U |
 | M2 | Pemasangan device bertabrakan yang lolos | 0% | Unit test + E2E untuk semua skenario tabrakan |
-| M3 | Maintenance mendekati tenggat tanpa pengingat | 0 | Tes cron: WO dan notifikasi terbentuk paling lambat 3 hari sebelum tenggat |
+| M3 | Maintenance mendekati tenggat tanpa pengingat | 0 | Tes cron: WO preventif terbentuk 7 hari sebelum tenggat dan pengingat terkirim paling lambat 3 hari sebelum tenggat |
 | M4 | Kelengkapan impact analysis (satu lompatan) | 100% device yang terhubung langsung tampil | Tes integrasi dengan data seed |
 | M5 | Test case blackbox valid saat demo | 100% | Tabel Bab IV + laporan Playwright |
 | M6 | Waktu teknisi menyelesaikan WO dari HP | < 2 menit | Diukur saat uji coba: buka WO → Mulai → centang checklist → Selesai |
@@ -132,9 +135,9 @@ Memantau kondisi tanpa mengubah data, sering dari HP. Peran yang sama juga cocok
 
 | Prioritas | Fitur |
 |---|---|
-| **Must** | Login + peran; manajemen user; Site → Room → Rack; elevation rack; katalog Manufacturer/Model/Device function; device dengan validasi posisi; device tanpa rack (berdiri di lantai room); port otomatis dari model; cable data dan daya; maintenance plan berulang; WO preventif otomatis (cron) dan korektif manual; nomor WO otomatis; checklist; penugasan berdasarkan keahlian; notifikasi in-app untuk Teknisi dan Admin; impact analysis satu lompatan; QR per device; pencarian; dashboard; audit log; seed data; semua halaman tidak rusak di HP |
-| **Should** | Cetak label QR massal (satu lembar A4); indikator jalur daya cadangan pada impact analysis; kalender WO |
-| **Could** | Kolom IP management per device; WO korektif lanjutan dari WO lain; foto bukti maintenance (Cloudinary); trace cable menembus patch panel; visual graf topologi; persetujuan WO; vendor sebagai data terpisah (bukan teks); import CSV; notifikasi email; impact analysis berantai; pindahkan device ke device function lain saat menghapus device function; optimasi tampilan HP untuk semua halaman; simulasi pembacaan data device; mode gelap; pemindai QR di dalam aplikasi |
+| **Must** | Login + peran; manajemen user; Site → Room → Rack; elevation rack; katalog Manufacturer/Model/Device function; device dengan validasi posisi; device tanpa rack (berdiri di lantai room); port otomatis dari model; cable data dan daya; estimasi daya per rack; maintenance plan berulang; WO preventif otomatis (cron) dan korektif manual; nomor WO otomatis; checklist; penugasan berdasarkan keahlian; notifikasi in-app untuk Teknisi dan Admin; Admin mengatur ulang password user; impact analysis satu lompatan; QR per device; pencarian; dashboard; audit log; seed data; semua halaman tidak rusak di HP |
+| **Should** | Cetak label QR massal (satu lembar A4); indikator jalur daya cadangan pada impact analysis; kalender WO (termasuk tenggat maintenance plan yang belum menjadi WO); kapasitas daya rack dengan peringatan; pola rentang port template dan duplikat model; tambah/ubah/hapus port per device; user mengganti password sendiri |
+| **Could** | Kolom IP management per device; WO untuk rack atau room; daya per device yang berbeda dari modelnya; foto dampak saat pekerjaan dimulai; WO korektif lanjutan dari WO lain; foto bukti maintenance (Cloudinary); trace cable menembus patch panel; visual graf topologi; persetujuan WO; vendor sebagai data terpisah (bukan teks); import CSV; notifikasi email; impact analysis berantai; pindahkan device ke device function lain saat menghapus device function; optimasi tampilan HP untuk semua halaman; simulasi pembacaan data device; mode gelap; pemindai QR di dalam aplikasi |
 | **Won't** | IPAM penuh (prefix, VLAN, alokasi IP); virtualisasi; VPN; wireless; circuits; pembacaan data dari device fisik sungguhan (SNMP/IPMI/LLDP); pengadaan barang (status "Dipesan") |
 
 ---
@@ -157,9 +160,15 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 - **AC2:** Given email sudah terdaftar, When membuat user dengan email yang sama, Then ditolak dengan pesan email sudah dipakai.
 - **AC3:** Given user ada, When Admin menonaktifkannya, Then user itu tidak bisa login lagi dan sesi aktifnya berakhir.
 - **AC4:** Given login sebagai Teknisi atau Viewer, When membuka halaman kelola user, Then akses ditolak.
+- **AC5:** Given user lupa password, When Admin mengatur ulang password user tersebut, Then password lama tidak berlaku, sesi aktif user berakhir, dan user dapat login dengan password baru.
 
 **US-AUTH-03 (Must)** Sebagai sistem, saya harus menegakkan hak akses di sisi server, bukan hanya menyembunyikan tombol.
 - **AC1:** Given login sebagai Teknisi, When mengirim permintaan hapus device langsung ke server (tanpa lewat tombol), Then permintaan ditolak.
+- **AC2:** Given login sebagai Teknisi atau Viewer, Then menu Administrasi serta tombol tambah, ubah, dan hapus data tidak ditampilkan.
+
+**US-AUTH-04 (Should)** Sebagai user, saya ingin mengganti password saya sendiri.
+- **AC1:** Given login, When mengisi password lama yang benar dan password baru dua kali, Then password berganti.
+- **AC2:** Given password lama salah atau dua isian password baru berbeda, Then ditolak.
 
 ### E2. Lokasi dan rack
 
@@ -167,12 +176,16 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 - **AC1:** Given login sebagai Admin, When membuat site "Kampus Utama" lalu room "Ruang Server Gedung A" di dalamnya, Then keduanya tersimpan dengan relasi yang benar.
 - **AC2:** Given room masih berisi rack atau device, When Admin menghapus room itu, Then ditolak dengan pesan yang menyebut jumlah rack dan device yang masih ada.
 - **AC3:** Given site masih berisi room, When Admin menghapus site itu, Then ditolak dengan pesan yang menyebut jumlah room.
+- **AC4:** Given nama site sudah dipakai, When membuat site dengan nama itu, Then ditolak. Given nama room sudah ada di site yang sama, When membuat room dengan nama itu, Then ditolak; nama yang sama di site lain diperbolehkan.
+- **AC5:** When Admin mengubah nama site atau room, Then semua tampilan yang memuatnya ikut menampilkan nama baru.
+- **AC6:** Given room berisi rack dan device, When room dipindah ke site lain, Then semua rack dan device di dalamnya ikut pindah tanpa perubahan posisi.
 
 **US-RAK-01 (Must)** Sebagai Admin, saya ingin mencatat rack beserta tingginya.
 - **AC1:** When membuat rack dengan nama, room, dan tinggi (bawaan 42U), Then rack tersimpan.
 - **AC2:** Given nama rack sudah ada di room yang sama, When membuat rack dengan nama itu, Then ditolak.
 - **AC3:** Given rack masih berisi device, When Admin menghapus rack, Then ditolak.
 - **AC4:** Given rack berisi device yang menempati sampai U40, When tingginya diubah menjadi kurang dari 40U, Then ditolak.
+- **AC5:** Given rack berisi device, When rack dipindah ke room lain, Then semua device di dalamnya ikut pindah dengan posisi U dan sisi yang sama. Nama rack harus unik di room tujuan.
 
 **US-RAK-02 (Must)** Sebagai user, saya ingin melihat elevation rack (tampak depan dan belakang) agar tahu slot mana yang terisi dan kosong.
 - **AC1:** Given rack berisi device, When membuka halaman rack, Then tampil dua kolom (depan dan belakang) dari U tertinggi ke U1, dengan device di posisinya masing-masing.
@@ -180,6 +193,12 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 - **AC3:** Ringkasan rack menampilkan jumlah U terpakai, U kosong, dan persentase utilisasi.
 - **AC4:** Device 0U tampil di daftar terpisah "Terpasang 0U".
 - **AC5:** Klik device di elevation membuka halaman detail device.
+- **AC6:** Ringkasan rack menampilkan estimasi daya (jumlah daya maksimum model semua device di rack, termasuk device 0U) beserta jumlah device yang modelnya tidak punya data daya.
+
+**US-RAK-03 (Should)** Sebagai Admin, saya ingin menetapkan kapasitas daya rack agar tahu kapan rack mendekati batas daya.
+- **AC1:** Given rack punya kapasitas daya, Then ringkasan rack menampilkan persentase estimasi daya terhadap kapasitas.
+- **AC2:** Given pemasangan device akan membuat estimasi daya melebihi kapasitas, When memilih rack dan posisi di form device, Then tampil peringatan yang menyebut estimasi baru dan kapasitasnya; penyimpanan tetap diizinkan karena angkanya estimasi.
+- **AC3:** Given kapasitas daya kosong, Then hanya estimasi daya yang ditampilkan, tanpa persentase dan peringatan.
 
 ### E3. Katalog
 
@@ -194,6 +213,10 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 - **AC3:** Given nama port template sudah ada pada model yang sama, When menambahkan nama itu lagi, Then ditolak.
 - **AC4:** Given model sudah dipakai device, When port template-nya diubah, Then hanya device yang dibuat setelahnya yang terpengaruh; port device yang sudah ada tidak berubah.
 - **AC5:** Given model masih dipakai device, When dihapus, Then ditolak dengan pesan yang menyebut jumlah device.
+
+**US-CAT-03 (Should)** Sebagai Admin, saya ingin mengisi port template dengan cepat.
+- **AC1:** When mengisi nama port template dengan pola rentang `port[1-48]`, Then terbentuk 48 port template `port1` sampai `port48` dengan jenis dan tipe konektor yang sama; jumlahnya ditampilkan sebelum disimpan.
+- **AC2:** When Admin memilih "Duplikat model", Then form model baru terbuka berisi salinan spesifikasi dan port template, dengan nama yang harus diganti sebelum disimpan.
 
 ### E4. Device
 
@@ -230,6 +253,12 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 - **AC1:** Given device belum pernah punya WO, When dihapus, Then device beserta port dan cable-nya terhapus permanen setelah konfirmasi.
 - **AC2:** Given device sudah punya riwayat WO, When dihapus, Then ditolak dengan saran mengubah statusnya menjadi Pensiun.
 
+**US-DEV-06 (Should)** Sebagai Admin, saya ingin menyesuaikan port sebuah device tanpa mengubah model, misalnya saat server ditambah kartu jaringan.
+- **AC1:** When Admin menambah port (nama, jenis, tipe konektor) pada device, Then port tersimpan hanya pada device itu dan ditandai "ditambahkan manual".
+- **AC2:** When Admin mengubah nama atau tipe konektor port, Then hanya port device itu yang berubah; port template model dan device lain tidak berubah. Jenis port tidak dapat diubah selama port tersambung cable.
+- **AC3:** Given port tersambung cable, When dihapus, Then ditolak dengan saran melepas cable terlebih dahulu. Port kosong dapat dihapus setelah konfirmasi.
+- **AC4:** Given nama port sudah ada pada device yang sama, When disimpan, Then ditolak.
+
 ### E5. Port dan cable
 
 **US-CAB-01 (Must)** Sebagai Admin, saya ingin menyambungkan dua port dengan cable.
@@ -254,10 +283,10 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 - **AC5:** Teknisi bawaan hanya dapat dipilih dari teknisi dengan keahlian yang sesuai (BR-12).
 
 **US-WO-01 (Must)** Sebagai sistem, saya harus membuat WO preventif otomatis agar tidak ada jadwal yang terlewat.
-- **AC1:** Given maintenance plan aktif yang tenggat berikutnya tinggal 3 hari lagi atau kurang dan belum punya WO terbuka, When cron harian berjalan, Then satu WO preventif dibuat dengan status Terjadwal, judul dan checklist disalin dari maintenance plan, tenggat dari maintenance plan, dan teknisi bawaan (jika ada).
+- **AC1:** Given maintenance plan aktif yang tenggat berikutnya tinggal 7 hari lagi atau kurang dan belum punya WO terbuka, When cron harian berjalan, Then satu WO preventif dibuat dengan status Terjadwal, judul dan checklist disalin dari maintenance plan, tenggat dari maintenance plan, dan teknisi bawaan (jika ada).
 - **AC2:** Given cron sudah berjalan hari ini, When cron dijalankan lagi, Then tidak ada WO ganda.
 - **AC3:** Given maintenance plan sudah punya WO yang belum Selesai atau Dibatalkan, When cron berjalan, Then tidak dibuat WO baru untuk maintenance plan itu.
-- **AC4:** Given cron gagal berjalan satu hari, When cron berjalan keesokan harinya, Then WO yang seharusnya dibuat kemarin tetap dibuat (aturan "3 hari atau kurang", bukan "tepat 3 hari").
+- **AC4:** Given cron gagal berjalan satu hari, When cron berjalan keesokan harinya, Then WO yang seharusnya dibuat kemarin tetap dibuat (aturan "7 hari atau kurang", bukan "tepat 7 hari").
 - **AC5:** Given maintenance plan tidak punya teknisi bawaan, When WO-nya dibuat, Then WO tersimpan tanpa teknisi dan Admin menerima notifikasi (US-NOTIF-02).
 
 **US-WO-02 (Must)** Sebagai Admin, saya ingin membuat WO korektif secara manual saat ada kerusakan.
@@ -307,7 +336,9 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 - **AC2:** Klik notifikasi membuka WO terkait dan menandainya sudah dibaca; tersedia aksi "Tandai semua sudah dibaca".
 - **AC3:** Setiap user hanya melihat notifikasinya sendiri.
 
-**US-CAL-01 (Should)** Sebagai user, saya ingin melihat WO dalam tampilan kalender bulanan berdasarkan tenggatnya.
+**US-CAL-01 (Should)** Sebagai user, saya ingin melihat jadwal maintenance dalam kalender bulanan.
+- **AC1:** Setiap WO tampil pada tanggal tenggatnya dengan warna statusnya.
+- **AC2:** Tenggat maintenance plan aktif yang belum menjadi WO juga tampil, dibedakan sebagai "terjadwal otomatis", sampai 6 bulan ke depan (berdasarkan interval).
 
 **US-PHOTO-01 (Could)** Sebagai Teknisi, saya ingin mengunggah foto bukti saat menyelesaikan WO (Cloudinary).
 
@@ -321,9 +352,11 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 **US-IMP-02 (Must)** Sebagai Admin, saya ingin melihat dampak sebelum menyimpan WO.
 - **AC1:** Given device punya device terhubung, When memilih device itu di form WO, Then sebelum disimpan tampil peringatan berisi daftar device terdampak dan jumlahnya.
 - **AC2:** Admin tetap dapat menyimpan WO setelah melihat peringatan.
+- **AC3:** Daftar device terdampak juga tampil di detail setiap WO (preventif dan korektif) dan di form maintenance plan setelah device dipilih, karena WO preventif dibuat otomatis tanpa form.
+- **AC4:** Daftar selalu dihitung dari data cable saat halaman dibuka, tidak disimpan pada WO.
 
 **US-IMP-03 (Should)** Sebagai Admin, saya ingin tahu apakah device terdampak masih punya jalur daya cadangan.
-- **AC1:** Given PDU-A akan di-maintenance dan sebuah server punya power inlet lain yang tersambung ke PDU-B, Then server itu ditandai "Masih punya jalur daya cadangan"; jika tidak, ditandai "Kehilangan seluruh daya".
+- **AC1:** Given PDU-A akan di-maintenance dan sebuah server punya power inlet lain yang tersambung ke PDU-B, Then server itu ditandai "Tetap menyala lewat jalur cadangan"; jika tidak, ditandai "Ikut mati, tanpa jalur cadangan". Kedua label menggambarkan akibat bila PDU-A dimatikan, bukan kondisi saat ini.
 
 ### E8. QR code
 
@@ -343,8 +376,9 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 ### E9. Dashboard dan pencarian
 
 **US-DASH-01 (Must)** Sebagai user, saya ingin melihat ringkasan kondisi ruang server.
-- **AC1:** Dashboard menampilkan: jumlah device per status; utilisasi setiap rack (% U terpakai); device tanpa rack per room; WO dengan tenggat 7 hari ke depan; WO terlambat; device dengan garansi habis atau habis dalam 30 hari.
+- **AC1:** Dashboard menampilkan: jumlah device per status; utilisasi setiap rack (% U terpakai) dan estimasi dayanya; device tanpa rack per room; WO dengan tenggat 7 hari ke depan; WO terlambat; device dengan garansi habis atau habis dalam 30 hari.
 - **AC2:** Setiap angka atau item dapat diklik menuju daftar atau detail terkait.
+- **AC3:** Peta rack menampilkan satu room sekaligus; user dapat memilih room lain (dan site lain bila lebih dari satu) tanpa meninggalkan dashboard, sehingga tinggi dashboard tidak bertambah seiring jumlah room.
 
 **US-SRCH-01 (Must)** Sebagai user, saya ingin mencari device dengan cepat.
 - **AC1:** When mengetik sebagian nama, asset tag, atau serial number di kolom pencarian, Then tampil device yang cocok beserta lokasinya.
@@ -380,7 +414,7 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 | BR-07 | Asset tag dibuat otomatis, berurutan, unik, dan tidak dapat diubah. |
 | BR-08 | Satu maintenance plan hanya boleh punya satu WO terbuka (Terjadwal atau Dikerjakan) pada satu waktu. |
 | BR-09 | Tenggat berikutnya pada maintenance plan = tenggat WO preventif yang baru ditutup (Selesai atau Dibatalkan) + interval. |
-| BR-10 | WO disebut "Terlambat" bila tenggatnya sudah lewat (sebelum hari ini) dan statusnya bukan Selesai atau Dibatalkan. Pada hari tenggat itu sendiri belum terlambat. Dihitung saat ditampilkan, tidak disimpan. |
+| BR-10 | WO disebut "Terlambat" bila tenggatnya sudah lewat (sebelum hari ini) dan statusnya bukan Selesai atau Dibatalkan. Pada hari tenggat itu sendiri belum terlambat. Dihitung saat ditampilkan, tidak disimpan, karena (1) Terlambat bukan tahap kerja: WO bisa Dikerjakan sekaligus Terlambat; (2) hasilnya selalu akurat tanpa program yang harus mengubah status setiap tengah malam; (3) tenggat dan status sudah cukup sebagai sumber kebenaran. |
 | BR-11 | Device berstatus Maintenance selama ada minimal satu WO Dikerjakan untuknya; kembali Aktif saat tidak ada lagi. |
 | BR-12 | Teknisi yang dapat ditugaskan harus aktif dan memiliki keahlian yang cocok dengan kategori device function device (atau Keduanya). |
 | BR-13 | Semua tanggal dan jadwal memakai zona waktu WIB (Asia/Jakarta). Cron berjalan pukul 07.00 WIB. |
@@ -388,6 +422,9 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 | BR-15 | Nomor WO dibuat otomatis, berurutan, unik, dan tidak dapat diubah. |
 | BR-16 | WO (preventif maupun korektif) dan maintenance plan hanya dapat dibuat untuk device berstatus Aktif atau Maintenance. Status device tidak dapat diubah selama ada WO Dikerjakan untuknya. |
 | BR-17 | Satu WO memiliki tepat satu jenis: Preventif (dibuat cron dari maintenance plan) atau Korektif (dibuat manual oleh Admin). |
+| BR-18 | WO preventif dibuat saat tenggat maintenance plan tinggal 7 hari atau kurang. Pengingat ke teknisi dikirim saat tenggat WO tinggal 3 hari atau kurang. |
+| BR-19 | Estimasi daya rack = jumlah daya maksimum model semua device di rack (termasuk 0U). Model tanpa data daya dihitung 0 dan dilaporkan jumlahnya. Melebihi kapasitas daya rack hanya memunculkan peringatan, tidak menolak. |
+| BR-20 | Port device adalah salinan port template saat device dibuat; setelah itu port device dan port template tidak saling memengaruhi. |
 
 ---
 
@@ -401,7 +438,7 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 | NFR-04 | Keamanan | Password disimpan dalam bentuk hash. Hak akses diperiksa di server untuk setiap aksi. Tidak ada halaman yang dapat diakses tanpa login selain halaman login. |
 | NFR-05 | Performa | Dengan data seed, setiap halaman tampil kurang dari 2 detik. |
 | NFR-06 | Keandalan | Cron idempoten: dijalankan berulang kali di hari yang sama tidak menghasilkan WO atau notifikasi ganda. |
-| NFR-07 | Keterujian | Setiap AC bertanda Must memiliki minimal satu tes otomatis. Aturan BR-01 s.d. BR-03, BR-05, BR-08 s.d. BR-11, dan BR-16 memiliki unit test. |
+| NFR-07 | Keterujian | Setiap AC bertanda Must memiliki minimal satu tes otomatis. Aturan BR-01 s.d. BR-03, BR-05, BR-08 s.d. BR-11, BR-16, BR-18, dan BR-19 memiliki unit test. |
 | NFR-08 | Data demo | Tersedia seed script yang mengembalikan database ke data demo standar dengan satu perintah. |
 
 ---
@@ -413,7 +450,9 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 3. Desain jaringan di data demo memakai pola Top-of-Rack, sehingga server tersambung langsung ke switch tanpa melewati patch panel.
 4. Penggantian unit dicatat sebagai WO korektif; Admin mengubah device lama menjadi Pensiun dan mendaftarkan unit baru secara manual.
 5. Satu user memiliki tepat satu peran.
-6. Hierarki lokasi tetap tiga tingkat (site → room → rack). Lokasi bersarang bebas seperti di NetBox tidak dibutuhkan untuk ruang server satu kampus.
+6. Hierarki lokasi tetap tiga tingkat (site → room → rack). Site tidak dapat berada di bawah site lain dan room tidak dapat berada di bawah room lain; lokasi bersarang bebas seperti di NetBox tidak dibutuhkan untuk ruang server kampus. Karena kedalamannya tetap, masalah tampilan hanya muncul dari jumlah, bukan kedalaman.
+7. Setiap WO ditujukan ke satu device. Pekerjaan tingkat room atau rack (misalnya membersihkan ruangan) dicatat lewat device yang mewakilinya, seperti CRAC atau UPS. WO untuk rack atau room menjadi fitur Could.
+8. Login memakai email kampus karena unik dan membuka jalan ke notifikasi email (Could).
 
 ---
 
@@ -455,7 +494,7 @@ Area berikut paling mungkin salah tanpa terlihat, sehingga wajib diuji paling le
 
 **Cable (sekitar 40):** setiap server ke switch ToR (data); setiap server dengan dua power inlet ke PDU-A dan PDU-B (daya, redundan); switch ToR ke core switch.
 
-**Maintenance plan:** cek baterai UPS (3 bulan), bersihkan filter CRAC (1 bulan), update firmware switch (6 bulan), cek fisik server (3 bulan). Data diatur agar saat demo ada WO dengan tenggat minggu ini, satu WO terlambat, satu WO preventif tanpa teknisi, dan satu device dengan garansi habis bulan ini.
+**Maintenance plan:** cek baterai UPS (3 bulan), bersihkan filter CRAC (1 bulan), update firmware switch (6 bulan), cek fisik server (3 bulan). Data diatur agar saat demo ada WO dengan tenggat minggu ini, satu WO terlambat, satu WO preventif tanpa teknisi, dan satu device dengan garansi habis bulan ini. Rack RK-A01 diberi kapasitas daya agar persentase dan peringatan daya dapat diperlihatkan.
 
 **User:** 1 Admin; 2 Teknisi (IT dan Fasilitas); 1 Viewer.
 
@@ -491,6 +530,20 @@ Area berikut paling mungkin salah tanpa terlihat, sehingga wajib diuji paling le
 | 24 | Notifikasi Admin | WO preventif tanpa teknisi; WO terlambat |
 | 25 | Device tanpa rack | Device Aktif wajib punya room; rack opsional |
 | 26 | IP management | Dipindah ke Could |
+| 27 | Impact analysis di WO (P1) | Dihitung langsung, tidak disimpan; tampil di detail semua WO dan form maintenance plan |
+| 28 | Label jalur daya (P2) | Kalimat hipotesis "bila dimatikan"; warna peringatan, bukan merah |
+| 29 | Target WO (P3) | Per device; WO rack/room = Could |
+| 30 | Alasan Terlambat dihitung (P4) | Ditulis di BR-10 |
+| 31 | Daya (P5) | Estimasi daya per rack (Must); kapasitas daya rack dengan peringatan (Should); daya per device = Could |
+| 32 | Port template (P6) | Inline di model; pola rentang dan duplikat model (Should) |
+| 33 | Port per device (P7) | Bisa ditambah, diubah, dihapus per device (Should) |
+| 34 | Hierarki lokasi (P8) | AC nama unik, ubah nama, pindah induk; tidak bersarang |
+| 35 | Kredensial (P9) | Email |
+| 36 | Password (P10) | Admin atur ulang (Must); user ganti sendiri (Should) |
+| 37 | Menu per peran (P11) | AC: menu dan tombol tanpa hak tidak ditampilkan |
+| 38 | Waktu WO preventif (P12) | Dibuat H-7, pengingat H-3 |
+| 39 | Kalender (P13) | Menampilkan tenggat maintenance plan yang belum menjadi WO |
+| 40 | Dashboard banyak room (P14) | Satu room sekaligus dengan pemilih room/site |
 
 ---
 
@@ -517,6 +570,7 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 | Nama | W | Unik di dalam room yang sama |
 | Room | W | |
 | Tinggi | W | Dalam U, bawaan 42 |
+| Kapasitas daya | O | Dalam watt (Should, US-RAK-03) |
 
 ### Manufacturer
 | Field | Sifat | Keterangan |
@@ -562,11 +616,14 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 | Vendor | O | Teks |
 | Akhir garansi | O | |
 
-### Port (dibuat dari port template saat device dibuat)
+### Port (disalin dari port template saat device dibuat; dapat disesuaikan, US-DEV-06)
 | Field | Sifat | Keterangan |
 |---|:---:|---|
 | Device | S | |
-| Nama, jenis, tipe konektor | S | Disalin dari port template |
+| Nama | W | Disalin dari port template; dapat diubah Admin. Unik di dalam device yang sama |
+| Jenis | W | Disalin dari port template; tidak dapat diubah selama tersambung cable |
+| Tipe konektor | O | Disalin dari port template; dapat diubah Admin |
+| Ditambahkan manual | S | Ya bila port ditambahkan Admin, bukan dari port template |
 
 ### Cable
 | Field | Sifat | Keterangan |
@@ -584,7 +641,7 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 | Judul | W | Disalin menjadi judul WO preventif |
 | Device | W | Hanya device Aktif atau Maintenance |
 | Interval | W | Angka + satuan (hari, minggu, bulan) |
-| Tenggat berikutnya | W | Diisi user sebagai tenggat pertama; selanjutnya diperbarui sistem (BR-09) |
+| Tenggat berikutnya | W | Diisi user sebagai tenggat pertama; selanjutnya diperbarui sistem (BR-09). WO dibuat 7 hari sebelumnya (BR-18) |
 | Teknisi bawaan | O | Tersaring sesuai keahlian |
 | Checklist | W | Minimal satu item; disalin ke setiap WO preventif |
 | Aktif | S | Diubah lewat aksi aktifkan/nonaktifkan |
@@ -612,7 +669,7 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 |---|:---:|---|
 | Nama | W | |
 | Email | W | Unik, dipakai login |
-| Password | W saat dibuat | Disimpan sebagai hash |
+| Password | W saat dibuat | Disimpan sebagai hash; dapat diatur ulang Admin (US-AUTH-02 AC5) atau diganti user sendiri (US-AUTH-04) |
 | Peran | W | Admin, Teknisi, atau Viewer |
 | Keahlian | W bila Teknisi | IT, Fasilitas, atau Keduanya |
 | Aktif | S | Diubah lewat aksi aktifkan/nonaktifkan |
@@ -642,3 +699,4 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 | 0.1 | 4 Okt 2026 | Draft awal dari 17 keputusan |
 | 0.2 | 5 Okt 2026 | Tambah metrik M6 (WO dari HP < 2 menit); "Role" perangkat menjadi Fungsi Perangkat; matriks akses dipisah untuk Admin dan Teknisi; status Dipesan dihapus; aturan hapus device dan rencana (US-DEV-05, US-MP-01 AC4, BR-14); AC WO-04 AC6 diperjelas; BR-10 ditulis tanpa simbol; NFR-02 diperluas; asumsi skala diperjelas; tambah US-SIM-01 (Could); glosarium ditambah |
 | 0.3 | 8 Okt 2026 | **Penamaan:** konvensi baru (bagian 2.1), nama entitas bahasa Inggris (Room, Rack, Cable, Device function, Maintenance plan, User), "jatuh tempo"/"tanggal target" diseragamkan menjadi "tenggat". **Baru:** Lampiran C daftar field per entitas; US-WO-06 nomor WO dan asal-usul WO; US-WO-07 WO lanjutan (Could); US-NOTIF-02 notifikasi Admin; US-NOTIF-03 pengelolaan notifikasi (dipisah dari NOTIF-01); BR-15 s.d. BR-17; device tanpa rack (US-DEV-02 AC8, BR-05). **Diperjelas:** glosarium garansi, vendor, preventif/korektif (EN 13306), nomor WO, tenggat; data pembelian opsional (US-DEV-01 AC5); serial number opsional; WO dan maintenance plan hanya untuk device Aktif/Maintenance, dan device ke Stok/Pensiun membatalkan WO Terjadwal-nya (US-DEV-03 AC3, AC5, BR-16); judul WO korektif wajib; checklist WO korektif opsional; WO tanpa teknisi tidak dapat dimulai; ganti teknisi (US-WO-03 AC3); pemindahan device (US-DEV-02 AC9); perubahan port template tidak memengaruhi device lama (US-CAT-02 AC4); hapus site dan model (US-LOC-01 AC3, US-CAT-02 AC5); tinggi rack tidak boleh lebih kecil dari isinya (US-RAK-01 AC4); cron mengejar hari yang terlewat (US-WO-01 AC4); BR-09 juga berlaku saat WO preventif dibatalkan. **Prioritas:** IP management dari kurung di Won't menjadi Could (penulisan lama ambigu); mode gelap dan pemindai QR di aplikasi masuk Could |
+| 0.4 | 11 Okt 2026 | Hasil review P1-P14. **Baru:** US-AUTH-04 ganti password sendiri (Should); US-RAK-03 kapasitas daya rack (Should); US-CAT-03 pola rentang dan duplikat model (Should); US-DEV-06 port per device (Should); BR-18 s.d. BR-20; glosarium estimasi daya, kapasitas daya, pola rentang. **AC baru:** reset password oleh Admin (US-AUTH-02 AC5); menu dan tombol disembunyikan per peran (US-AUTH-03 AC2); nama unik, ubah nama, dan pindah induk lokasi (US-LOC-01 AC4-6, US-RAK-01 AC5); estimasi daya rack (US-RAK-02 AC6); panel dampak di detail WO dan form maintenance plan, dihitung langsung (US-IMP-02 AC3-4); kalender menampilkan tenggat maintenance plan (US-CAL-01); peta rack satu room sekaligus (US-DASH-01 AC3). **Diubah:** WO preventif dibuat 7 hari sebelum tenggat (sebelumnya 3), pengingat tetap 3 hari (US-WO-01, BR-18); label jalur daya menjadi kalimat hipotesis (US-IMP-03); alasan BR-10 ditulis; Asumsi 6 diperjelas, Asumsi 7-8 ditambah; Lampiran C Rack dan Port. **Prioritas:** WO untuk rack/room, daya per device, dan foto dampak masuk Could |

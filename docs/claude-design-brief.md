@@ -8,6 +8,8 @@ Dipakai pada tahap Design untuk membuat mockup (alur playbook: mockup dibuat di 
 2. `specs/PRD.md`
 3. `specs/design.md`
 
+Jangan lampirkan `docs/wireframes/`. Wireframe ASCII hanya untuk tim, dan sengaja tidak diberikan agar Claude Design tidak terpaku pada tata letak kasarnya.
+
 ## Prompt
 
 ```

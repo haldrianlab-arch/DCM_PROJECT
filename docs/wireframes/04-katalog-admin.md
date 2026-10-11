@@ -90,6 +90,7 @@ Model                                                              [# Tambah mod
 │ APC          │ AP8941             │ 0U     │ —          │ —        │ 25     │ 8      │
 │ APC          │ SRT10K             │ 6U     │ Ya         │ —        │ 7      │ 1      │
 └──────────────┴────────────────────┴────────┴────────────┴──────────┴────────┴────────┘
+  [...] per baris (Should): Duplikat model
 ```
 
 ---
@@ -126,6 +127,34 @@ Port template
 │ (!) Nama sudah dipakai di model ini.                                                │
 └────────────────────┴──────────────────────────────────────────┴────────────────┴─────┘
 [ + Tambah port ]
+```
+
+### Pola rentang (Should)
+
+```
+Port template
+Tulis pola seperti port[1-48] untuk membuat banyak port sekaligus.
+┌────────────────────┬──────────────────────────────────────────┬────────────────┬─────┐
+│ [ port[1-48]     ] │ (•) Data ( ) Power inlet ( ) Power outlet │ [ RJ45       ] │ [x] │
+│ (i) Akan menjadi 48 port: port1 sampai port48                                       │
+│ [ uplink[1-4]    ] │ (•) Data ( ) Power inlet ( ) Power outlet │ [ SFP+       ] │ [x] │
+│ (i) Akan menjadi 4 port: uplink1 sampai uplink4                                     │
+│ [ PSU[1-2]       ] │ ( ) Data (•) Power inlet ( ) Power outlet │ [ C14        ] │ [x] │
+│ (i) Akan menjadi 2 port: PSU1 sampai PSU2                                           │
+└────────────────────┴──────────────────────────────────────────┴────────────────┴─────┘
+Total: 54 port template.
+```
+
+### Duplikat model (Should)
+
+```
+Tambah model
+
+┌─ (i) Salinan dari Dell PowerEdge R650. Ganti nama sebelum menyimpan. ────────────────┐
+└──────────────────────────────────────────────────────────────────────────────────────┘
+  Nama
+  [ PowerEdge R650 (salinan)               ]   ← disorot
+  (spesifikasi dan 4 port template ikut tersalin)
 
                                                          [ Batal ] [# Simpan model ]
 ```
@@ -138,6 +167,7 @@ Port template
 Katalog > Model > Dell PowerEdge R650
 
 Dell PowerEdge R650                                            [ Ubah ] [...]
+                                                    [...]: Duplikat model (Should), Hapus
 
 Spesifikasi
   Manufacturer      _Dell_
@@ -208,7 +238,60 @@ Tambah user
                                                           [ Batal ] [# Simpan user ]
 ```
 
-Mode ubah tidak menampilkan kolom password awal.
+Mode ubah tidak menampilkan kolom password awal; sebagai gantinya ada tombol "Atur ulang password":
+
+```
+Ubah user
+
+  Nama            [ Rina                          ]
+  Email           [ rina@kampus.ac.id             ]
+  Peran           ( ) Admin   (•) Teknisi   ( ) Viewer
+  Keahlian        (•) IT   ( ) Fasilitas   ( ) Keduanya
+
+  [ Atur ulang password ]
+                                                          [ Batal ] [# Simpan user ]
+```
+
+### MOD-12 Atur ulang password
+
+```
+┌──────────────────────────────────────────────────┐
+│ Atur ulang password Rina?                    [x] │
+├──────────────────────────────────────────────────┤
+│ Password lama tidak berlaku dan Rina akan keluar │
+│ dari semua perangkat.                            │
+│                                                  │
+│ Password baru                                    │
+│ [ ••••••••••                            [lihat]] │
+├──────────────────────────────────────────────────┤
+│              [ Batal ] [! Atur ulang password ]  │
+└──────────────────────────────────────────────────┘
+```
+
+---
+
+## HAL-31 Akun saya (Should)
+
+```
+Akun saya
+
+Nama        Rina
+Email       rina@kampus.ac.id
+Peran       Teknisi · IT
+
+Ganti password
+  Password lama
+  [ ••••••••                       [lihat]]
+  (!) Password lama salah.
+
+  Password baru
+  [ ••••••••••                     [lihat]]
+
+  Ulangi password baru
+  [ ••••••••••                     [lihat]]
+
+                                                        [# Simpan password ]
+```
 
 ---
 

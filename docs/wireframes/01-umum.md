@@ -65,7 +65,10 @@ Device per status
 
 Peta room
 ┌──────────────────────────────────────────────────────────────────────────────────────┐
-│ Ruang Server Gedung A                                                                │
+│ Site [ Kampus Utama       v]         ← hanya tampil bila site lebih dari satu        │
+│                                                                                      │
+│ (•Gedung A · 4 rack)  ( Gedung B · 0 rack)                                           │
+│   ↑ chip room; hanya tampil bila room lebih dari satu                                │
 │                                                                                      │
 │   ┌───┐     ┌───┐     ┌───┐     ┌───┐                                                │
 │   │▒▒▒│     │▒▒▒│     │▒▒▒│     │▒▒▒│      ▒ = blok device (warna device function)   │
@@ -77,10 +80,11 @@ Peta room
 │   │   │     │   │     │   │     │   │                                                │
 │   └───┘     └───┘     └───┘     └───┘                                                │
 │   RK-A01    RK-A02    RK-A03    RK-A04                                               │
-│    21%       17%       19%       24%                                                 │
+│  21%·3,4kW 17%·2,1kW 19%·2,6kW 24%·3,0kW                                             │
 │                                                                                      │
 │   Tanpa rack:  ups-01 {Aktif}   crac-01 {Aktif}   crac-02 {Aktif}                    │
 └──────────────────────────────────────────────────────────────────────────────────────┘
+  Klik chip lain → isi kotak berganti; tinggi dashboard tetap.
 
 ┌─ Perlu perhatian ─────────────────────────────┐  ┌─ Garansi ──────────────────────────────┐
 │ Terlambat                                     │  │ srv-db-01     habis 2 Okt 2026         │
@@ -122,8 +126,9 @@ Peta room
 │ {Aktif 18} {Maint. 1}    │
 │ {Stok 2} {Pensiun 1}     │
 │                          │
-│ Peta room       geser -> │
-│ ┌───┐ ┌───┐ ┌───┐ ┌──    │
+│ Peta room                │
+│ (•Gedung A) ( Gedung B)  │
+│ ┌───┐ ┌───┐ ┌───┐ ┌──  → │
 │ │▓▓▓│ │▓▓▓│ │▓▓▓│ │▓▓    │
 │ │▓▓▓│ │   │ │▓▓▓│ │      │
 │ └───┘ └───┘ └───┘ └──    │
@@ -136,6 +141,23 @@ Peta room
 │board │order │      │  (2)│
 └──────┴──────┴──────┴─────┘
 ```
+
+### Peta room dengan banyak rack (desktop: turun ke baris berikutnya)
+
+```
+│ (•Gedung A · 14 rack)  ( Gedung B · 3 rack)  ( Jaringan Lt3 · 2 rack)               │
+│                                                                                      │
+│  ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐                         │
+│  │▓▓▓│ │▓▓▓│ │▓  │ │▓▓▓│ │▓▓ │ │▓▓▓│ │▓  │ │▓▓▓│ │▓▓ │ │▓▓▓│                         │
+│  └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘ └───┘                         │
+│  A01   A02   A03   A04   A05   A06   A07   A08   A09   A10                           │
+│  ┌───┐ ┌───┐ ┌───┐ ┌───┐                                                             │
+│  │▓▓ │ │▓▓▓│ │▓  │ │   │                                                             │
+│  └───┘ └───┘ └───┘ └───┘                                                             │
+│  A11   A12   A13   A14                                                               │
+```
+
+Di HP, rack tetap satu baris yang digeser ke samping, dan chip room juga dapat digeser.
 
 ### Database masih kosong (Admin)
 

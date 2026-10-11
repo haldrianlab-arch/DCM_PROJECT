@@ -112,8 +112,9 @@ Setelah disimpan:
 │ Tenggat 11 Okt 2026      │
 │                          │
 │ ┌──────────────────────┐ │
-│ │ Tidak ada device     │ │
-│ │ terhubung.           │ │
+│ │ (!) 6 device         │ │
+│ │ terhubung ke ups-01  │ │
+│ │ Lihat daftar      v  │ │
 │ └──────────────────────┘ │
 │                          │
 │ Checklist · 0 dari 5     │
@@ -321,12 +322,22 @@ Tambah maintenance plan
   Device
   [ ups-01  (Ruang Server Gedung A · tanpa rack)           v]
 
+  ┌─ (!) 6 device terhubung ke ups-01 ───────────────────────────────────┐
+  │ Daya (6)                                                             │
+  │   _pdu-a01-a_   inlet    ⟷  ups-01 outlet 1                          │
+  │   _pdu-a02-a_   inlet    ⟷  ups-01 outlet 2                          │
+  │   ...                                                                │
+  └──────────────────────────────────────────────────────────────────────┘
+     ↑ ditampilkan di sini karena WO preventif nanti dibuat otomatis
+       tanpa form; inilah kesempatan Admin melihat dampaknya
+
   Interval
   [ 3          ]   ( ) Hari   ( ) Minggu   (•) Bulan
 
   Tenggat pertama
   [ 11 Okt 2026          ]
-  WO preventif dibuat otomatis 3 hari sebelum tenggat.
+  WO preventif dibuat otomatis 7 hari sebelum tenggat.
+  Teknisi diingatkan 3 hari sebelum tenggat.
 
   Teknisi bawaan (opsional)
   [ Joko (Fasilitas)                                       v]
@@ -397,8 +408,13 @@ Kalender                   [ < ]  Oktober 2026  [ > ]  [ Hari ini ]
 │          │  merah   │          │          │  ungu    │          │  ungu    │
 ├──────────┼──────────┼──────────┼──────────┼──────────┼──────────┼──────────┤
 │       12 │       13 │       14 │       15 │       16 │       17 │       18 │
-│ {WO-0013}│          │ {WO-0011}│          │          │          │          │
-│          │          │          │          │          │          │          │
+│ {WO-0013}│          │ {WO-0011}│          │          │          │┌╌╌╌╌╌╌╌╌┐│
+│          │          │          │          │          │          │╎Filter  ╎│
+│          │          │          │          │          │          │╎crac-02 ╎│
+│          │          │          │          │          │          │└╌╌╌╌╌╌╌╌┘│
 └──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┘
-  Label berwarna status; lebih dari 3 WO dalam satu tanggal: "+n lainnya".
+  {WO-xxxx}  = WO yang sudah ada, berwarna status; klik → detail WO
+  ┌╌╌╌╌┐     = tenggat maintenance plan yang belum menjadi WO ("terjadwal
+  └╌╌╌╌┘       otomatis"), bergaris putus-putus tanpa warna; klik → detail plan
+  Lebih dari 3 label dalam satu tanggal: "+n lainnya".
 ```
