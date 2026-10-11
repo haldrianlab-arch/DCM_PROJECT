@@ -10,6 +10,21 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 ---
 
+## Sesi 8: Wireframe ASCII untuk tim
+
+**Dikerjakan**
+- Membuat `docs/wireframes/`: wireframe ASCII seluruh 30 halaman dan 10 modal di design.md v0.3, termasuk versi HP untuk halaman yang dioptimalkan, beberapa kondisi (kosong, error, bentrok, terkunci), dan semua varian dialog konfirmasi.
+
+**Keputusan**
+- Disimpan di `docs/`, bukan `specs/`, karena wireframe hanya ilustrasi untuk tim; sumber kebenaran tetap `specs/design.md`.
+- Tidak dilampirkan ke Claude Design, agar mockup tidak terpaku pada tata letak kasar ASCII (alasan yang sama dengan penghapusan sketsa dari design.md).
+- Memakai data contoh yang konsisten di semua file (rack RK-A01 s.d. RK-A04, WO-0010 s.d. WO-0014, user Andi/Rina/Joko/Sari).
+
+**Berikutnya**
+- Tim membaca wireframe untuk membayangkan aplikasi; review PRD v0.3 dan design.md v0.3; lalu mockup di Claude Design.
+
+---
+
 ## Sesi 7: PRD v0.3 dan Design Spec v0.3 (Tahap Design)
 
 **Dikerjakan**

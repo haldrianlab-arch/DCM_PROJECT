@@ -54,6 +54,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
     ├── devlog.md                          # Jurnal proses pengembangan per sesi
     ├── rangkuman-diskusi-proyek-dcim.md   # Rangkuman riset dan keputusan awal
     ├── diagrams/                          # Flowchart dan use case
+    ├── wireframes/                        # Wireframe ASCII semua halaman (internal tim)
     ├── demo-script.md                     # Naskah demo
     └── claude-design-brief.md             # Prompt mockup Claude Design
 ```
