@@ -6,7 +6,36 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design berjalan. PRD v0.4 dan Design Spec v0.4 menunggu review akhir. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+**Status saat ini:** Tahap Design berjalan. PRD v0.4, Design Spec v0.5, dan design system SIRAMA siap. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+
+---
+
+## Sesi 10: Design system SIRAMA di Claude Design (Tahap Design)
+
+**Dikerjakan**
+- Membuat design system SIRAMA di Claude Design (artifact Design System) dari design.md v0.4: token warna, huruf, ukuran, dan 31 komponen dasar (KOM-01 s.d. KOM-31) lengkap dengan README tiap komponen.
+- Memeriksa setiap versi dengan cara me-render semua pratinjau komponen di browser, menghitung kontras warna dari `tokens.json`, dan memeriksa gaya yang benar-benar dipakai browser (bukan hanya membaca README).
+- Merevisi empat kali, lalu menyinkronkan design.md menjadi v0.5 dan menyalin token ke `specs/design-system/`.
+
+**Keputusan**
+- **Arah visual diganti** dari abu kebiruan dengan lencana pekat menjadi gaya modern ala shadcn/ui dan Linear: netral zinc, satu aksen `air`, garis tipis, bayangan nyaris tak terlihat. Versi pertama terasa generik ("AI slop") dan kurang modern.
+- **Lencana status lembut**, hanya Terlambat yang pekat, agar WO yang lewat tenggat paling menonjol.
+- **Huruf Geist**, dengan Geist Mono hanya untuk asset tag, nomor WO, dan serial number.
+- **Nol bergaris hanya untuk pengenal** (nama device, rack, lokasi, nomor U). Di Geist, angka 0 mirip huruf O ("RK-A01" terbaca "RK-AO1"). Percobaan pertama memasang nol bergaris di semua teks, tetapi tanggal dan jumlah jadi terlihat terlalu teknis.
+- **Font tidak boleh dimodifikasi.** Claude Design sempat menambal file font agar nol bergaris tetap muncul bersama angka tabular. Ditolak, karena aplikasi nanti memuat Geist dari paket resmi, sehingga mockup dan aplikasi akan berbeda. Solusinya: angka tabular hanya untuk kolom angka.
+- **Format angka Indonesia** (5.250 W, 1,5 m). Contoh "1.5 m" sempat lolos, padahal dalam format Indonesia bisa terbaca seribu lima ratus.
+- **Logo** diganti dari tetesan air (bermakna bocor di ruang server), lalu dari kotak tiga garis (mirip tombol menu, padahal berdiri tepat di sebelah tombol menu di header HP), menjadi simbol lemari rack bergaris tepi.
+- **Warna navigasi:** `air` untuk navigasi utama (sidebar, bar bawah), `ink` untuk tab dan pilihan tersegmen.
+- **design.md tetap sumber kebenaran untuk aturan**, sedangkan `tokens.json` sumber kebenaran untuk angka. Salinannya disimpan di repo agar tahap Build tidak bergantung pada akses ke Claude Design.
+
+**Pelajaran**
+- Memeriksa hasil AI harus dengan melihat hasilnya, bukan hanya membaca laporannya. Beberapa masalah (bug nol bergaris di kolom isian, contoh notifikasi di luar spec) hanya terlihat setelah di-render, padahal README-nya sudah benar.
+- Rekomendasi juga bisa salah setelah dilihat wujudnya. Saran "nol bergaris di semua teks" dan "logo tiga garis" sama-sama direvisi setelah dirender.
+- Nama ikon atau bentuk yang terdengar masuk akal di teks bisa tertukar makna di layar (logo tiga garis = ikon menu).
+
+**Berikutnya**
+- Mockup di Claude Design mengikuti [`claude-design-brief.md`](claude-design-brief.md): proyek Design baru, pilih design system SIRAMA, satu atau dua layar per prompt dimulai dari HAL-07 Detail rack.
+- Setelah mockup: Technical Spec (`specs/tech.md`), dengan shadcn/ui + Tailwind sebagai kandidat kuat karena design system sudah mengikuti gayanya.
 
 ---
 

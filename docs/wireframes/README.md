@@ -1,11 +1,12 @@
 # Wireframe ASCII SIRAMA
 
-Gambaran kasar setiap halaman dan modal di [`specs/design.md`](../../specs/design.md) v0.4, supaya tim bisa membayangkan bentuk website sebelum mockup dan kode jadi.
+Gambaran kasar setiap halaman dan modal di [`specs/design.md`](../../specs/design.md) v0.4 (isi dan urutan halaman tidak berubah di v0.5), supaya tim bisa membayangkan bentuk website sebelum mockup dan kode jadi.
 
 **Untuk internal tim saja.**
 - **Bukan sumber kebenaran.** Bila wireframe berbeda dengan `design.md`, yang berlaku `design.md`.
 - **Jangan dilampirkan ke Claude Design.** Sketsa ASCII sengaja dikeluarkan dari design.md agar Claude Design tidak terpaku pada tata letak kasar ini.
 - Ukuran, jarak, dan proporsi di sini tidak akurat; yang penting adalah **isi dan urutan**.
+- **Tampilan visual** (warna, huruf, bentuk lencana, sudut) tidak digambarkan di sini. Lihat `design.md` §4 dan design system SIRAMA di [`specs/design-system/`](../../specs/design-system/).
 
 ## Daftar file
 
@@ -31,7 +32,7 @@ Gambaran kasar setiap halaman dan modal di [`specs/design.md`](../../specs/desig
 | `(•) Depan  ( ) Belakang` | Pilihan tersegmen; `(•)` = terpilih |
 | `[________________]` | Kolom isian teks |
 | `[ Pilih room       v]` | Pilihan dengan pencarian (dropdown) |
-| `{Aktif}` | Lencana status (di aplikasi: warna + ikon + teks) |
+| `{Aktif}` | Lencana status (di aplikasi: lencana lembut berwarna + ikon + teks; hanya `{Terlambat}` yang pekat) |
 | `_srv-web-01_` | Tautan |
 | `(!)` | Ikon peringatan |
 | `(i)` | Ikon informasi |

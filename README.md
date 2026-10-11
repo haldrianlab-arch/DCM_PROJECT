@@ -36,7 +36,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 | Tahap | Artefak | Status |
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
-| Design | [`specs/PRD.md`](specs/PRD.md) v0.4, [`specs/design.md`](specs/design.md) v0.4, `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
+| Design | [`specs/PRD.md`](specs/PRD.md) v0.4, [`specs/design.md`](specs/design.md) v0.5, [design system](specs/design-system/), `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
 | Build | `plans/*.md`, `CLAUDE.md`, source code | — |
 | Test | Test suite + tabel blackbox testing | — |
 | Deploy | Vercel | — |
@@ -48,7 +48,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 .
 ├── README.md
 ├── intent/        # Tahap Plan: masalah, tujuan, batasan
-├── specs/         # Tahap Design: PRD, design spec, technical spec
+├── specs/         # Tahap Design: PRD, design spec, design system (token), technical spec
 ├── plans/         # Tahap Build: rencana per fitur
 └── docs/
     ├── devlog.md                          # Jurnal proses pengembangan per sesi

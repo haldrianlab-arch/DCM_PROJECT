@@ -211,7 +211,7 @@ Device                                                          [# Tambah device
 └───┴─────────────┴──────────┴───────────┴──────────────────┴───────────────────┴───────────────┴──────────────┴─────┘
 Menampilkan 1-25 dari 23 device                                          < 1 >
 
-  ▲ = tanggal berwarna merah (garansi habis) atau kuning-oranye (segera habis)
+  ▲ = tanggal berwarna merah (garansi habis) atau amber (segera habis)
   Filter: status, device function, room, rack (termasuk "Tanpa rack"), garansi
 ```
 
@@ -272,7 +272,7 @@ Pembelian & garansi
 
 Setelah posisi diganti ke U39, sorotan pratinjau berubah warna `air` di U39-U40 dan pesan hilang.
 
-Bila rack punya kapasitas daya dan pemasangan melewatinya (Should), di bawah pratinjau tampil peringatan kuning-oranye, bukan merah, dan tombol Simpan tetap aktif:
+Bila rack punya kapasitas daya dan pemasangan melewatinya (Should), di bawah pratinjau tampil peringatan amber, bukan merah, dan tombol Simpan tetap aktif:
 
 ```
   (!) Estimasi daya menjadi 5.250 W, melebihi
@@ -389,7 +389,7 @@ QR code
 │   _srv-db-01_    PSU1   ⟷  pdu-a01-a outlet 4   [ok] Tetap menyala lewat jalur cadangan │
 │   _core-sw-01_   PSU1   ⟷  pdu-a01-a outlet 6   [ok] Tetap menyala lewat jalur cadangan │
 │   _fw-01_        PSU    ⟷  pdu-a01-a outlet 8   (!) Ikut mati, tanpa jalur cadangan     │
-│   ...                                                    ↑ kuning-oranye, bukan merah   │
+│   ...                                                    ↑ amber, bukan merah   │
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 

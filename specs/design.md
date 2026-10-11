@@ -4,10 +4,11 @@
 
 | | |
 |---|---|
-| Versi | 0.4 (direvisi setelah review) |
+| Versi | 0.5 (identitas visual mengikuti design system SIRAMA) |
 | Tanggal | 11 Oktober 2026 |
 | Sumber | [`intent/asset-maintenance.md`](../intent/asset-maintenance.md), [`specs/PRD.md`](PRD.md) v0.4 |
 | Tahap SDLC | Design |
+| Design system | Artifact Design System "SIRAMA" di Claude Design; salinan token di [`specs/design-system/`](design-system/) |
 | Dipakai oleh | Claude Design (mockup), Claude Code (build), tahap Test (acuan visual) |
 
 ---
@@ -69,38 +70,51 @@ Dokumen ini menjelaskan **bagaimana user mengalami SIRAMA**: identitas visual, s
 
 ## 4. Identitas visual
 
-### 4.1 Warna dasar
+Gaya SIRAMA modern dan tenang, sejalan dengan shadcn/ui dan Linear: abu netral, satu warna aksen, garis tipis, bayangan yang nyaris tak terlihat, dan huruf yang rapat. Elevation rack tetap menjadi pusat perhatian (prinsip 1).
 
-| Token | Hex | Peran | Kontras |
+**Sumber nilai.** Semua nilai di bagian ini sudah dijadikan token dan komponen di **design system SIRAMA** (artifact Design System di Claude Design). Salinan token dan aturannya disimpan di [`specs/design-system/`](design-system/). Bagian ini memuat aturan dan nilai pokoknya; bila ada angka yang berbeda, **`tokens.json` yang berlaku**.
+
+### 4.1 Warna dasar (netral zinc)
+
+| Token | Hex | Peran |
+|---|---|---|
+| `ink` | `#18181B` | Teks utama dan ikon utama |
+| `ink-muted` | `#6B6B73` | Teks sekunder, keterangan, kepala kolom tabel, label grup sidebar, ikon tidak aktif |
+| `surface` | `#FFFFFF` | Latar kartu, tabel, input, header, modal, popover |
+| `canvas` | `#FAFAFA` | Latar halaman di bawah kartu dan tabel; juga latar sidebar dan kepala kolom tabel |
+| `muted` | `#F4F4F5` | Latar disorot pada menu, opsi, dan tombol ghost; lintasan batang kemajuan dan pilihan tersegmen; kerangka memuat |
+| `line` | `#E4E4E7` | Garis tepi kartu, tabel, input, dan pemisah |
+| `line-strong` | `#D4D4D8` | Garis tepi input dan tombol sekunder saat disorot |
+| `air` | `#0A6C8C` | **Warna merek SIRAMA dan satu-satunya aksen** |
+| `air-soft` | `#E1F1F6` | Latar menu aktif dan chip terpilih |
+| `air-ring` | `air` 20% | Cincin fokus lembut |
+
+Aturan `air`:
+- Hanya untuk elemen yang **bisa diklik atau sedang aktif**: tombol utama, tautan, kotak centang tercentang, tanggal terpilih, garis fokus, dan menu aktif **navigasi utama** (sidebar dan bar navigasi bawah).
+- **Navigasi di dalam halaman memakai `ink`**, bukan `air`: tab aktif bergaris bawah `ink`, pilihan tersegmen terpilih berteks `ink` di atas `surface`. Dengan begitu `air` hanya menandai di mana user berada di aplikasi.
+- Tidak dipakai untuk dekorasi, status, atau batang kemajuan.
+
+### 4.2 Warna status (lencana lembut)
+
+Lencana status (KOM-12) **lembut**: latar tint pucat, teks dan ikon berwarna gelap dari keluarga yang sama, dan garis 1 px. Setiap warna punya empat token: `status-<warna>` (dasar), `-soft` (latar), `-text` (teks dan ikon), dan `-line` (garis).
+
+| Warna | Latar / teks | Kontras teks | Dipakai untuk |
 |---|---|---|---|
-| `ink` | `#14232B` | Teks utama (biru-abu sangat tua) | 16.1:1 di atas putih |
-| `ink-muted` | `#5A6B74` | Teks sekunder, keterangan | 5.5:1 di atas putih, 5.1:1 di atas `canvas` |
-| `surface` | `#FFFFFF` | Latar kartu, tabel, form | — |
-| `canvas` | `#F3F6F8` | Latar halaman (abu dingin) | — |
-| `line` | `#D5DEE3` | Garis tepi, pemisah | — |
-| `air` | `#0A6C8C` | **Warna merek SIRAMA.** Tombol utama, menu aktif, tautan, garis fokus | 5.9:1 dengan teks putih |
-| `air-soft` | `#E1F1F6` | Latar menu aktif, sorotan lembut | `air` di atasnya 5.1:1 |
+| Hijau | `#EDF5F1` / `#166C44` | 5.8:1 | Device **Aktif**, WO **Selesai** |
+| Amber | `#F7F2EB` / `#834D00` | 6.2:1 | Device **Maintenance**, WO **Dikerjakan**, **Garansi segera habis**; juga peringatan yang tidak menghalangi (panel dampak, daya melebihi kapasitas) |
+| Indigo | `#F2F1FA` / `#4D43A7` | 7.0:1 | WO **Terjadwal** |
+| Abu | `#F4F4F5` / `#52525B` | 7.0:1 | Device **Stok**, WO **Dibatalkan** |
+| Abu tua | `#E4E4E7` / `#27272A` | 11.7:1 | Device **Pensiun** |
+| Merah | `#FAEFEE` / `#A53028` | 6.1:1 | **Garansi habis**, pesan error, input error |
 
-Aturan: `air` hanya dipakai untuk elemen yang **bisa diklik atau sedang aktif**. Tidak dipakai untuk dekorasi dan tidak untuk status.
-
-### 4.2 Warna status
-
-Lencana status (KOM-12) berwarna pekat dengan teks putih dan ikon. Semua warna di bawah memiliki kontras minimal 4.5:1 dengan teks putih.
-
-| Warna | Hex | Kontras | Dipakai untuk |
-|---|---|---|---|
-| Hijau | `#1A7F50` | 5.0:1 | Device **Aktif**, WO **Selesai** |
-| Kuning-oranye | `#9A5B00` | 5.4:1 | Device **Maintenance**, WO **Dikerjakan**, **Garansi segera habis** |
-| Ungu-indigo | `#5B4FC4` | 6.3:1 | WO **Terjadwal** |
-| Abu | `#5F6E77` | 5.3:1 | Device **Stok**, WO **Dibatalkan** |
-| Abu tua | `#3D4950` | 9.3:1 | Device **Pensiun** |
-| Merah | `#C2382F` | 5.4:1 | WO **Terlambat**, **Garansi habis**, pesan error |
-
-Ungu-indigo dipilih untuk Terjadwal agar tidak tertukar dengan warna merek `air` yang menandai elemen bisa diklik.
+- **Lencana pekat hanya untuk Terlambat**: latar `status-red` (`#C2382F`) dengan teks putih (5.4:1), agar WO yang lewat tenggat langsung tertangkap mata. Status lain tidak boleh pekat.
+- **Merah hanya untuk keadaan yang salah atau sudah lewat.** Akibat yang *mungkin* terjadi (device ikut mati saat maintenance, daya melebihi kapasitas) memakai amber.
+- Indigo dipilih untuk Terjadwal agar tidak tertukar dengan `air` yang menandai elemen bisa diklik.
+- Latar pucat lain yang disebut spesifikasi ini (panel dampak, perbandingan audit) memakai token `status-*-soft` dengan garis `status-*-line` 1 px.
 
 ### 4.3 Warna device function (khusus elevation rack dan peta room)
 
-Blok device di elevation memakai **isian pucat dengan garis tepi kiri tebal (4 px)** sesuai device function-nya, sehingga tidak tertukar dengan lencana status yang pekat. Teks `ink` di atas semua isian ini memiliki kontras di atas 13:1.
+Blok device di elevation memakai **isian pucat dengan garis tepi kiri 4 px** sesuai device function-nya, sudut 2 px, dan teks `ink` (kontras minimal 14.7:1). **Ini satu-satunya tempat garis kiri tebal dipakai**; kartu, panel, dan peringatan lain tidak memakainya.
 
 | Device function | Isian | Garis kiri |
 |---|---|---|
@@ -109,27 +123,39 @@ Blok device di elevation memakai **isian pucat dengan garis tepi kiri tebal (4 p
 | Storage | `#E6F2EC` | `#2F7A57` |
 | Patch panel | `#EEEEF0` | `#6E6E78` |
 | PDU, UPS (daya) | `#F7E6E3` | `#A4483C` |
-| Lainnya | `#EDEFF1` | `#5A6B74` |
+| Lainnya | `#F4F4F5` | `#71717A` |
 
 Device function dibuat Admin di Katalog, sehingga daftarnya bisa bertambah. Pemetaan warna di atas ditentukan dari nama device function bawaan data seed; device function baru yang tidak cocok dengan baris mana pun memakai warna "Lainnya".
 
 ### 4.4 Tipografi
 
-- **Satu keluarga huruf: IBM Plex Sans** (lisensi terbuka, tersedia di Google Fonts). Bernuansa teknik dan jelas di ukuran kecil.
-- **Angka tabular** untuk nomor U, asset tag, nomor WO, serial number, tanggal, dan angka di tabel, agar digit sejajar vertikal.
-- Skala ukuran: 13 px (keterangan), 14 px (isi tabel), 16 px (teks utama), 20 px (judul bagian), 28 px (judul halaman).
-- Ketebalan: 400 untuk teks, 500 untuk label dan isi tabel yang ditekankan, 600 untuk judul.
-- Huruf kapital hanya di awal kalimat (*sentence case*), termasuk label dan tombol, kecuali nama entitas dan singkatan (Device, WO, PDU). Tidak memakai label huruf kapital semua.
+- **Geist** untuk semua teks antarmuka (lisensi OFL, dipakai dari paket resminya tanpa perubahan). **Geist Mono hanya untuk kode buatan sistem**: asset tag, nomor WO, dan serial number (*DCM-0001*, *WO-0012*, *CN7016-9XK2*), lewat komponen Code. Termasuk di dalam kalimat, misalnya teks notifikasi.
+- **Pengenal memakai nol bergaris** (fitur `ss09` Geist, kelas `.sr-id`) agar angka 0 tidak tertukar dengan huruf O: nama device, nama rack, lokasi singkat, dan nomor U (*srv-web-01*, *RK-A01 · U12-U13*). Komponen memasangnya sendiri (kolom nama dan lokasi di tabel, pilihan dengan pencarian, pencarian global, breadcrumb, elevation rack, kolom isian nama device atau rack). Teks biasa, tanggal, jumlah, dan nama model **tidak** memakai nol bergaris.
+- **Angka tabular** hanya untuk kolom angka di tabel, nilai batang kemajuan, dan angka di pemilih tanggal. Pengenal tidak memakai angka tabular, karena di Geist fitur itu mematikan nol bergaris.
+
+| Gaya | Ukuran / tinggi baris, tebal | Dipakai untuk |
+|---|---|---|
+| Judul halaman | 24/32, 600, rapat −0.02em | Judul halaman |
+| Judul bagian | 18/28, 600 | Judul bagian, modal, panel |
+| Judul kartu | 14/20, 600 | Judul kartu, blok buka-tutup, popover |
+| Teks | 14/20, 400 | Teks dasar, isi tabel, isi input (16 px di HP agar HP tidak memperbesar halaman) |
+| Teks tebal | 14/20, 500 | Label field, tombol, kolom nama, menu sidebar |
+| Kecil | 13/18, 400 | Teks bantuan, keterangan, pesan validasi |
+| Label | 12/16, 500 | Kepala kolom, lencana, label grup sidebar, bar bawah |
+| Lokasi besar | 20/28, 600 | Lokasi singkat di kartu lokasi (KOM-43) |
+| Kode | 13/20, 400 atau 500, Geist Mono | Asset tag, nomor WO, serial number |
+
+- Huruf kapital hanya di awal kalimat (*sentence case*), termasuk label, tombol, kepala kolom, dan label grup sidebar, kecuali nama entitas di awal kalimat dan singkatan (WO, PDU, UPS). Tidak memakai label huruf kapital semua.
 - Panjang baris paragraf maksimal sekitar 75 karakter.
 
 ### 4.5 Ikon
 
 - **Tidak ada emoji di antarmuka.**
-- Semua ikon berasal dari **satu pustaka ikon garis open source: Lucide**. Ukuran 16 px di dalam teks dan tombol kecil, 20 px di navigasi. Ketebalan garis seragam.
+- Semua ikon berasal dari **Lucide** (ikon garis, tebal garis 2, warna mengikuti teks). Ukuran 16 px di dalam teks, tombol, dan sidebar; 20 px di bar navigasi bawah dan header HP; 12 px di lencana.
 - Hanya logo (§4.7) yang digambar khusus.
-- Ikon status (nama Lucide; diverifikasi saat build karena nama ikon bisa berubah antarversi):
+- **Satu makna selalu satu ikon** di seluruh aplikasi. Ikon status tidak dipakai untuk makna lain. Nama ikon diverifikasi saat build karena bisa berubah antarversi.
 
-| Status | Ikon |
+| Makna | Ikon |
 |---|---|
 | Aktif, Selesai | `circle-check` |
 | Maintenance, Dikerjakan | `wrench` |
@@ -139,19 +165,24 @@ Device function dibuat Admin di Katalog, sehingga daftarnya bisa bertambah. Peme
 | Dibatalkan | `circle-slash` |
 | Terlambat, Garansi habis | `triangle-alert` |
 | Garansi segera habis | `clock` |
+| Notifikasi: WO ditugaskan · tenggat mendekat · belum punya teknisi · terlambat | `clipboard-list` · `clock` · `user-x` · `triangle-alert` |
 
-- Ikon menu dan aksi dipilih bebas dari pustaka yang sama, dengan syarat satu makna selalu memakai ikon yang sama di seluruh aplikasi.
+Ikon menu sidebar dan aksi umum mengikuti daftar di design system (misalnya `server` untuk Device, `cable` untuk Cable, `list-filter` untuk filter).
 
 ### 4.6 Bentuk, kepadatan, dan gerak
 
-- Sudut membulat 4 px untuk tombol dan input, 6 px untuk kartu dan modal. Blok di elevation rack bersudut 2 px agar terlihat seperti perangkat sungguhan.
-- Tinggi baris tabel 44 px di desktop.
-- Bayangan hanya untuk elemen yang melayang di atas halaman (modal, dropdown, toast, panel samping). Kartu biasa memakai garis tepi `line`, bukan bayangan.
-- Animasi hanya sebagai respons aksi user (modal terbuka, panel dampak muncul, status berubah), berdurasi 150-200 ms. Tidak ada animasi dekoratif saat halaman dimuat. Bila user mengaktifkan "kurangi gerakan" di perangkatnya, animasi dimatikan.
+- **Sudut:** 6 px untuk tombol, input, lencana, chip, dan item menu; 10 px untuk kartu, tabel, popover, dan toast; 12 px untuk modal dan panel samping; 2 px untuk blok elevation rack agar terlihat seperti perangkat sungguhan.
+- **Kepadatan:** tombol dan input setinggi 36 px di desktop; baris tabel 40 px; kepala kolom tabel 36 px; lencana 22 px. Di HP semua kontrol minimal 44 px.
+- **Bayangan:** bayangan sangat tipis untuk tombol dan input; bayangan melayang untuk dropdown, menu, kalender, tooltip, dan toast; bayangan besar dan halus untuk modal dan panel samping. **Kartu biasa memakai garis `line`, tanpa bayangan.**
+- **Latar di belakang modal:** hitam 40% dengan blur 4 px. Ini satu-satunya efek blur.
+- **Gerak:** hanya sebagai respons aksi user (modal terbuka, panel dampak muncul, status berubah), 150-200 ms. Tidak ada animasi dekoratif saat halaman dimuat. Bila user mengaktifkan "kurangi gerakan" di perangkatnya, animasi dimatikan.
+- **Hindari:** gradasi, efek kaca (selain blur latar modal), kartu bergaris kiri tebal, dan lencana pekat di mana-mana.
 
 ### 4.7 Logo
 
-Wordmark "SIRAMA" dalam IBM Plex Sans tebal berwarna `air`, didampingi simbol sederhana: tiga garis horizontal bertumpuk (melambangkan rack) yang dibingkai bentuk tetesan air. Versi kecil (hanya simbol) dipakai sebagai favicon dan di sidebar yang diciutkan. **Bebas:** bentuk detail simbol, selama tetap sederhana dan terbaca di ukuran 16 px.
+Simbol lemari rack: persegi panjang tegak (sekitar 3:4) bergaris tepi `air` 2 px tanpa isian pekat, berisi dua blok unit dengan tinggi berbeda dan satu titik kecil sebagai lampu indikator. Wordmark "SIRAMA" dalam Geist 600 berwarna `air` di sebelah kanan simbol. Simbol saja dipakai sebagai favicon dan di sidebar yang diciutkan.
+
+**Wajib:** simbol tidak boleh menyerupai ikon menu (garis bertumpuk) atau ikon Lucide lain, karena di header HP logo berdiri tepat di sebelah tombol menu. Tetap terbaca di 16 px.
 
 ---
 
@@ -214,7 +245,7 @@ Bila login dipicu oleh pemindaian QR, user dikembalikan ke detail device yang di
 
 ### 5.3 Desktop: sidebar dan header
 
-**Tata letak.** Dua kolom: sidebar (KOM-26) di kiri selebar 240 px, berlatar `surface` dengan garis tepi kanan `line`, menempel saat halaman di-scroll; kolom kanan berisi header (KOM-27) di atas dan isi halaman di bawahnya, berlatar `canvas`.
+**Tata letak.** Dua kolom: sidebar (KOM-26) di kiri selebar 240 px, berlatar `canvas` dengan garis tepi kanan `line`, menempel saat halaman di-scroll; kolom kanan berisi header (KOM-27) di atas dan isi halaman di bawahnya, berlatar `canvas`.
 
 **Isi sidebar dari atas ke bawah:**
 1. Logo SIRAMA.
@@ -226,9 +257,9 @@ Bila login dipicu oleh pemindaian QR, user dikembalikan ke detail device yang di
 
 **Perilaku grup:** semua grup **tertutup secara bawaan**, kecuali grup yang berisi halaman yang sedang dibuka, yang otomatis terbuka. Pilihan buka/tutup terakhir user diingat di browser tersebut. Nama grup bisa diklik untuk membuka/menutup, dengan ikon panah yang berputar sesuai keadaan.
 
-**Menu aktif:** latar `air-soft`, teks `air`, dan garis tebal `air` di sisi kiri. Setiap menu memiliki ikon di kiri teksnya. Sidebar dapat diciutkan menjadi 64 px (hanya ikon); nama menu muncul sebagai keterangan saat ikon disorot.
+**Menu aktif:** latar `air-soft`, teks dan ikon `air`, tanpa garis tebal di sisi kiri. Setiap menu memiliki ikon di kiri teksnya. Label grup ditulis kecil (12 px) berwarna `ink-muted`, *sentence case*. Sidebar dapat diciutkan menjadi 64 px (hanya ikon); nama menu muncul sebagai keterangan saat ikon disorot.
 
-**Header** setinggi 56 px, dari kiri ke kanan: pencarian global (KOM-31), lonceng notifikasi (KOM-30; Admin dan Teknisi), dan menu user berisi nama, peran, "Akun saya" (HAL-31, Should), dan "Keluar".
+**Header** setinggi 56 px berlatar `surface`, dari kiri ke kanan: pencarian global (KOM-31, dapat dibuka dari mana saja dengan **Ctrl K**, ⌘ K di Mac), lonceng notifikasi (KOM-30; Admin dan Teknisi), dan menu user berisi nama, peran, "Akun saya" (HAL-31, Should), dan "Keluar".
 
 Di bawah header: breadcrumb (§5.5), lalu isi halaman.
 
@@ -236,7 +267,7 @@ Di bawah header: breadcrumb (§5.5), lalu isi halaman.
 
 Pada layar selebar 768 px atau kurang, sidebar disembunyikan.
 
-**Header ringkas** setinggi 52 px: tombol menu di kiri dan logo di sebelahnya. Tombol menu membuka MOD-10 (menu lengkap) yang meluncur dari kiri.
+**Header ringkas** setinggi 52 px: tombol menu di kiri dan logo di sebelahnya (karena itu simbol logo tidak boleh mirip ikon menu, §4.7). Tombol menu membuka MOD-10 (menu lengkap) yang meluncur dari kiri.
 
 **Bar navigasi bawah** (KOM-28) setinggi 60 px, selalu terlihat, berisi tombol berikon dengan label di bawahnya:
 
@@ -301,7 +332,9 @@ Aksi yang **ditolak** aturan (misalnya menghapus device yang punya riwayat WO, B
 - Tanggal relatif hanya untuk notifikasi: *"3 jam lalu"*.
 - Nomor U tanpa nol di depan: *U1*, *U12*, rentang *U12-U13*.
 - Lokasi singkat device: *RK-A01 · U39-U40* (di rack), *RK-A01 · 0U* (0U), *Ruang Server Gedung A · tanpa rack* (tanpa rack), *—* (Stok/Pensiun).
-- Nomor WO dan asset tag selalu ditulis lengkap (*WO-0012*, *DCM-0001*).
+- Nomor WO dan asset tag selalu ditulis lengkap (*WO-0012*, *DCM-0001*) dalam Geist Mono (§4.4).
+- Angka memakai format Indonesia: titik untuk ribuan, koma untuk desimal (*5.250 W*, *1,5 m*, *3,4 kW*). Kolom input angka menerima ketikan *1,5* atau *5250* lalu merapikannya ke format ini.
+- Pengenal (nama device, nama rack, lokasi singkat, nomor U) memakai nol bergaris (§4.4).
 
 ### 6.6 Teks antarmuka
 
@@ -311,8 +344,8 @@ Aksi yang **ditolak** aturan (misalnya menghapus device yang punya riwayat WO, B
 
 ### 6.7 Aksesibilitas dasar
 
-- Kontras teks minimal 4.5:1 terhadap latarnya (sudah diperiksa untuk semua warna di §4).
-- Semua aksi bisa dilakukan dengan keyboard; fokus ditandai garis `air` 2 px di sekeliling elemen.
+- Kontras teks minimal 4.5:1 terhadap latarnya (sudah diperiksa untuk semua warna di §4). Garis `line` (1.3:1) sengaja di bawah 3:1; kontrol selalu punya label dan fokus menambah garis `air`.
+- Semua aksi bisa dilakukan dengan keyboard; fokus ditandai garis `air` 1 px ditambah cincin lembut `air-ring` 3 px. Pencarian global dapat dibuka dengan Ctrl K (⌘ K di Mac).
 - Setiap tombol yang hanya berupa ikon memiliki keterangan untuk pembaca layar.
 - Area sentuh di HP minimal 44 × 44 px.
 
@@ -350,6 +383,8 @@ Template adalah kerangka halaman atau modal yang dipakai berulang. Halaman yang 
 
 ## 8. Komponen
 
+Komponen KOM-01 s.d. KOM-31 sudah dibuat di design system SIRAMA dengan nama bahasa Inggris (misalnya KOM-01 = `Button`, KOM-19 = `DataTable`, KOM-31 = `GlobalSearch`; daftar lengkap di [`design-system/README.md`](design-system/README.md) bagian Komponen). Design system juga menambah `Logo` (§4.7) dan `Code` (kode dalam Geist Mono, §4.4). Komponen khusus KOM-32 s.d. KOM-46 belum ada di design system dan dirancang di mockup mengikuti §8.4.
+
 ### 8.1 Keadaan standar komponen interaktif
 
 Semua komponen yang bisa diklik atau diisi punya keadaan berikut, dan tampilannya konsisten di seluruh aplikasi:
@@ -357,32 +392,32 @@ Semua komponen yang bisa diklik atau diisi punya keadaan berikut, dan tampilanny
 | Keadaan | Tampilan |
 |---|---|
 | Normal | Tampilan dasar |
-| Disorot | Sedikit lebih gelap atau berlatar `air-soft` (desktop saja) |
-| Fokus | Garis `air` 2 px di sekeliling |
+| Disorot | Isian pekat sedikit lebih gelap; kontrol bergaris menjadi `line-strong`; item menu, opsi, dan tombol ghost berlatar `muted`; baris tabel berlatar `canvas` (desktop saja) |
+| Fokus | Garis `air` 1 px + cincin `air-ring` 3 px; pada tombol pekat didahului celah putih 2 px |
 | Ditekan | Sedikit lebih gelap dari disorot |
 | Nonaktif | Pudar (opasitas sekitar 50%), kursor tidak berubah menjadi tangan, disertai keterangan alasan bila tidak jelas |
-| Error (input) | Garis tepi merah dan pesan di bawahnya |
+| Error (input) | Garis tepi merah, cincin merah lembut saat fokus, dan pesan merah dengan ikon `circle-alert` di bawahnya |
 | Memproses (tombol) | Ikon berputar kecil di dalam tombol, teks tetap, tombol tidak bisa ditekan lagi |
 
 ### 8.2 Komponen dasar
 
 | ID | Komponen | Fungsi | Varian | Catatan |
 |---|---|---|---|---|
-| KOM-01 | Tombol | Menjalankan aksi | Utama (`air`), sekunder (garis tepi), bahaya (merah), teks saja | Satu tombol utama per area |
+| KOM-01 | Tombol | Menjalankan aksi | Utama (`air`), sekunder (garis tepi), bahaya (merah), ghost (tanpa garis, disorot berlatar `muted`), teks saja; besar (HP) | Satu tombol utama per area |
 | KOM-02 | Tombol ikon | Aksi ringkas (menu titik tiga, tutup, buka menu HP) | — | Wajib punya keterangan untuk pembaca layar |
-| KOM-03 | Input teks | Teks satu baris | Biasa, email, password (dengan tombol tampilkan/sembunyikan) | |
+| KOM-03 | Input teks | Teks satu baris | Biasa, email, password (dengan tombol tampilkan/sembunyikan), pengenal (nama device atau rack, nol bergaris) | |
 | KOM-04 | Area teks | Teks beberapa baris | — | Deskripsi masalah, catatan hasil, alasan pembatalan |
-| KOM-05 | Input angka | Angka dengan satuan di dalam kolom | — | Tinggi rack (U), panjang cable (m), daya (W), interval |
+| KOM-05 | Input angka | Angka dengan satuan di dalam kolom | — | Tinggi rack (U), panjang cable (m), daya (W), interval. Format Indonesia (§6.5); di HP membuka papan angka |
 | KOM-06 | Pilihan dengan pencarian | Memilih satu dari daftar panjang; mengetik menyaring daftar | Satu pilihan | Device, model, room, rack, teknisi. Setiap pilihan boleh punya keterangan kecil (misalnya lokasi device) |
 | KOM-07 | Pemilih tanggal | Memilih tanggal | — | Format §6.5 |
 | KOM-08 | Kotak centang | Ya/tidak, atau memilih banyak baris | — | Full-depth, item checklist, pilih baris tabel |
-| KOM-09 | Pilihan tersegmen | Memilih satu dari 2-4 pilihan yang selalu terlihat | — | Sisi rack (Depan/Belakang), kategori (IT/Fasilitas), peran, keahlian, jenis port |
+| KOM-09 | Pilihan tersegmen | Memilih satu dari 2-4 pilihan yang selalu terlihat | — | Sisi rack (Depan/Belakang), kategori (IT/Fasilitas), peran, keahlian, jenis port. Pilihan terpilih berlatar `surface` dengan teks `ink` (bukan `air`) |
 | KOM-10 | Tautan | Pindah halaman | Biasa, di dalam teks | Warna `air` |
 | KOM-11 | Ikon | Lihat §4.5 | — | |
-| KOM-12 | Lencana status | Menunjukkan status | Satu per nilai status (§4.2), versi ringkas (ikon saja, untuk ruang sempit) | Selalu warna + ikon + teks; versi ringkas wajib punya keterangan saat disorot |
-| KOM-13 | Chip | Menandai filter aktif | Dengan tombol hapus | |
+| KOM-12 | Lencana status | Menunjukkan status | Satu per nilai status (§4.2), versi ringkas (ikon saja, untuk ruang sempit) | Lembut (tint pucat + teks gelap + garis 1 px); hanya Terlambat yang pekat. Selalu warna + ikon + teks; versi ringkas wajib punya keterangan saat disorot |
+| KOM-13 | Chip | Menandai filter aktif, atau memilih satu dari beberapa (chip room di peta room) | Dengan tombol hapus; dapat dipilih (terpilih: `air-soft`, teks `air`) | |
 | KOM-14 | Keterangan (tooltip) | Info singkat saat disorot atau diketuk | — | |
-| KOM-15 | Batang kemajuan | Menunjukkan proporsi | Utilisasi rack, kemajuan checklist | |
+| KOM-15 | Batang kemajuan | Menunjukkan proporsi | Utilisasi rack, kemajuan checklist, daya terhadap kapasitas | Batang `ink` di atas lintasan `muted`; amber bila daya melebihi kapasitas. Bukan `air` |
 | KOM-16 | Kerangka memuat | Tampilan sementara saat data dimuat | Baris tabel, kartu, teks | |
 
 ### 8.3 Komponen gabungan
@@ -392,7 +427,7 @@ Semua komponen yang bisa diklik atau diisi punya keadaan berikut, dan tampilanny
 | KOM-17 | Field form | Label + input + teks bantuan + pesan error dalam satu kesatuan | Semua form |
 | KOM-18 | Bar cari dan filter | Kolom cari, tombol filter yang membuka daftar filter, dan chip filter aktif | TPL-01 |
 | KOM-19 | Tabel data | Tabel dengan kepala kolom, baris yang bisa diklik, menu baris, kotak centang (opsional), dan pagination | TPL-01, beberapa tab detail |
-| KOM-20 | Tab | Berpindah antarbagian di satu halaman tanpa pindah URL | TPL-02 di desktop |
+| KOM-20 | Tab | Berpindah antarbagian di satu halaman tanpa pindah URL; tab aktif bergaris bawah `ink` 2 px, jumlah isi tampil sebagai angka kecil | TPL-02 di desktop |
 | KOM-21 | Blok buka-tutup | Bagian yang bisa dibuka-tutup dengan ketukan | TPL-02 di HP, grup sidebar |
 | KOM-22 | Toast | Pesan berhasil singkat (§6.4) | Setelah simpan, hapus, lepas |
 | KOM-23 | Modal | Jendela di atas halaman dengan latar gelap transparan; tutup dengan tombol tutup, Esc, atau klik di luar (kecuali form yang sudah diubah) | TPL-04, TPL-05 |
@@ -402,8 +437,8 @@ Semua komponen yang bisa diklik atau diisi punya keadaan berikut, dan tampilanny
 | KOM-27 | Header | Pencarian, lonceng, menu user (§5.3) | Semua halaman setelah login |
 | KOM-28 | Bar navigasi bawah | Navigasi HP (§5.4) | Semua halaman setelah login di HP |
 | KOM-29 | Breadcrumb | Jejak lokasi halaman (§5.5) | Semua halaman kecuali Dashboard dan Tugas saya |
-| KOM-30 | Lonceng notifikasi | Ikon lonceng dengan angka belum dibaca; diklik membuka daftar 5 notifikasi terbaru dan tautan "Lihat semua" | Header (Admin, Teknisi) |
-| KOM-31 | Pencarian global | Kolom cari device di header; hasil muncul sebagai daftar di bawah kolom saat mengetik (nama, asset tag, lokasi singkat, lencana status); Enter membuka HAL-04 | Header |
+| KOM-30 | Lonceng notifikasi | Ikon lonceng dengan angka belum dibaca; diklik membuka daftar 5 notifikasi terbaru dan tautan "Lihat semua". Setiap notifikasi berikon jenis (§4.5, empat jenis di HAL-05); nomor WO di teks memakai Geist Mono | Header (Admin, Teknisi) |
+| KOM-31 | Pencarian global | Kolom cari device di header; Ctrl K (⌘ K di Mac) memfokuskannya dari mana saja, dengan petunjuk tombol di dalam kolom selama kosong. Hasil muncul sebagai daftar di bawah kolom saat mengetik (nama, asset tag, lokasi singkat, lencana status); Enter membuka HAL-04, Esc menutup | Header |
 
 ### 8.4 Komponen khusus SIRAMA
 
@@ -413,8 +448,8 @@ Menampilkan isi satu rack seperti tampak fisiknya. Dipakai di HAL-07.
 
 **Wajib**
 - Dua kolom berdampingan: **Depan di kiri, Belakang di kanan**, masing-masing berjudul.
-- Baris ringkasan di atas: nama rack, tinggi, U terpakai, U kosong, persentase utilisasi, dan **estimasi daya** (BR-19), misalnya *"Estimasi daya 3.450 W"*. Bila ada device yang modelnya tanpa data daya, tambahkan *"(2 device tanpa data daya)"*. *(Should, US-RAK-03)* Bila rack punya kapasitas daya: *"3.450 / 5.000 W (69%)"* dengan batang kemajuan (KOM-15); batang berwarna kuning-oranye bila di atas 100%.
-- Setiap kolom dibagi menjadi slot setinggi 22 px per U, disusun dari **U tertinggi di atas sampai U1 di bawah**. Nomor U (angka tabular, `ink-muted`) di sebelah kiri kolom Depan, sejajar slotnya.
+- Baris ringkasan di atas: nama rack, tinggi, U terpakai, U kosong, persentase utilisasi, dan **estimasi daya** (BR-19), misalnya *"Estimasi daya 3.450 W"*. Bila ada device yang modelnya tanpa data daya, tambahkan *"(2 device tanpa data daya)"*. *(Should, US-RAK-03)* Bila rack punya kapasitas daya: *"3.450 / 5.000 W (69%)"* dengan batang kemajuan (KOM-15); batang berwarna amber bila di atas 100%.
+- Setiap kolom dibagi menjadi slot setinggi 22 px per U, disusun dari **U tertinggi di atas sampai U1 di bawah**. Nomor U (nol bergaris, `ink-muted`) di sebelah kiri kolom Depan, sejajar slotnya.
 - Device tampil sebagai blok yang menutupi semua slot yang ditempatinya (device 2U di posisi U39 menutupi U39 dan U40). Blok memakai warna device function (§4.3), berisi nama device dan lencana status.
 - Device **half-depth** hanya tampil di kolom sisinya. Device **full-depth** tampil di kedua kolom: di sisi pemasangan sebagai blok biasa, di sisi lain sebagai blok berarsir garis miring tipis tanpa lencana, dengan nama ditulis kecil, menandakan bagian belakang device yang sama.
 - Slot kosong untuk **Admin**: saat disorot berlatar `air-soft` dengan teks "+ Pasang di sini"; diklik membuka HAL-09 dengan room, rack, sisi, dan posisi terisi. Untuk Teknisi dan Viewer slot kosong tidak bereaksi.
@@ -434,7 +469,7 @@ Versi kecil elevation untuk menunjukkan posisi. Dipakai di HAL-09 (pratinjau), H
 - Satu kolom (sisi yang relevan), slot setinggi 4-6 px, tanpa teks di dalam blok, hanya warna device function.
 - Device yang sedang dibahas disorot dengan garis tepi `air`.
 - **Mode pratinjau** (di form device): slot yang akan ditempati disorot `air` bila kosong; merah bila bertabrakan atau melebihi tinggi rack, disertai teks di bawahnya yang menyebut device yang bertabrakan atau alasannya. Pratinjau diperbarui setiap kali rack, sisi, posisi, atau model berubah.
-- *(Should, US-RAK-03)* Di bawah pratinjau: estimasi daya rack setelah device dipasang. Bila melebihi kapasitas daya rack, tampil peringatan kuning-oranye (bukan merah) *"Estimasi daya menjadi 5.250 W, melebihi kapasitas 5.000 W. Device tetap dapat disimpan."*
+- *(Should, US-RAK-03)* Di bawah pratinjau: estimasi daya rack setelah device dipasang. Bila melebihi kapasitas daya rack, tampil peringatan amber (bukan merah) *"Estimasi daya menjadi 5.250 W, melebihi kapasitas 5.000 W. Device tetap dapat disimpan."*
 
 #### KOM-34 Peta room
 
@@ -467,15 +502,15 @@ Struktur site → room → rack dalam satu halaman. Dipakai di HAL-06.
 Menunjukkan device yang terhubung langsung ke sebuah device, yaitu device yang terdampak bila device itu dimatikan. Dipakai di HAL-14 dan HAL-17 (setelah device dipilih), HAL-15 (ringkas, untuk WO preventif maupun korektif), dan HAL-10 tab Port & cable.
 
 **Wajib**
-- Kotak berlatar kuning-oranye sangat pucat dengan garis tepi kiri tebal kuning-oranye, ikon peringatan, dan judul *"[jumlah] device terhubung ke [nama device]"*.
+- Kotak berlatar `status-amber-soft` dengan garis tepi 1 px `status-amber-line` di sekelilingnya (bukan garis kiri tebal, §4.3), ikon peringatan amber, dan judul *"[jumlah] device terhubung ke [nama device]"*.
 - Dua kelompok berurutan, **Data** lalu **Daya**, masing-masing berjudul dengan jumlahnya. Kelompok kosong tidak ditampilkan.
 - Setiap baris: nama device terhubung (tautan ke HAL-10), port di device itu, simbol penghubung, lalu port di device yang dibahas.
 - Mencakup semua cable dari arah mana pun (satu lompatan).
 - Selalu dihitung dari data cable saat halaman dibuka; tidak disimpan pada WO (US-IMP-02 AC4).
-- Bila tidak ada device terhubung: kotak abu-abu pucat tanpa ikon peringatan, teks *"Tidak ada device terhubung."*
+- Bila tidak ada device terhubung: kotak berlatar `muted` tanpa ikon peringatan, teks *"Tidak ada device terhubung."*
 - Panel hanya informasi; tidak menghalangi penyimpanan form.
 - Versi ringkas (HAL-15): hanya judul dan jumlah; diklik membuka daftar lengkap.
-- *(Should, US-IMP-03)* Kelompok Daya diberi keterangan *"Bila [nama device] dimatikan:"* di bawah judulnya. Setiap device yang menerima daya diberi label di ujung baris: **"Tetap menyala lewat jalur cadangan"** (abu, ikon `circle-check`) atau **"Ikut mati, tanpa jalur cadangan"** (kuning-oranye, ikon `triangle-alert`). Label ini menggambarkan akibat bila device dimatikan, bukan kondisi saat ini, sehingga tidak memakai merah.
+- *(Should, US-IMP-03)* Kelompok Daya diberi keterangan *"Bila [nama device] dimatikan:"* di bawah judulnya. Setiap device yang menerima daya diberi label di ujung baris: **"Tetap menyala lewat jalur cadangan"** (abu, ikon `circle-check`) atau **"Ikut mati, tanpa jalur cadangan"** (amber, ikon `triangle-alert`). Label ini menggambarkan akibat bila device dimatikan, bukan kondisi saat ini, sehingga tidak memakai merah.
 
 Referensi: US-IMP-01, US-IMP-02, US-IMP-03.
 
@@ -562,7 +597,7 @@ Menjelaskan dari mana sebuah WO berasal. Dipakai di HAL-15.
 
 Menunjukkan perubahan data. Dipakai di MOD-09.
 
-**Wajib:** dua kolom, "Sebelum" dan "Sesudah", berisi daftar field dan nilainya. Field yang berubah disorot (sebelum berlatar merah pucat, sesudah hijau pucat) dan diletakkan paling atas. Untuk aksi Buat, kolom Sebelum kosong; untuk Hapus, kolom Sesudah kosong.
+**Wajib:** dua kolom, "Sebelum" dan "Sesudah", berisi daftar field dan nilainya. Field yang berubah disorot (sebelum berlatar `status-red-soft`, sesudah `status-green-soft`) dan diletakkan paling atas. Untuk aksi Buat, kolom Sebelum kosong; untuk Hapus, kolom Sesudah kosong.
 
 #### KOM-46 Kalender bulanan (Should)
 
@@ -572,15 +607,15 @@ Dipakai di HAL-19. **Wajib:** grid bulan; setiap WO tampil sebagai label kecil d
 
 ## 9. Halaman
 
-Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dari mana halaman dibuka, bila ada isian awal), isi, aksi, dan referensi. Tanda 📱 = dioptimalkan untuk HP (NFR-02); halaman lain cukup tidak rusak di HP.
+Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dari mana halaman dibuka, bila ada isian awal), isi, aksi, dan referensi. Tanda **[HP]** = dioptimalkan untuk HP (NFR-02); halaman lain cukup tidak rusak di HP.
 
-### HAL-01 Login 📱
+### HAL-01 Login [HP]
 - **URL:** `/login`. **Template:** khusus. **Peran:** belum login.
 - **Isi:** kartu di tengah layar berisi logo, kolom email, kolom password (dengan tombol tampilkan/sembunyikan), tombol "Masuk". Tidak ada tautan daftar atau lupa password.
 - **Perilaku:** login gagal (salah kredensial atau akun nonaktif) menampilkan pesan yang sama: *"Email atau password salah."* Login berhasil menuju halaman awal peran (§5.2).
 - **Referensi:** US-AUTH-01.
 
-### HAL-02 Dashboard 📱
+### HAL-02 Dashboard [HP]
 - **URL:** `/dashboard`. **Template:** khusus. **Peran:** semua.
 - **Isi desktop, dari atas:**
   1. **Ringkasan device per status:** satu baris lencana dengan jumlah (*Aktif 18 · Maintenance 1 · Stok 2 · Pensiun 1*). Setiap lencana membuka HAL-08 terfilter.
@@ -591,13 +626,13 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 - **Database kosong:** langkah awal (§6.4) menggantikan seluruh isi.
 - **Referensi:** US-DASH-01 (AC3: satu room sekaligus).
 
-### HAL-03 Tugas saya 📱
+### HAL-03 Tugas saya [HP]
 - **URL:** `/my-tasks`. **Template:** khusus. **Peran:** Teknisi.
 - **Isi:** WO milik teknisi yang login dan belum Selesai/Dibatalkan, sebagai kartu (KOM-42), dikelompokkan dengan judul kecil: **Terlambat**, **Hari ini**, **7 hari ke depan**, **Nanti**, berdasarkan tenggat. Kelompok kosong tidak ditampilkan; urutan dalam kelompok dari tenggat terdekat.
 - **Kosong:** *"Tidak ada tugas. Tugas baru akan muncul di sini dan di notifikasi."*
 - **Referensi:** US-WO-05 AC3.
 
-### HAL-04 Pencarian 📱
+### HAL-04 Pencarian [HP]
 - **URL:** `/search`. **Template:** khusus. **Peran:** semua.
 - **Isi:** kolom pencarian yang langsung aktif; hasil berupa daftar device (nama, asset tag, lokasi singkat, lencana status) yang diperbarui saat mengetik. Mencari pada nama, asset tag, dan serial number.
 - **Pintu masuk:** tombol Cari di bar bawah HP; Enter pada pencarian global desktop.
@@ -610,10 +645,10 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 
 | Penerima | Jenis | Kalimat |
 |---|---|---|
-| Teknisi | Penugasan | *"WO-0012 ditugaskan kepada Anda: Cek baterai UPS-01"* |
-| Teknisi | Pengingat tenggat | *"Tenggat WO-0012 tinggal 3 hari (11 Okt 2026)"* |
-| Admin | WO tanpa teknisi | *"WO-0013 belum punya teknisi: Bersihkan filter CRAC-01"* |
-| Admin | WO terlambat | *"WO-0010 terlambat sejak 6 Okt 2026"* |
+| Teknisi | Penugasan (`clipboard-list`) | *"WO-0012 ditugaskan kepada Anda: Cek baterai ups-01"* |
+| Teknisi | Pengingat tenggat (`clock`) | *"Tenggat WO-0012 tinggal 3 hari (11 Okt 2026)"* |
+| Admin | WO tanpa teknisi (`user-x`) | *"WO-0013 belum punya teknisi: Bersihkan filter crac-01"* |
+| Admin | WO terlambat (`triangle-alert`) | *"WO-0010 terlambat sejak 6 Okt 2026"* |
 
 - **Aksi:** klik notifikasi membuka HAL-15 dan menandainya sudah dibaca; untuk jenis "WO tanpa teknisi", HAL-15 langsung membuka MOD-08. Tombol "Tandai semua sudah dibaca".
 - **Referensi:** US-NOTIF-01, 02, 03.
@@ -645,7 +680,7 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 
 ### HAL-08 Daftar device
 - **URL:** `/devices`. **Template:** TPL-01. **Peran:** semua.
-- **Kolom:** nama, asset tag, device function, model, lokasi singkat (§6.5), status, akhir garansi (berwarna kuning-oranye atau merah sesuai §4.2; kosong bila tidak diisi).
+- **Kolom:** nama, asset tag, device function, model, lokasi singkat (§6.5), status, akhir garansi (lencana Garansi segera habis atau Garansi habis sesuai §4.2; kosong bila tidak diisi).
 - **Filter:** status, device function, room, rack (termasuk pilihan "Tanpa rack"), garansi (segera habis, habis).
 - **Aksi Admin:** "Tambah device" (HAL-09 kosong); *(Should)* centang baris lalu "Cetak label" (HAL-28).
 - **Referensi:** US-DEV-01, US-SRCH-01, US-QR-03.
@@ -670,7 +705,7 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 - **Tombol:** "Simpan device", "Batal".
 - **Referensi:** US-DEV-01, 02, 03, US-RAK-03; PRD Lampiran C (Device).
 
-### HAL-10 Detail device 📱
+### HAL-10 Detail device [HP]
 - **URL:** `/devices/[id]` (juga tujuan `/a/[asset-tag]`). **Template:** TPL-02. **Peran:** semua.
 - **Header:** nama device, asset tag, lencana status, penanda garansi bila berlaku. Aksi Admin: Ubah (HAL-09), Unduh label (KOM-41 sebagai gambar), Buat WO korektif (HAL-14 dengan device terisi), dan di menu titik tiga: Pindah ke stok, Pensiunkan (keduanya MOD-06), Hapus (MOD-06 konfirmasi bila belum ada riwayat WO, atau varian informasi bila sudah). Aksi pindah status nonaktif bila device berstatus Maintenance.
 - **Tab desktop:**
@@ -717,7 +752,7 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 - **Tombol:** "Simpan work order", "Batal". Setelah disimpan menuju HAL-15 dengan toast yang menyebut nomor WO baru.
 - **Referensi:** US-WO-02, 03, US-IMP-02; PRD Lampiran C (Work order).
 
-### HAL-15 Detail work order 📱
+### HAL-15 Detail work order [HP]
 - **URL:** `/work-orders/[id]`. **Template:** TPL-02 (seksi berurutan, tanpa tab). **Peran:** semua.
 - **Header:** nomor WO, judul, lencana status (dan Terlambat bila berlaku), jenis.
 - **Isi, dari atas:**
@@ -933,7 +968,7 @@ Berdasarkan [naskah demo](../docs/demo-script.md), halaman berikut dipoles palin
 
 ## 13. Ditunda ke Technical Spec
 
-- Library komponen UI, autentikasi, dan pembuat QR; versi pustaka ikon Lucide.
+- Library komponen UI (gaya design system mengikuti shadcn/ui, sehingga shadcn/ui + Tailwind menjadi kandidat kuat), autentikasi, dan pembuat QR; versi pustaka ikon Lucide; cara memuat Geist (paket resmi `geist`).
 - Pemeriksaan hak akses dan validasi di server (pasangan "tolak di server" dari prinsip 3; PRD US-AUTH-03, NFR-04).
 - Cara menyimpan pilihan buka/tutup sidebar dan pilihan room di peta room, serta cara mengisi awal form dari pintu masuk (misalnya lewat parameter URL).
 - Cara menjabarkan pola rentang port dan menghitung estimasi daya.
@@ -976,6 +1011,12 @@ Berdasarkan [naskah demo](../docs/demo-script.md), halaman berikut dipoles palin
 | 28 | Password (P10) | MOD-12 atur ulang oleh Admin; HAL-31 Akun saya (Should) |
 | 29 | Kalender (P13) | Tenggat maintenance plan tampil sebagai label bergaris putus-putus |
 | 30 | Peta room (P14) | Satu room sekaligus dengan pemilih site dan chip room; rack wrap di desktop, geser di HP |
+| 31 | Arah visual (revisi no. 7) | Modern dan tenang ala shadcn/ui dan Linear: netral zinc, satu aksen `air`, garis tipis, bayangan nyaris tak terlihat; menggantikan abu kebiruan dan lencana pekat |
+| 32 | Lencana status | Lembut (tint + teks gelap + garis); hanya Terlambat yang pekat |
+| 33 | Huruf | Geist untuk antarmuka, Geist Mono hanya untuk asset tag, nomor WO, serial number; nol bergaris (`ss09`) hanya untuk pengenal; font tidak dimodifikasi |
+| 34 | Warna navigasi | `air` untuk navigasi utama (sidebar, bar bawah); `ink` untuk tab dan pilihan tersegmen |
+| 35 | Logo | Simbol lemari rack bergaris tepi; tidak boleh mirip ikon menu |
+| 36 | Sumber token | Design system SIRAMA; salinan `tokens.json` di repo dan berlaku bila angka berbeda |
 
 ---
 
@@ -987,3 +1028,4 @@ Berdasarkan [naskah demo](../docs/demo-script.md), halaman berikut dipoles palin
 | 0.2 | 5 Okt 2026 | Flowchart, use case, naskah demo, dan brief Claude Design dipindah ke `docs/`. Semua sketsa diberi deskripsi tertulis. Perbaikan kontras warna status, akses Tugas saya dan notifikasi, sitemap, form device, dan panel dampak |
 | 0.3 | 8 Okt 2026 | **Struktur:** bagian cara membaca dengan konvensi rujukan (§1); inventaris template (§7), komponen (§8), halaman (§9), dan modal (§10) dengan ID; setiap halaman menyebut template, peran, pintu masuk, dan referensi. **Sketsa:** semua sketsa ASCII dan emoji dihapus; komponen khusus dideskripsikan dengan bagian Wajib dan Bebas. **Prinsip:** "Cegah di tampilan, tolak di server" menjadi "Cegah kesalahan sebelum terjadi"; "Lapangan dulu" diperjelas menjadi "Mudah dipakai teknisi di ruang server"; prinsip konsistensi ditambahkan. **Ikon:** Lucide. **Penamaan:** mengikuti PRD v0.3 (nama entitas bahasa Inggris, "tenggat"); URL bahasa Inggris. **Dari PRD v0.3:** notifikasi Admin (lonceng, bar bawah, jenis notifikasi, MOD-08 dari notifikasi); device tanpa rack (form device, peta room, pohon lokasi, filter); nomor WO; info asal WO (KOM-44); judul WO korektif; data pembelian opsional dengan nama bagian "Pembelian & garansi"; status device terkunci saat Maintenance; pindah ke stok; WO tanpa teknisi tidak dapat dimulai. **Lainnya:** alur tambah lokasi (HAL-06); grup sidebar tertutup secara bawaan; "Lepas cable" dari daftar dan tab Port & cable; "Sambungkan" dari port kosong; "Buat WO korektif" dan "Tambah maintenance plan" dari detail device; pemberitahuan perubahan port template; validasi tinggi rack di MOD-03; kelompok Tugas saya "7 hari ke depan"; keadaan standar komponen (§8.1) |
 | 0.4 | 11 Okt 2026 | Mengikuti PRD v0.4 (P1-P14). **Baru:** HAL-31 Akun saya (Should), MOD-11 Port (Should), MOD-12 Atur ulang password, varian MOD-06 hapus port. **Diubah:** KOM-34 peta room menampilkan satu room sekaligus dengan pemilih site dan chip room, rack wrap di desktop dan geser di HP; KOM-36 dihitung langsung, tampil juga di HAL-17 dan semua WO, label jalur daya diganti kalimat hipotesis berwarna peringatan; KOM-32, KOM-33, KOM-35 menampilkan estimasi daya dan kapasitas daya (Should); KOM-35 room tertutup bila lebih dari 5; KOM-39 pola rentang; KOM-46 tenggat maintenance plan; HAL-17 teks waktu pembuatan WO (7 hari) dan pengingat (3 hari); HAL-22/23/24 duplikat model; HAL-10 tambah/ubah/hapus port; HAL-26 atur ulang password; MOD-02/03 keterangan pindah induk dan kapasitas daya; menu user dan MOD-10 berisi Akun saya |
+| 0.5 | 11 Okt 2026 | **Identitas visual (§4) ditulis ulang** mengikuti design system SIRAMA: netral zinc, lencana lembut (hanya Terlambat pekat), Geist dan Geist Mono, nol bergaris untuk pengenal, angka tabular hanya untuk kolom angka, sudut 6/10/12/2 px, kontrol 36 px, baris tabel 40 px, bayangan dan blur latar modal, logo simbol lemari rack. **Navigasi:** sidebar berlatar `canvas`, menu aktif tanpa garis kiri, Ctrl K untuk pencarian global. **Pola:** format angka Indonesia (§6.5), fokus garis + cincin (§6.7, §8.1). **Komponen:** KOM-01, 03, 05, 09, 12, 13, 15, 20, 30, 31 disesuaikan; KOM-36 panel dampak memakai latar dan garis amber 1 px, bukan garis kiri tebal; pemetaan ke nama komponen design system (§8). **Lainnya:** jenis notifikasi HAL-05 diberi ikon dan nama device huruf kecil; penanda halaman HP diganti dari emoji menjadi [HP]; keputusan 31-36; salinan token di `specs/design-system/` |
