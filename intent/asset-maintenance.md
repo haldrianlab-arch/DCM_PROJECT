@@ -58,8 +58,8 @@ Tidak masuk:
 ## Decisions (dapat direvisi)
 - Metode pengembangan: AI-Native SDLC (Anthropic, 2026), dijelaskan secara
   profesional di laporan. Dosen mengizinkan penggunaan AI.
-- Impact analysis MVP: satu lompatan (perangkat yang terhubung langsung lewat kabel).
-  Penelusuran berantai menjadi pengembangan lanjutan.
+- Impact analysis MVP: jalur data satu lompatan (perangkat yang terhubung langsung lewat
+  kabel), jalur daya berantai beserta jalur cadangan (diubah 8 Nov 2026, PRD keputusan 43).
 - Pengingat MVP: notifikasi di dalam aplikasi. Email menjadi pengembangan lanjutan.
 
 ## Open questions

@@ -26,7 +26,7 @@ Pencatatan aset di spreadsheet terpisah dari jadwal maintenance, posisi perangka
 | Framework | Next.js |
 | ORM | Drizzle ORM |
 | Database | Neon Postgres |
-| Deploy & jadwal otomatis | Vercel (Vercel Schedules untuk WO preventif dan pengingat) |
+| Deploy & jadwal otomatis | Vercel (Vercel Cron Jobs untuk WO preventif dan pengingat) |
 | Testing | Vitest, React Testing Library, PGlite, Playwright |
 
 ## Metode pengembangan
@@ -36,7 +36,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 | Tahap | Artefak | Status |
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
-| Design | [`specs/PRD.md`](specs/PRD.md) v0.5, [`specs/design.md`](specs/design.md) v0.5, [design system](specs/design-system/), `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
+| Design | [`specs/PRD.md`](specs/PRD.md) v0.6, [`specs/design.md`](specs/design.md) v0.5, [design system](specs/design-system/), `specs/tech.md` (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
 | Build | `plans/*.md`, `CLAUDE.md`, source code | — |
 | Test | Test suite + tabel blackbox testing | — |
 | Deploy | Vercel | — |

@@ -6,7 +6,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design hampir selesai. PRD v0.5, Design Spec v0.5, design system, dan mockup 31 halaman + 12 modal sudah jadi. Laporan Bab I dan Bab II sudah dibuat. Berikutnya: Technical Spec.
+**Status saat ini:** Tahap Design hampir selesai. PRD v0.6, Design Spec v0.5, design system, dan mockup 31 halaman + 12 modal sudah jadi. Laporan Bab I dan Bab II sudah dibuat. Berikutnya: Technical Spec.
 
 ---
 
@@ -18,11 +18,14 @@ diambil beserta alasannya, dan langkah berikutnya.
 - Laporan Bab I dan Bab II ditulis di `docs/laporan/laporan-bab1-bab2.md` dengan 25 referensi IEEE yang semuanya diperiksa langsung.
 
 **Keputusan**
-- **Penjadwal memakai Vercel Schedules**, bukan Vercel Cron Jobs. Cron Jobs sekarang berstatus legacy. Schedules mendukung zona waktu langsung (`Asia/Jakarta`, pukul 07.00), riwayat eksekusi, dan bisa dijalankan manual saat demo tanpa deploy ulang. Catatan: Schedules masih beta publik.
+- **Penjadwal memakai Vercel Cron Jobs** (stabil). Sempat dipilih Vercel Schedules, tetapi dibatalkan karena Schedules masih beta publik dan status itu tidak cukup disampaikan saat keputusan diambil. Cron Jobs ditandai legacy oleh Vercel dan hanya mengenal UTC: `0 0 * * *` berjalan antara 07.00 dan 07.59 WIB di paket Hobby, dan itu cukup karena aturan WO dihitung per hari.
+- **Impact analysis jalur daya berantai** (PRD keputusan 43, US-IMP-04, BR-21). Satu lompatan tidak menangani maintenance UPS: hanya PDU yang tampil, padahal server di belakangnya ikut mati. Cable daya punya arah (outlet → inlet), jadi penelusuran berantai jelas; indikator jalur cadangan naik ke Must karena dibutuhkan untuk menghentikan penelusuran. Jalur data tetap satu lompatan. KOM-36 di design.md diperbarui; mockup panel dampak perlu menyusul (baris tidak langsung dengan keterangan "lewat [device]").
+- **Laporan direview** dengan panel lima sudut pandang (hasil di `docs/laporan/review-laporan-bab1-bab2.md`) lalu direvisi: latar belakang ditulis jujur sebagai skenario, posisi terhadap NetBox (dengan plugin maintenance) dan GLPI diakui, sumber Uptime diganti ke siaran pers resmi, batasan jaringan ditambah, cara ukur tujuan ditambah. Referensi menjadi 27.
 - **Referensi hanya yang metadatanya lengkap dan bisa diperiksa.** Sumber yang volume atau halamannya tidak bisa dipastikan dibuang dan diganti sumber lain.
 
 **Berikutnya**
-- Technical Spec (`specs/tech.md`): skema data, struktur proyek Next.js, Vercel Schedules, autentikasi, dan strategi pengujian.
+- Technical Spec (`specs/tech.md`): skema data, struktur proyek Next.js, Vercel Cron Jobs, autentikasi, query impact analysis berantai, dan strategi pengujian.
+- Perbarui mockup KOM-36 untuk baris dampak tidak langsung.
 
 ---
 

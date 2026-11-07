@@ -499,20 +499,21 @@ Struktur site → room → rack dalam satu halaman. Dipakai di HAL-06.
 
 #### KOM-36 Panel dampak
 
-Menunjukkan device yang terhubung langsung ke sebuah device, yaitu device yang terdampak bila device itu dimatikan. Dipakai di HAL-14 dan HAL-17 (setelah device dipilih), HAL-15 (ringkas, untuk WO preventif maupun korektif), dan HAL-10 tab Port & cable.
+Menunjukkan device yang terdampak bila sebuah device dimatikan: device yang terhubung langsung, ditambah device di hilir rantai daya (US-IMP-04). Dipakai di HAL-14 dan HAL-17 (setelah device dipilih), HAL-15 (ringkas, untuk WO preventif maupun korektif), dan HAL-10 tab Port & cable.
 
 **Wajib**
 - Kotak berlatar `status-amber-soft` dengan garis tepi 1 px `status-amber-line` di sekelilingnya (bukan garis kiri tebal, §4.3), ikon peringatan amber, dan judul *"[jumlah] device terhubung ke [nama device]"*.
 - Dua kelompok berurutan, **Data** lalu **Daya**, masing-masing berjudul dengan jumlahnya. Kelompok kosong tidak ditampilkan.
 - Setiap baris: nama device terhubung (tautan ke HAL-10), port di device itu, simbol penghubung, lalu port di device yang dibahas.
-- Mencakup semua cable dari arah mana pun (satu lompatan).
+- Kelompok Data: semua cable data dari arah mana pun (satu lompatan).
+- Kelompok Daya: ditelusuri berantai menurut BR-21. Device yang terdampak tidak langsung ditampilkan di bawah device yang menyuplainya, menjorok satu tingkat, dengan keterangan *"lewat [nama device]"* sebagai pengganti pasangan port.
 - Selalu dihitung dari data cable saat halaman dibuka; tidak disimpan pada WO (US-IMP-02 AC4).
 - Bila tidak ada device terhubung: kotak berlatar `muted` tanpa ikon peringatan, teks *"Tidak ada device terhubung."*
 - Panel hanya informasi; tidak menghalangi penyimpanan form.
 - Versi ringkas (HAL-15): hanya judul dan jumlah; diklik membuka daftar lengkap.
-- *(Should, US-IMP-03)* Kelompok Daya diberi keterangan *"Bila [nama device] dimatikan:"* di bawah judulnya. Setiap device yang menerima daya diberi label di ujung baris: **"Tetap menyala lewat jalur cadangan"** (abu, ikon `circle-check`) atau **"Ikut mati, tanpa jalur cadangan"** (amber, ikon `triangle-alert`). Label ini menggambarkan akibat bila device dimatikan, bukan kondisi saat ini, sehingga tidak memakai merah.
+- *(US-IMP-03)* Kelompok Daya diberi keterangan *"Bila [nama device] dimatikan:"* di bawah judulnya. Setiap device yang menerima daya diberi label di ujung baris: **"Tetap menyala lewat jalur cadangan"** (abu, ikon `circle-check`) atau **"Ikut mati, tanpa jalur cadangan"** (amber, ikon `triangle-alert`). Label ini menggambarkan akibat bila device dimatikan, bukan kondisi saat ini, sehingga tidak memakai merah.
 
-Referensi: US-IMP-01, US-IMP-02, US-IMP-03.
+Referensi: US-IMP-01, US-IMP-02, US-IMP-03, US-IMP-04.
 
 #### KOM-37 Checklist pengerjaan
 

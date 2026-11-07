@@ -6,7 +6,7 @@ Playbook menghasilkan satu file `spec.md` yang menggabungkan kebutuhan dan desai
 
 | File | Menjawab | Status | Dipakai untuk |
 |---|---|---|---|
-| [`PRD.md`](PRD.md) | **Apa** yang dibangun dan bagaimana tahu sudah benar | v0.5, review | Bab I, analisis kebutuhan, test case blackbox |
+| [`PRD.md`](PRD.md) | **Apa** yang dibangun dan bagaimana tahu sudah benar | v0.6, review | Bab I, analisis kebutuhan, test case blackbox |
 | [`design.md`](design.md) | **Bagaimana user mengalaminya** | v0.5, review | Mockup Claude Design, build tampilan, manual book |
 | [`design-system/`](design-system/) | **Token visual dan aturan komponen** | Salinan dari Claude Design | Mockup (dipilih sebagai design system), build (sumber token CSS) |
 | `tech.md` | **Bagaimana dibangun** | Belum dibuat | Architecture & topology diagram, plan mode |
