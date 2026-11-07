@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Versi | 0.4 (direview Product Owner) |
-| Tanggal | 11 Oktober 2026 |
+| Versi | 0.5 (data demo disamakan dengan mockup; penjadwal Vercel Schedules) |
+| Tanggal | 8 November 2026 |
 | Sumber | [`intent/asset-maintenance.md`](../intent/asset-maintenance.md) |
 | Tahap SDLC | Design |
 | Dokumen berikutnya | [`specs/design.md`](design.md) (Design Spec), `specs/tech.md` (Technical Spec) |
@@ -59,7 +59,7 @@ Aplikasi web untuk mengelola aset fisik ruang server data center kampus: lokasi 
 | **Preventif / Korektif** | Mengikuti standar terminologi maintenance EN 13306. Preventif = dilakukan sebelum kerusakan pada interval tertentu (di sini: dari maintenance plan). Korektif = dilakukan setelah kerusakan terdeteksi, untuk memulihkan fungsi device (termasuk penggantian unit). |
 | **Tenggat** | Tanggal paling lambat sebuah WO harus selesai. |
 | **Checklist** | Daftar langkah yang dicentang teknisi saat mengerjakan WO. |
-| **Cron** | Program yang berjalan otomatis sesuai jadwal (di sini: setiap hari pukul 07.00 WIB). |
+| **Cron** | Program yang berjalan otomatis sesuai jadwal (di sini: setiap hari pukul 07.00 WIB). Di SIRAMA dijalankan oleh Vercel Schedules. |
 | **Impact analysis** | Daftar device yang ikut terdampak bila satu device dimatikan atau di-maintenance. Bersifat hipotesis ("bila dimatikan") dan selalu dihitung dari data cable saat ini. |
 | **Estimasi daya** | Jumlah daya maksimum (dari model) semua device di sebuah rack. Angka label pabrik ini biasanya jauh di atas pemakaian nyata, sehingga hanya dipakai untuk perencanaan kasar. |
 | **Kapasitas daya rack** | Batas daya yang direncanakan untuk satu rack (watt), diisi Admin. |
@@ -476,7 +476,7 @@ Area berikut paling mungkin salah tanpa terlihat, sehingga wajib diuji paling le
 | Rilis | Isi | Syarat selesai |
 |---|---|---|
 | **R1: Inventaris** | E1, E2, E3, E4, E5, US-SRCH-01, US-AUD-01 | Semua AC lulus tes; seed data inventaris tersedia |
-| **R2: Maintenance** | E6 (Must), E7 (Must), E8 (Must), US-DASH-01 | Semua AC lulus tes; cron berjalan di Vercel |
+| **R2: Maintenance** | E6 (Must), E7 (Must), E8 (Must), US-DASH-01 | Semua AC lulus tes; cron berjalan di Vercel Schedules |
 | **R3: Penyempurnaan** | Semua Should | Semua AC Should lulus tes |
 | **R4: Bonus** | Could, dipilih sesuai sisa waktu | — |
 
@@ -486,15 +486,26 @@ Area berikut paling mungkin salah tanpa terlihat, sehingga wajib diuji paling le
 
 **Lokasi:** Site "Kampus Utama" → room "Ruang Server Gedung A" → 4 rack 42U: `RK-A01` s.d. `RK-A04`.
 
-**Device (sekitar 20):**
-- Setiap rack: 1 switch ToR (half-depth, sisi belakang, U42), 2 PDU 0U (PDU-A dan PDU-B), 3-4 server full-depth.
+**Tanggal acuan:** mockup memakai 9 Okt 2026 sebagai "hari ini". Skrip seed menghitung semua tanggal (tenggat, garansi, riwayat) relatif terhadap tanggal demo, sehingga keadaan di bawah tetap terjadi kapan pun demo dijalankan.
+
+**Rack:** `RK-A01` diberi kapasitas daya 5.000 W (estimasi daya 4.300 W, 86%) agar persentase dan peringatan daya dapat diperlihatkan. Rack lain tanpa kapasitas daya.
+
+**Katalog:** 6 manufacturer (APC, Cisco, Dell, Fortinet, Panduit, Vertiv), 11 model, dan 8 device function (Server, Switch, Firewall, Storage, Patch panel, PDU, UPS, CRAC).
+
+**Device (34):**
+- Setiap rack: 1 switch ToR (half-depth, sisi belakang, U42), 2 PDU 0U (PDU-A dan PDU-B), dan 3 server full-depth.
 - `RK-A01` juga berisi core switch dan firewall; `RK-A04` berisi patch panel dan storage.
 - Device tanpa rack (berdiri di lantai room): 1 UPS, 2 CRAC.
 - 2 device berstatus Stok (tanpa penempatan) dan 1 device Pensiun.
+- Rincian: 28 device di dalam rack, 3 device tanpa rack, 3 device tanpa penempatan. Status: 30 Aktif, 1 Maintenance, 2 Stok, 1 Pensiun.
 
-**Cable (sekitar 40):** setiap server ke switch ToR (data); setiap server dengan dua power inlet ke PDU-A dan PDU-B (daya, redundan); switch ToR ke core switch.
+**Cable (46):** setiap server ke switch ToR (data); setiap server dengan dua power inlet ke PDU-A dan PDU-B (daya, redundan); switch ToR ke core switch.
 
-**Maintenance plan:** cek baterai UPS (3 bulan), bersihkan filter CRAC (1 bulan), update firmware switch (6 bulan), cek fisik server (3 bulan). Data diatur agar saat demo ada WO dengan tenggat minggu ini, satu WO terlambat, satu WO preventif tanpa teknisi, dan satu device dengan garansi habis bulan ini. Rack RK-A01 diberi kapasitas daya agar persentase dan peringatan daya dapat diperlihatkan.
+**Maintenance plan (19; 18 aktif, 1 nonaktif):** cek baterai UPS (3 bulan), bersihkan filter CRAC (1 bulan), update firmware switch ToR (6 bulan), dan cek fisik server (3 bulan).
+
+**Work order (16, termasuk riwayat):** saat demo ada 7 WO terbuka, termasuk WO dengan tenggat minggu ini, 1 WO terlambat, 1 WO preventif tanpa teknisi, dan 1 WO berstatus Dikerjakan. Riwayatnya berisi WO Selesai dan 1 WO Dibatalkan.
+
+**Garansi:** 1 device dengan garansi habis bulan ini dan 3 device dengan garansi segera habis.
 
 **User:** 1 Admin; 2 Teknisi (IT dan Fasilitas); 1 Viewer.
 
@@ -544,6 +555,8 @@ Area berikut paling mungkin salah tanpa terlihat, sehingga wajib diuji paling le
 | 38 | Waktu WO preventif (P12) | Dibuat H-7, pengingat H-3 |
 | 39 | Kalender (P13) | Menampilkan tenggat maintenance plan yang belum menjadi WO |
 | 40 | Dashboard banyak room (P14) | Satu room sekaligus dengan pemilih room/site |
+| 41 | Penjadwal otomatis | Vercel Schedules (pengganti Vercel Cron Jobs yang berstatus legacy): zona waktu Asia/Jakarta langsung, riwayat eksekusi per jadwal, dan dapat dijalankan manual tanpa deploy ulang |
+| 42 | Data demo | Disamakan dengan mockup Claude Design: 34 device, 46 cable, 19 maintenance plan, 16 WO |
 
 ---
 
@@ -700,3 +713,4 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 | 0.2 | 5 Okt 2026 | Tambah metrik M6 (WO dari HP < 2 menit); "Role" perangkat menjadi Fungsi Perangkat; matriks akses dipisah untuk Admin dan Teknisi; status Dipesan dihapus; aturan hapus device dan rencana (US-DEV-05, US-MP-01 AC4, BR-14); AC WO-04 AC6 diperjelas; BR-10 ditulis tanpa simbol; NFR-02 diperluas; asumsi skala diperjelas; tambah US-SIM-01 (Could); glosarium ditambah |
 | 0.3 | 8 Okt 2026 | **Penamaan:** konvensi baru (bagian 2.1), nama entitas bahasa Inggris (Room, Rack, Cable, Device function, Maintenance plan, User), "jatuh tempo"/"tanggal target" diseragamkan menjadi "tenggat". **Baru:** Lampiran C daftar field per entitas; US-WO-06 nomor WO dan asal-usul WO; US-WO-07 WO lanjutan (Could); US-NOTIF-02 notifikasi Admin; US-NOTIF-03 pengelolaan notifikasi (dipisah dari NOTIF-01); BR-15 s.d. BR-17; device tanpa rack (US-DEV-02 AC8, BR-05). **Diperjelas:** glosarium garansi, vendor, preventif/korektif (EN 13306), nomor WO, tenggat; data pembelian opsional (US-DEV-01 AC5); serial number opsional; WO dan maintenance plan hanya untuk device Aktif/Maintenance, dan device ke Stok/Pensiun membatalkan WO Terjadwal-nya (US-DEV-03 AC3, AC5, BR-16); judul WO korektif wajib; checklist WO korektif opsional; WO tanpa teknisi tidak dapat dimulai; ganti teknisi (US-WO-03 AC3); pemindahan device (US-DEV-02 AC9); perubahan port template tidak memengaruhi device lama (US-CAT-02 AC4); hapus site dan model (US-LOC-01 AC3, US-CAT-02 AC5); tinggi rack tidak boleh lebih kecil dari isinya (US-RAK-01 AC4); cron mengejar hari yang terlewat (US-WO-01 AC4); BR-09 juga berlaku saat WO preventif dibatalkan. **Prioritas:** IP management dari kurung di Won't menjadi Could (penulisan lama ambigu); mode gelap dan pemindai QR di aplikasi masuk Could |
 | 0.4 | 11 Okt 2026 | Hasil review P1-P14. **Baru:** US-AUTH-04 ganti password sendiri (Should); US-RAK-03 kapasitas daya rack (Should); US-CAT-03 pola rentang dan duplikat model (Should); US-DEV-06 port per device (Should); BR-18 s.d. BR-20; glosarium estimasi daya, kapasitas daya, pola rentang. **AC baru:** reset password oleh Admin (US-AUTH-02 AC5); menu dan tombol disembunyikan per peran (US-AUTH-03 AC2); nama unik, ubah nama, dan pindah induk lokasi (US-LOC-01 AC4-6, US-RAK-01 AC5); estimasi daya rack (US-RAK-02 AC6); panel dampak di detail WO dan form maintenance plan, dihitung langsung (US-IMP-02 AC3-4); kalender menampilkan tenggat maintenance plan (US-CAL-01); peta rack satu room sekaligus (US-DASH-01 AC3). **Diubah:** WO preventif dibuat 7 hari sebelum tenggat (sebelumnya 3), pengingat tetap 3 hari (US-WO-01, BR-18); label jalur daya menjadi kalimat hipotesis (US-IMP-03); alasan BR-10 ditulis; Asumsi 6 diperjelas, Asumsi 7-8 ditambah; Lampiran C Rack dan Port. **Prioritas:** WO untuk rack/room, daya per device, dan foto dampak masuk Could |
+| 0.5 | 8 Nov 2026 | **Lampiran A** disamakan dengan mockup (34 device, katalog, 46 cable, 19 maintenance plan, 16 WO, garansi, tanggal relatif terhadap hari demo). **Penjadwal** cron memakai Vercel Schedules (glosarium, rilis R2, keputusan 41). Keputusan 42 |

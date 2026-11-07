@@ -6,7 +6,23 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design berjalan. PRD v0.4, Design Spec v0.5, dan design system SIRAMA siap. Berikutnya: mockup di Claude Design, lalu Technical Spec.
+**Status saat ini:** Tahap Design hampir selesai. PRD v0.5, Design Spec v0.5, design system, dan mockup 31 halaman + 12 modal sudah jadi. Laporan Bab I dan Bab II sudah dibuat. Berikutnya: Technical Spec.
+
+---
+
+## Sesi 11: Mockup, laporan Bab I-II, dan penjadwal (Tahap Design)
+
+**Dikerjakan**
+- Mockup lengkap dibuat di Claude Design dengan 4 prompt per kelompok: 31 halaman dan 12 modal dalam 80 artboard. Semua artboard dirender dan diperiksa. Data antarlayar konsisten (kapasitas rack, aturan WO H-7, pengingat H-3, nomor cable, riwayat).
+- PRD naik ke v0.5: Lampiran A (data demo) disamakan dengan mockup, yaitu 34 device, 46 cable, 19 maintenance plan, dan 16 WO, dengan tanggal relatif terhadap hari demo.
+- Laporan Bab I dan Bab II ditulis di `docs/laporan/laporan-bab1-bab2.md` dengan 25 referensi IEEE yang semuanya diperiksa langsung.
+
+**Keputusan**
+- **Penjadwal memakai Vercel Schedules**, bukan Vercel Cron Jobs. Cron Jobs sekarang berstatus legacy. Schedules mendukung zona waktu langsung (`Asia/Jakarta`, pukul 07.00), riwayat eksekusi, dan bisa dijalankan manual saat demo tanpa deploy ulang. Catatan: Schedules masih beta publik.
+- **Referensi hanya yang metadatanya lengkap dan bisa diperiksa.** Sumber yang volume atau halamannya tidak bisa dipastikan dibuang dan diganti sumber lain.
+
+**Berikutnya**
+- Technical Spec (`specs/tech.md`): skema data, struktur proyek Next.js, Vercel Schedules, autentikasi, dan strategi pengujian.
 
 ---
 
