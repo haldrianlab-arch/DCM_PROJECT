@@ -29,6 +29,8 @@ diambil beserta alasannya, dan langkah berikutnya.
 - Next.js 16.4.5, bukan 16.4.6: CI pertama gagal karena pnpm 12 menolak paket yang dirilis kurang dari 24 jam (`minimumReleaseAge`), dan 16.4.6 baru dirilis 1,5 jam sebelum dipasang. Aturan keamanan dipertahankan; naik ke 16.4.6 menyusul di PR terpisah (TR4).
 - Next.js 16.4 bawaan memakai Cache Components; dipertahankan karena itu default template resmi. PR 2 perlu mengikuti panduan `authentication-with-cache-components` di dokumentasi Next.
 - Tailwind `@theme static` agar semua token warna selalu tersedia sebagai variabel CSS (ditemukan saat meninjau screenshot: kotak warna yang tidak dipakai kelas tampil putih).
+- `vercel.json` menetapkan `"framework": "nextjs"`: project Vercel diimpor saat repo belum berisi aplikasi sehingga preset terdeteksi sebagai situs statis, dan preview pertama gagal. Pengaturan disimpan di repo, bukan hanya di dashboard.
+- Preview Vercel dilindungi Vercel Authentication (bawaan). Diuji dengan `vercel curl`: `/` 200, cron tanpa secret 401, cron dengan secret 200, `/dev/components` 404. Koneksi Neon branch `dev` dari lokal teruji (112 tes lulus).
 - Koneksi database lewat `getDb()` (dibuat saat pertama dipakai) agar build tidak gagal tanpa `DATABASE_URL`.
 
 **Berikutnya**
