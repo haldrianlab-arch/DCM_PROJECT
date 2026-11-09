@@ -56,7 +56,9 @@ export function TokenShowcase() {
               />
               <span className="min-w-0">
                 <span className="block text-body-strong">{c.name}</span>
-                <span className="block font-mono text-code break-all text-ink-muted">{c.value}</span>
+                <span className="block font-mono text-code break-all text-ink-muted">
+                  {c.value}
+                </span>
               </span>
             </li>
           ))}

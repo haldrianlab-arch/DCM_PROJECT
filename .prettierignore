@@ -1,0 +1,13 @@
+pnpm-lock.yaml
+.next
+node_modules
+playwright-report
+test-results
+db/migrations
+specs
+docs
+intent
+plans
+CLAUDE.md
+README.md
+AGENTS.md

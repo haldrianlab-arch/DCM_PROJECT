@@ -68,8 +68,7 @@
 
   /* Huruf */
   --font-sans: var(--font-geist-sans), "Geist", "Inter", system-ui, sans-serif;
-  --font-mono:
-    var(--font-geist-mono), "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --text-page-title: 24px;
   --text-page-title--line-height: 32px;

@@ -21,14 +21,14 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-air text-on-fill shadow-xs hover:bg-air-hover active:bg-air-active focus-visible:shadow-ring-focus-gap",
+          "bg-air text-on-fill shadow-xs hover:bg-air-hover focus-visible:shadow-ring-focus-gap active:bg-air-active",
         secondary: [
           "border border-line bg-surface text-ink shadow-xs hover:border-line-strong active:bg-muted",
           "focus-visible:shadow-ring-focus",
         ],
         danger:
-          "bg-status-red text-on-fill shadow-xs hover:bg-danger-hover active:bg-danger-active focus-visible:shadow-ring-focus-gap",
-        ghost: "text-ink hover:bg-muted active:bg-line focus-visible:shadow-ring-focus",
+          "bg-status-red text-on-fill shadow-xs hover:bg-danger-hover focus-visible:shadow-ring-focus-gap active:bg-danger-active",
+        ghost: "text-ink hover:bg-muted focus-visible:shadow-ring-focus active:bg-line",
         text: "text-air hover:underline focus-visible:shadow-ring-focus",
       },
       size: {

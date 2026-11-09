@@ -15,7 +15,11 @@ for (const m of css.matchAll(/(--[\w-]+)\s*:\s*([^;{}]+);/g)) {
 }
 
 const norm = (v: string) =>
-  v.replace(/\s+/g, " ").replace(/\s*,\s*/g, ", ").trim().toLowerCase();
+  v
+    .replace(/\s+/g, " ")
+    .replace(/\s*,\s*/g, ", ")
+    .trim()
+    .toLowerCase();
 
 function expectVar(name: string, value: string) {
   expect(declared.has(name), `${name} tidak ada di globals.css`).toBe(true);

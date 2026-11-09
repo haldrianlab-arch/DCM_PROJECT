@@ -22,7 +22,13 @@ export function LogoSymbol({ className }: { className?: string }) {
   );
 }
 
-export function Logo({ className, showWordmark = true }: { className?: string; showWordmark?: boolean }) {
+export function Logo({
+  className,
+  showWordmark = true,
+}: {
+  className?: string;
+  showWordmark?: boolean;
+}) {
   return (
     <span className={cn("inline-flex items-center gap-2 text-air", className)}>
       <LogoSymbol />
