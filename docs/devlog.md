@@ -6,7 +6,31 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design hampir selesai. PRD v0.6, Design Spec v0.5, design system, dan mockup 31 halaman + 12 modal sudah jadi. Laporan Bab I dan Bab II sudah dibuat. Berikutnya: Technical Spec.
+**Status saat ini:** Tahap Design selesai menunggu review Technical Spec v0.1. UTS sudah didemokan; laporan Bab I-II siap dikumpulkan. Berikutnya: Build dimulai dari PR 1 (fondasi), target UAS R1 + R2.
+
+---
+
+## Sesi 12: Technical Spec (Tahap Design)
+
+**Dikerjakan**
+- Brainstorm keputusan teknis lewat tiga ronde pilihan ganda, lalu `specs/tech.md` v0.1 ditulis: stack, struktur proyek, skema database, logika inti, auth, pola server action, cron, QR, seed, pengujian, lingkungan, dan urutan 13 PR.
+
+**Keputusan** (rinci di tech.md §1 dan §14)
+- Better Auth (plugin admin) untuk login dan manajemen user.
+- Server Actions untuk mutasi; Route Handler hanya untuk cron, QR, dan simulator.
+- shadcn/ui + Tailwind v4 dengan token SIRAMA.
+- Impact analysis daya dihitung di TypeScript sebagai fungsi murni.
+- Audit log ditulis di kode aplikasi dalam transaksi yang sama; setiap action punya tes yang memastikan audit tertulis.
+- Cable `port_a`/`port_b`; cable daya selalu outlet di A, inlet di B.
+- Tenggat dan garansi bertipe `date` WIB; waktu kejadian `timestamptz`.
+- Neon branch untuk dev, CI, dan preview; PR per fitur dengan CI dan preview Vercel.
+- Tes: setiap aturan BR wajib unit test, setiap action punya tes integrasi, satu E2E per alur Must.
+- Kode ditulis sebagian besar lewat AI; tim meninjau PR dan preview.
+- Target UAS: R1 + R2.
+- Diputuskan saat menulis spec (bisa ditinjau ulang): status Maintenance tidak disimpan tetapi diturunkan dari WO Dikerjakan, agar BR-11 tidak butuh kode sinkronisasi; nomor asset tag dan WO dari tabel `counters` agar tidak ada nomor terlewat; driver `neon-serverless` karena `neon-http` tidak mendukung transaksi.
+
+**Berikutnya**
+- Review tech.md, lalu PR 1 (fondasi).
 
 ---
 
