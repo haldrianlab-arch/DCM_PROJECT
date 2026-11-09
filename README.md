@@ -38,10 +38,22 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
 | Design | [`specs/PRD.md`](specs/PRD.md) v0.7, [`specs/design.md`](specs/design.md) v0.6, [design system](specs/design-system/), [`specs/tech.md`](specs/tech.md) v0.2 (lihat [indeks](specs/README.md)) | ✅ Selesai |
-| Build | [`CLAUDE.md`](CLAUDE.md), `plans/*.md`, source code | ⏳ Berikutnya |
+| Build | [`CLAUDE.md`](CLAUDE.md), [`plans/`](plans/), source code | ⏳ Berjalan (PR 1 fondasi) |
 | Test | Test suite + tabel blackbox testing | — |
 | Deploy | Vercel | — |
 | Maintain | Bug dan masukan → intent baru | — |
+
+## Menjalankan lokal
+
+Butuh Node 22 dan pnpm.
+
+```
+pnpm install
+cp .env.example .env.local   # isi DATABASE_URL (Neon branch dev) dan CRON_SECRET
+pnpm dev
+```
+
+Perintah lain (tes, lint, migrasi) ada di [`CLAUDE.md`](CLAUDE.md) bagian Perintah.
 
 ## Struktur repo
 
