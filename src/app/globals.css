@@ -1,0 +1,230 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * Token SIRAMA.
+ * Sumber kebenaran: specs/design-system/tokens.json (mengalahkan angka di design.md §4).
+ * Setiap nilai di sini dicek tests/unit/tokens.test.ts. Bila token berubah, ubah tokens.json
+ * dulu, lalu samakan berkas ini sampai tes lulus.
+ */
+
+@theme {
+  /* Netral (zinc) */
+  --color-ink: #18181b;
+  --color-ink-muted: #6b6b73;
+  --color-surface: #ffffff;
+  --color-canvas: #fafafa;
+  --color-sidebar: var(--color-canvas);
+  --color-muted: #f4f4f5;
+  --color-line: #e4e4e7;
+  --color-line-strong: #d4d4d8;
+
+  /* Aksen tunggal */
+  --color-air: #0a6c8c;
+  --color-air-soft: #e1f1f6;
+  --color-air-ring: rgba(10, 108, 140, 0.2);
+  --color-on-fill: #ffffff;
+  --color-overlay: rgba(0, 0, 0, 0.4);
+
+  /* Status: lencana lembut */
+  --color-status-green: #1a7f50;
+  --color-status-green-soft: #edf5f1;
+  --color-status-green-text: #166c44;
+  --color-status-green-line: #bfdbce;
+  --color-status-amber: #9a5b00;
+  --color-status-amber-soft: #f7f2eb;
+  --color-status-amber-text: #834d00;
+  --color-status-amber-line: #e3d1b8;
+  --color-status-indigo: #5b4fc4;
+  --color-status-indigo-soft: #f2f1fa;
+  --color-status-indigo-text: #4d43a7;
+  --color-status-indigo-line: #d1ceee;
+  --color-status-gray: #52525b;
+  --color-status-gray-soft: #f4f4f5;
+  --color-status-gray-text: #52525b;
+  --color-status-gray-line: #e4e4e7;
+  --color-status-gray-dark: #3f3f46;
+  --color-status-gray-dark-soft: #e4e4e7;
+  --color-status-gray-dark-text: #27272a;
+  --color-status-gray-dark-line: #d4d4d8;
+  --color-status-red: #c2382f;
+  --color-status-red-soft: #faefee;
+  --color-status-red-text: #a53028;
+  --color-status-red-line: #eec7c5;
+
+  /* Device function (khusus elevation rack dan peta room) */
+  --color-fn-server-fill: #e4eef7;
+  --color-fn-server-edge: #3b6e9e;
+  --color-fn-network-fill: #f4ecdd;
+  --color-fn-network-edge: #9a6a1f;
+  --color-fn-storage-fill: #e6f2ec;
+  --color-fn-storage-edge: #2f7a57;
+  --color-fn-patch-fill: #eeeef0;
+  --color-fn-patch-edge: #6e6e78;
+  --color-fn-power-fill: #f7e6e3;
+  --color-fn-power-edge: #a4483c;
+  --color-fn-other-fill: #f4f4f5;
+  --color-fn-other-edge: #71717a;
+
+  /* Huruf */
+  --font-sans: var(--font-geist-sans), "Geist", "Inter", system-ui, sans-serif;
+  --font-mono:
+    var(--font-geist-mono), "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --text-page-title: 24px;
+  --text-page-title--line-height: 32px;
+  --text-page-title--font-weight: 600;
+  --text-page-title--letter-spacing: -0.02em;
+  --text-section-title: 18px;
+  --text-section-title--line-height: 28px;
+  --text-section-title--font-weight: 600;
+  --text-section-title--letter-spacing: -0.01em;
+  --text-card-title: 14px;
+  --text-card-title--line-height: 20px;
+  --text-card-title--font-weight: 600;
+  --text-body: 14px;
+  --text-body--line-height: 20px;
+  --text-body--font-weight: 400;
+  --text-body-strong: 14px;
+  --text-body-strong--line-height: 20px;
+  --text-body-strong--font-weight: 500;
+  --text-small: 13px;
+  --text-small--line-height: 18px;
+  --text-small--font-weight: 400;
+  --text-location-lg: 20px;
+  --text-location-lg--line-height: 28px;
+  --text-location-lg--font-weight: 600;
+  --text-location-lg--letter-spacing: -0.01em;
+  --text-label-xs: 12px;
+  --text-label-xs--line-height: 16px;
+  --text-label-xs--font-weight: 500;
+  --text-code: 13px;
+  --text-code--line-height: 20px;
+  --text-code--font-weight: 400;
+  --text-code-strong: 13px;
+  --text-code-strong--line-height: 20px;
+  --text-code-strong--font-weight: 500;
+
+  /* Jarak: skala 4 px (space-1 = 4px ... space-8 = 32px) */
+  --spacing: 4px;
+
+  /* Sudut */
+  --radius-rack: 2px;
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --radius-modal: 12px;
+
+  /* Bayangan */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-overlay: 0 24px 48px -12px rgba(0, 0, 0, 0.18), 0 8px 16px -8px rgba(0, 0, 0, 0.08);
+  --shadow-ring-focus: 0 0 0 1px #0a6c8c, 0 0 0 4px rgba(10, 108, 140, 0.2);
+
+  /* Ukuran tetap komponen dan tata letak (dipakai sebagai h-*, w-*, size-*) */
+  --spacing-sidebar-width: 240px;
+  --spacing-sidebar-collapsed: 64px;
+  --spacing-header-height: 56px;
+  --spacing-header-height-mobile: 52px;
+  --spacing-bottom-nav-height: 60px;
+  --spacing-control-height: 36px;
+  --spacing-table-row: 40px;
+  --spacing-table-head: 36px;
+  --spacing-badge-height: 22px;
+  --spacing-touch-target: 44px;
+  --spacing-rack-unit: 22px;
+  --spacing-form-max: 720px;
+  --spacing-ring-width: 3px;
+  --spacing-function-edge: 4px;
+  --spacing-icon-inline: 16px;
+  --spacing-icon-nav: 20px;
+
+  /* Lebar layar HP: 768 px atau kurang */
+  --breakpoint-md: 768px;
+
+  /* Blur latar modal, satu-satunya efek blur */
+  --blur-overlay: 4px;
+}
+
+:root {
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --opacity-disabled: 0.5;
+}
+
+/*
+ * Nama semantik shadcn/ui dipetakan ke token SIRAMA, agar komponen yang
+ * ditambahkan lewat `shadcn add` langsung memakai token tanpa warna bawaan.
+ */
+@theme inline {
+  --color-background: var(--color-canvas);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-air);
+  --color-primary-foreground: var(--color-on-fill);
+  --color-secondary: var(--color-surface);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted-foreground: var(--color-ink-muted);
+  --color-accent: var(--color-muted);
+  --color-accent-foreground: var(--color-ink);
+  --color-destructive: var(--color-status-red);
+  --color-border: var(--color-line);
+  --color-input: var(--color-line);
+  --color-ring: var(--color-air);
+
+  /*
+   * Turunan token untuk keadaan komponen (design.md §8.1), bukan warna baru:
+   * isian pekat "sedikit lebih gelap" saat disorot dan ditekan, dan fokus tombol pekat
+   * = ring-focus didahului celah surface 2 px.
+   */
+  --color-air-hover: color-mix(in oklab, var(--color-air) 88%, black);
+  --color-air-active: color-mix(in oklab, var(--color-air) 78%, black);
+  --color-danger-hover: color-mix(in oklab, var(--color-status-red) 88%, black);
+  --color-danger-active: color-mix(in oklab, var(--color-status-red) 78%, black);
+  --shadow-ring-focus-gap:
+    0 0 0 2px var(--color-surface), 0 0 0 3px var(--color-air), 0 0 0 6px var(--color-air-ring);
+
+  --radius-sm: var(--radius-rack);
+  --radius-md: var(--radius-control);
+  --radius-lg: var(--radius-card);
+  --radius-xl: var(--radius-modal);
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Pengenal (nama device, nama rack, lokasi singkat, nomor U): nol bergaris Geist ss09 */
+@utility sr-id {
+  font-feature-settings: "ss09";
+}
+
+/* Gerak hanya respons aksi user; dimatikan bila "kurangi gerakan" aktif */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
