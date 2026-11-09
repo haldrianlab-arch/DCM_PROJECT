@@ -39,6 +39,11 @@ Bila menemukan pertentangan atau celah di dokumen, berhenti dan tanyakan. Jangan
 6. Commit kecil dan bermakna. Buka PR berisi ringkasan, daftar AC yang dicakup, dan cara meninjau di preview.
 7. Setelah merge: tambahkan entri sesi di `docs/devlog.md` (dikerjakan, keputusan, berikutnya) dan perbarui baris "Status saat ini".
 
+**Kebiasaan sesi:**
+- Satu sesi Claude Code untuk satu PR. Setelah PR selesai, tim memulai sesi baru atau `/clear`.
+- Di awal sesi, baca baris "Status saat ini" dan entri terakhir `docs/devlog.md` untuk tahu posisi kerja.
+- Sebelum sesi ditutup, walaupun PR belum selesai, tulis catatan singkat di devlog: apa yang sudah jadi, apa yang belum, dan langkah berikutnya, agar sesi lain (termasuk sesi diskusi di luar Claude Code) bisa melanjutkan.
+
 **Definisi selesai:** semua AC terkait punya tes otomatis yang lulus, BR terkait punya unit test, `typecheck` dan `lint` bersih, CI hijau, dan sudah ditinjau di preview Vercel.
 
 ## Aturan kode

@@ -34,7 +34,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Berikutnya**
 - PR 1 (fondasi) di Claude Code, dimulai di plan mode.
-- Laporan Bab I-II perlu disesuaikan bila belum dikumpulkan: 1.2, 1.3 tujuan 4, 1.4 butir 4, 2.1.6, dan 2.4 butir 3 masih menyebut jalur data satu lompatan.
+- Laporan Bab I-II sudah disesuaikan dengan impact analysis data berantai (1.1, 1.2, 1.3, 1.4, 2.1.6, 2.4) dan .docx dibuat ulang.
 - Mockup KOM-36 perlu diperbarui untuk baris tidak langsung pada kedua kelompok.
 
 ---
