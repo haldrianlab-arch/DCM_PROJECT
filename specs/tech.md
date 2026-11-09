@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| Versi | 0.1 (draf untuk review) |
+| Versi | 0.2 |
 | Tanggal | 10 Nov 2026 |
 | Tahap | Design (dokumen terakhir sebelum Build) |
-| Acuan | [`PRD.md`](PRD.md) v0.6 (apa yang dibangun), [`design.md`](design.md) v0.5 (bagaimana user mengalaminya) |
+| Acuan | [`PRD.md`](PRD.md) v0.7 (apa yang dibangun), [`design.md`](design.md) v0.6 (bagaimana user mengalaminya) |
 
 Dokumen ini menjelaskan **bagaimana SIRAMA dibangun**: stack, struktur kode, skema database, logika inti, keamanan, pengujian, dan urutan pengerjaan. Field entitas tetap mengacu ke PRD Lampiran C; halaman dan URL mengacu ke design.md §5.1. Bila dokumen ini bertentangan dengan PRD tentang perilaku, PRD yang benar dan dokumen ini diperbaiki.
 
@@ -22,7 +22,7 @@ Diputuskan pada sesi 12 (10 Nov 2026) dengan pilihan ganda; alasan lengkap di §
 | T3 | Database | PostgreSQL di Neon, diakses lewat Drizzle ORM dengan driver `neon-serverless` (WebSocket `Pool`) agar transaksi interaktif tersedia |
 | T4 | Mutasi data | Server Actions; Route Handler hanya untuk cron, gambar QR, dan simulator (Could) |
 | T5 | UI | shadcn/ui + Tailwind CSS v4, token SIRAMA dipetakan ke variabel CSS |
-| T6 | Impact analysis | Dihitung di TypeScript (fungsi murni), datanya diambil dengan satu query |
+| T6 | Impact analysis | Daya dan data berantai dengan satu fungsi murni TypeScript (`chainImpact`); arah data dari port uplink |
 | T7 | Audit log | Ditulis di kode aplikasi, dalam transaksi yang sama dengan perubahan data |
 | T8 | Cable | Kolom `port_a_id` dan `port_b_id`; untuk cable daya, A selalu power outlet dan B selalu power inlet |
 | T9 | Tanggal | Tenggat, jadwal, dan garansi bertipe `date` dalam WIB; waktu kejadian bertipe `timestamptz` |
@@ -78,7 +78,7 @@ src/
     sirama/                     komponen khusus (KOM-32 s.d. KOM-46)
   domain/                       logika murni tanpa database, diuji unit
     rack-placement.ts           BR-01 s.d. BR-04
-    power-impact.ts             BR-21, US-IMP
+    chain-impact.ts             BR-21, BR-22, US-IMP
     work-order-rules.ts         BR-08 s.d. BR-11, BR-16, BR-18
     dates.ts                    hari ini WIB, tambah interval, garansi, terlambat
     power-estimate.ts           BR-19
@@ -152,14 +152,14 @@ Label tampilan bahasa Indonesia (Stok, Aktif, Terjadwal, ...) ada di satu berkas
 | `manufacturers` | `name` | unik |
 | `device_functions` | `name`, `category` | `name` unik |
 | `models` | `manufacturer_id`, `name`, `height_u` (0 = 0U), `full_depth` (bool), `max_power_w` (int null) | unik (`manufacturer_id`, `name`) |
-| `port_templates` | `model_id`, `name`, `kind`, `connector` (text null), `position` | unik (`model_id`, `name`) |
+| `port_templates` | `model_id`, `name`, `kind`, `connector` (text null), `is_uplink` (bool), `position` | unik (`model_id`, `name`); CHECK `is_uplink` hanya bila `kind = data` |
 
 **Device, port, cable**
 
 | Tabel | Kolom penting | Constraint |
 |---|---|---|
 | `devices` | `asset_tag`, `name`, `model_id`, `function_id`, `serial` (null), `status`, `room_id` (null), `rack_id` (null), `face` (null), `position_u` (null), `purchase_date` (date null), `vendor` (text null), `warranty_end` (date null) | `asset_tag` unik; `name` unik; `serial` unik bila tidak null; CHECK BR-05: status `stock`/`retired` ⇒ `room_id`, `rack_id`, `face`, `position_u` null; status `active` ⇒ `room_id` tidak null; `rack_id` ada ⇒ `room_id` sama dengan room rack (dicek di aplikasi) |
-| `ports` | `device_id`, `name`, `kind`, `connector`, `is_manual` (bool), `position` | unik (`device_id`, `name`) |
+| `ports` | `device_id`, `name`, `kind`, `connector`, `is_uplink` (bool), `is_manual` (bool), `position` | unik (`device_id`, `name`); CHECK `is_uplink` hanya bila `kind = data` |
 | `cables` | `label`, `type`, `color` (null), `length_m` (numeric null), `port_a_id`, `port_b_id` | `label` unik; `port_a_id` unik; `port_b_id` unik; CHECK `port_a_id <> port_b_id` |
 
 Aturan yang tidak bisa dinyatakan dengan constraint sederhana dijaga di server action dan diuji: satu port tidak boleh muncul di `port_a_id` satu cable dan `port_b_id` cable lain; jenis port cocok (BR-06); arah daya (T8); kedua ujung bukan device yang sama.
@@ -215,22 +215,33 @@ Kasus uji minimal: semua AC US-DEV-02, ditambah U1, U tertinggi, irisan sebagian
 
 ### 5.2 Impact analysis
 
-**Data (satu lompatan, US-IMP-01):** query semua cable yang salah satu ujungnya port milik device X, lalu ambil device di ujung lain. Kueri memeriksa `port_a_id` dan `port_b_id` (risiko R4).
+Daya dan data memakai **satu algoritma yang sama** (BR-21). Yang berbeda hanya cara membentuk sisi hulu → hilir dari data cable.
 
-**Daya (berantai, BR-21, US-IMP-03/04):** query mengambil seluruh cable daya sekali (`outlet device → inlet device`, beserta id inlet), lalu:
+**Membentuk sisi berarah** (satu query per jenis, mengambil semua cable sekaligus; memeriksa `port_a_id` dan `port_b_id`, risiko R4):
+
+- **Daya:** setiap cable daya menjadi sisi `device port A (outlet) → device port B (inlet)`, dengan `inletPortId` = port B.
+- **Data (BR-22):** bila tepat satu ujung cable adalah port uplink, sisi berjalan dari device di ujung bukan uplink ke device pemilik uplink, dengan `inletPortId` = port uplink. Cable tanpa arah (kedua ujung uplink atau keduanya bukan) tidak menjadi sisi; device di ujungnya ditambahkan ke hasil sebagai "terhubung langsung, tanpa arah" bila salah satu ujungnya root.
 
 ```ts
-type PowerEdge = { fromDevice: string; toDevice: string; inletPortId: string }
-powerImpact(root: string, edges: PowerEdge[]): Array<{ deviceId: string; via: string | null; depth: number; outcome: 'down' | 'backup' }>
+type Edge = { from: string; to: string; inletPortId: string }
+type Impact = { deviceId: string; via: string | null; depth: number; outcome: 'down' | 'backup' }
+chainImpact(root: string, edges: Edge[]): Impact[]
 ```
 
-1. `dead = {root}`, antrean berisi device yang disuplai root.
-2. Untuk setiap device D di antrean: kumpulkan inlet D yang tersambung. Bila semua sumbernya ada di `dead`, D masuk `dead` dengan `outcome = 'down'`, dan device yang disuplai D masuk antrean. Bila ada sumber yang tidak mati, D dicatat `outcome = 'backup'` dan tidak diteruskan.
-3. Ulangi sampai antrean habis. Karena device bisa dicek ulang setelah sumber lain ikut mati, status `backup` dapat berubah menjadi `down`; hasil akhir diambil setelah tidak ada perubahan.
-4. `via` = device mati pertama yang menyuplainya (untuk keterangan "lewat [device]"); `depth` 1 = langsung.
-5. Hasil unik per device (US-IMP-04 AC4). Siklus pada data (misalnya kabel salah) tidak membuat loop karena device yang sudah `down` tidak diproses ulang.
+1. `dead = {root}`, antrean berisi device hilir root.
+2. Untuk setiap device D di antrean: kumpulkan inlet D (power inlet atau port uplink) yang punya sisi. Bila semua sumbernya ada di `dead`, D masuk `dead` dengan `outcome = 'down'`, dan device hilir D masuk antrean. Bila ada sumber yang tidak mati, D dicatat `outcome = 'backup'` dan tidak diteruskan.
+3. Ulangi sampai antrean habis. Device `backup` dicek ulang bila sumber lainnya kemudian ikut mati, sehingga dapat berubah menjadi `down`; hasil akhir diambil setelah tidak ada perubahan.
+4. `via` = device mati pertama yang menjadi sumbernya (untuk keterangan "lewat [device]"); `depth` 1 = langsung.
+5. Hasil unik per device (US-IMP-04 AC3). Siklus pada data (misalnya kabel salah catat) tidak membuat loop karena device yang sudah `down` tidak diproses ulang.
 
-Kasus uji minimal: PDU tunggal; server dua PSU ke PDU-A dan PDU-B (backup); UPS → dua PDU → server dua PSU (keduanya mati, jadi server `down`); rantai tiga tingkat; data berisi siklus.
+Label di UI: daya → "Ikut mati" / "Tetap menyala lewat jalur cadangan"; data → "Ikut terputus" / "Tetap terhubung lewat jalur cadangan".
+
+**Daftar device terhubung langsung** di halaman detail device (US-IMP-01) tetap query satu lompatan biasa, karena tujuannya menampilkan port di kedua ujung.
+
+Kasus uji minimal:
+- Daya: PDU tunggal; server dua PSU ke PDU-A dan PDU-B (backup); UPS → dua PDU → server dua PSU (keduanya mati, jadi server `down`); rantai tiga tingkat.
+- Data: core → 4 ToR → 12 server (data demo); server dengan dua uplink ke dua ToR berbeda (backup); cable tanpa arah tidak diteruskan; arah benar dari ujung A maupun B.
+- Umum: data berisi siklus; device tanpa cable.
 
 ### 5.3 Status device dan WO
 
@@ -345,7 +356,7 @@ export async function placeDevice(input: unknown) {
 
 | Jenis | Alat | Cakupan | Kapan jalan |
 |---|---|---|---|
-| Unit | Vitest | Semua fungsi `domain/`: BR-01 s.d. BR-05, BR-08 s.d. BR-11, BR-16, BR-18, BR-19, BR-21 | Lokal dan setiap PR |
+| Unit | Vitest | Semua fungsi `domain/`: BR-01 s.d. BR-05, BR-08 s.d. BR-11, BR-16, BR-18, BR-19, BR-21, BR-22 | Lokal dan setiap PR |
 | Integrasi | Vitest + database Neon branch CI | Setiap server action: hak akses per peran, constraint, audit tertulis; query impact analysis dari kedua ujung cable; cron dengan `today` tetap dan dijalankan dua kali | Setiap PR |
 | E2E | Playwright | Satu alur per epic Must: login per peran, tambah device dengan bentrok, sambung cable, buat WO dan lihat dampak, kerjakan WO di viewport 375 px, pindai QR tanpa login | Setiap PR (preview) dan sebelum rilis |
 
@@ -380,7 +391,7 @@ Hasil Playwright (laporan HTML) menjadi bahan tabel blackbox Bab IV (PRD M5).
 | T3 | `neon-http` | Driver HTTP tidak mendukung transaksi interaktif, padahal hampir setiap action perlu transaksi (audit, nomor berurutan, kunci rack). |
 | T4 | REST API penuh | Server Actions mengurangi kode separuhnya dan skema Zod dipakai bersama. Tidak ada kebutuhan API publik. |
 | T5 | Mantine, Tailwind murni | Gaya design system mengikuti shadcn/ui; komponennya disalin ke repo sehingga bisa disesuaikan penuh dengan token. |
-| T6 | Recursive CTE | Aturan jalur cadangan sulit ditulis dan dites di SQL; datanya kecil. |
+| T6 | Recursive CTE; data tetap satu lompatan | Aturan jalur cadangan sulit ditulis dan dites di SQL; datanya kecil. Data ikut berantai karena maintenance core switch pada data demo tidak tertangani satu lompatan, dan algoritmanya bisa dipakai bersama dengan daya. |
 | T7 | Trigger PostgreSQL | Pelaku dan aksi bermakna (misalnya "menyelesaikan WO") lebih jelas di aplikasi; risiko terlewat ditutup dengan tes. |
 | T8 | A/B tanpa aturan urutan | Arah daya langsung terbaca dari kolom, query dampak lebih sederhana. |
 | T9 | Semua `timestamptz` | Perhitungan H-7/H-3 dan terlambat rawan meleset sehari di sekitar tengah malam WIB. |
@@ -402,7 +413,7 @@ Target UAS: R1 + R2 (semua Must). Should dikerjakan setelah semua Must lulus (ri
 | 4 | Lokasi dan rack | E2: site, room, rack (modal), HAL-06, HAL-07 dengan elevation (KOM-32) | 2, 3 |
 | 5 | Katalog | E3: manufacturer, device function, model + port template | 3 |
 | 6 | Device | E4: form device dengan pratinjau dan validasi (KOM-33), detail, status, hapus | 4, 5 |
-| 7 | Cable | E5 + US-IMP-01 + impact daya berantai (KOM-36) | 6 |
+| 7 | Cable | E5 + US-IMP-01 s.d. US-IMP-05: impact berantai daya dan data (KOM-36) | 6 |
 | 8 | User, pencarian, audit log | US-AUTH-02, US-SRCH-01, US-AUD-01 | 2, 6 |
 | — | **Rilis R1** | Seed inventaris lengkap; semua AC E1-E5 lulus | |
 | 9 | Maintenance plan | US-MP-01, HAL-16 s.d. HAL-18 | 6 |
@@ -412,7 +423,7 @@ Target UAS: R1 + R2 (semua Must). Should dikerjakan setelah semua Must lulus (ri
 | 13 | Dashboard | US-DASH-01 dengan peta room (KOM-34) | 10 |
 | — | **Rilis R2** | Seed lengkap Lampiran A; semua AC Must lulus; cron berjalan di produksi | |
 
-Setiap PR dimulai dengan `plan.md` singkat (AI-Native SDLC tahap Build) yang dicatat di deskripsi PR.
+Setiap PR dimulai dengan rencana singkat di `plans/NN-nama.md` (AI-Native SDLC tahap Build), dibuat di plan mode dan disetujui tim sebelum kode ditulis. Rencana ikut di-commit sebagai jejak audit.
 
 ---
 
@@ -433,3 +444,4 @@ Setiap PR dimulai dengan `plan.md` singkat (AI-Native SDLC tahap Build) yang dic
 | Versi | Tanggal | Perubahan |
 |---|---|---|
 | 0.1 | 10 Nov 2026 | Draf pertama dari keputusan sesi 12 |
+| 0.2 | 10 Nov 2026 | Disetujui. Impact analysis data ikut berantai lewat port uplink (PRD v0.7): `chainImpact` untuk daya dan data, kolom `is_uplink`, kasus uji data |

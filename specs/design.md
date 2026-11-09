@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| Versi | 0.5 (identitas visual mengikuti design system SIRAMA) |
+| Versi | 0.6 (panel dampak berantai untuk daya dan data) |
 | Tanggal | 11 Oktober 2026 |
 | Sumber | [`intent/asset-maintenance.md`](../intent/asset-maintenance.md), [`specs/PRD.md`](PRD.md) v0.4 |
 | Tahap SDLC | Design |
@@ -499,21 +499,20 @@ Struktur site → room → rack dalam satu halaman. Dipakai di HAL-06.
 
 #### KOM-36 Panel dampak
 
-Menunjukkan device yang terdampak bila sebuah device dimatikan: device yang terhubung langsung, ditambah device di hilir rantai daya (US-IMP-04). Dipakai di HAL-14 dan HAL-17 (setelah device dipilih), HAL-15 (ringkas, untuk WO preventif maupun korektif), dan HAL-10 tab Port & cable.
+Menunjukkan device yang terdampak bila sebuah device dimatikan: device yang terhubung langsung, ditambah device di hilir rantai daya (US-IMP-04) dan rantai data (US-IMP-05). Dipakai di HAL-14 dan HAL-17 (setelah device dipilih), HAL-15 (ringkas, untuk WO preventif maupun korektif), dan HAL-10 tab Port & cable.
 
 **Wajib**
 - Kotak berlatar `status-amber-soft` dengan garis tepi 1 px `status-amber-line` di sekelilingnya (bukan garis kiri tebal, §4.3), ikon peringatan amber, dan judul *"[jumlah] device terhubung ke [nama device]"*.
 - Dua kelompok berurutan, **Data** lalu **Daya**, masing-masing berjudul dengan jumlahnya. Kelompok kosong tidak ditampilkan.
 - Setiap baris: nama device terhubung (tautan ke HAL-10), port di device itu, simbol penghubung, lalu port di device yang dibahas.
-- Kelompok Data: semua cable data dari arah mana pun (satu lompatan).
-- Kelompok Daya: ditelusuri berantai menurut BR-21. Device yang terdampak tidak langsung ditampilkan di bawah device yang menyuplainya, menjorok satu tingkat, dengan keterangan *"lewat [nama device]"* sebagai pengganti pasangan port.
+- Kelompok Data dan Daya sama-sama ditelusuri berantai menurut BR-21 (arah data menurut BR-22). Device yang terdampak tidak langsung ditampilkan di bawah device yang menyuplainya, menjorok satu tingkat, dengan keterangan *"lewat [nama device]"* sebagai pengganti pasangan port.
 - Selalu dihitung dari data cable saat halaman dibuka; tidak disimpan pada WO (US-IMP-02 AC4).
 - Bila tidak ada device terhubung: kotak berlatar `muted` tanpa ikon peringatan, teks *"Tidak ada device terhubung."*
 - Panel hanya informasi; tidak menghalangi penyimpanan form.
 - Versi ringkas (HAL-15): hanya judul dan jumlah; diklik membuka daftar lengkap.
-- *(US-IMP-03)* Kelompok Daya diberi keterangan *"Bila [nama device] dimatikan:"* di bawah judulnya. Setiap device yang menerima daya diberi label di ujung baris: **"Tetap menyala lewat jalur cadangan"** (abu, ikon `circle-check`) atau **"Ikut mati, tanpa jalur cadangan"** (amber, ikon `triangle-alert`). Label ini menggambarkan akibat bila device dimatikan, bukan kondisi saat ini, sehingga tidak memakai merah.
+- *(US-IMP-03)* Kelompok Daya diberi keterangan *"Bila [nama device] dimatikan:"* di bawah judulnya. Setiap device yang menerima daya diberi label di ujung baris: **"Tetap menyala lewat jalur cadangan"** (abu, ikon `circle-check`) atau **"Ikut mati, tanpa jalur cadangan"** (amber, ikon `triangle-alert`). Kelompok Data memakai pola yang sama dengan kata **"Tetap terhubung lewat jalur cadangan"** dan **"Ikut terputus, tanpa jalur cadangan"** (US-IMP-05); cable data tanpa arah (BR-22 AC3) tampil sebagai terhubung langsung tanpa label. Label ini menggambarkan akibat bila device dimatikan, bukan kondisi saat ini, sehingga tidak memakai merah.
 
-Referensi: US-IMP-01, US-IMP-02, US-IMP-03, US-IMP-04.
+Referensi: US-IMP-01 s.d. US-IMP-05.
 
 #### KOM-37 Checklist pengerjaan
 
@@ -548,7 +547,7 @@ Menyusun daftar item checklist di form. Dipakai di HAL-14 dan HAL-17.
 
 Menyusun port template sebuah model. Dipakai di HAL-23.
 
-**Wajib:** tabel yang bisa diedit; setiap baris berisi nama, jenis (KOM-09: Data, Power inlet, Power outlet), dan tipe konektor (opsional), serta tombol hapus baris. Tombol "Tambah port" di bawah. Nama ganda dalam satu model ditandai error di barisnya.
+**Wajib:** tabel yang bisa diedit; setiap baris berisi nama, jenis (KOM-09: Data, Power inlet, Power outlet), tipe konektor (opsional), dan checkbox **Uplink** (hanya aktif untuk jenis Data; BR-22), serta tombol hapus baris. Tombol "Tambah port" di bawah. Nama ganda dalam satu model ditandai error di barisnya.
 
 *(Should, US-CAT-03)* **Pola rentang:** kolom nama menerima pola seperti `port[1-48]` atau `eth[0-3]`. Saat pola diketik, di bawah baris tampil keterangan *"Akan menjadi 48 port: port1 sampai port48"*. Saat disimpan atau saat kolom ditinggalkan, satu baris pola dijabarkan menjadi baris-baris terpisah dengan jenis dan tipe konektor yang sama. Teks bantuan di atas tabel menjelaskan cara penulisan pola.
 
@@ -714,7 +713,7 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 | Tab | Isi |
 |---|---|
 | Ringkasan | Lokasi lengkap (site, room, rack, U, sisi) dengan KOM-33 bila di rack; model, device function, serial number; tanggal beli, vendor, akhir garansi; QR code |
-| Port & cable | Tabel port: nama, jenis, tipe konektor, tersambung ke (device · port, tautan), label cable. Port yang ditambahkan manual diberi keterangan kecil *"manual"*. Aksi Admin per baris: port kosong → "Sambungkan" (HAL-12 dengan Ujung A terisi); port tersambung → menu titik tiga berisi "Ubah cable" (HAL-12) dan "Lepas cable" (MOD-06). *(Should, US-DEV-06)* Tombol "Tambah port" di atas tabel (MOD-11), dan menu titik tiga setiap port berisi "Ubah port" (MOD-11) dan "Hapus port" (MOD-06; varian informasi bila port tersambung). Di bawah tabel: KOM-36 |
+| Port & cable | Tabel port: nama, jenis, tipe konektor, tersambung ke (device · port, tautan), label cable. Port yang ditambahkan manual diberi keterangan kecil *"manual"*; port uplink diberi keterangan kecil *"uplink"*. Aksi Admin per baris: port kosong → "Sambungkan" (HAL-12 dengan Ujung A terisi); port tersambung → menu titik tiga berisi "Ubah cable" (HAL-12) dan "Lepas cable" (MOD-06). *(Should, US-DEV-06)* Tombol "Tambah port" di atas tabel (MOD-11), dan menu titik tiga setiap port berisi "Ubah port" (MOD-11) dan "Hapus port" (MOD-06; varian informasi bila port tersambung). Di bawah tabel: KOM-36 |
 | Maintenance | WO terbuka (KOM-42), maintenance plan aktif (judul, interval, tenggat berikutnya), riwayat WO (nomor, judul, jenis, teknisi, tenggat, status). Aksi Admin: "Tambah maintenance plan" (HAL-17 dengan device terisi) |
 | Riwayat | Audit log khusus device ini (waktu, pelaku, aksi); klik baris membuka MOD-09 |
 
@@ -932,7 +931,7 @@ Format setiap halaman: URL, template, peran yang boleh membuka, pintu masuk (dar
 
 ### MOD-11 Port (Should)
 - **Template:** TPL-04. **Dibuka dari:** HAL-10 tab Port & cable ("Tambah port" atau "Ubah port").
-- **Field:** nama; jenis (KOM-09: Data, Power inlet, Power outlet; terkunci pada mode ubah bila port tersambung, dengan keterangan *"Jenis tidak dapat diubah selama port tersambung cable."*); tipe konektor (opsional).
+- **Field:** nama; jenis (KOM-09: Data, Power inlet, Power outlet; terkunci pada mode ubah bila port tersambung, dengan keterangan *"Jenis tidak dapat diubah selama port tersambung cable."*); tipe konektor (opsional); checkbox Uplink (hanya untuk jenis Data).
 - **Teks bantuan:** *"Perubahan hanya berlaku untuk device ini. Model dan device lain tidak berubah."*
 - **Referensi:** US-DEV-06.
 
@@ -1030,3 +1029,4 @@ Berdasarkan [naskah demo](../docs/demo-script.md), halaman berikut dipoles palin
 | 0.3 | 8 Okt 2026 | **Struktur:** bagian cara membaca dengan konvensi rujukan (§1); inventaris template (§7), komponen (§8), halaman (§9), dan modal (§10) dengan ID; setiap halaman menyebut template, peran, pintu masuk, dan referensi. **Sketsa:** semua sketsa ASCII dan emoji dihapus; komponen khusus dideskripsikan dengan bagian Wajib dan Bebas. **Prinsip:** "Cegah di tampilan, tolak di server" menjadi "Cegah kesalahan sebelum terjadi"; "Lapangan dulu" diperjelas menjadi "Mudah dipakai teknisi di ruang server"; prinsip konsistensi ditambahkan. **Ikon:** Lucide. **Penamaan:** mengikuti PRD v0.3 (nama entitas bahasa Inggris, "tenggat"); URL bahasa Inggris. **Dari PRD v0.3:** notifikasi Admin (lonceng, bar bawah, jenis notifikasi, MOD-08 dari notifikasi); device tanpa rack (form device, peta room, pohon lokasi, filter); nomor WO; info asal WO (KOM-44); judul WO korektif; data pembelian opsional dengan nama bagian "Pembelian & garansi"; status device terkunci saat Maintenance; pindah ke stok; WO tanpa teknisi tidak dapat dimulai. **Lainnya:** alur tambah lokasi (HAL-06); grup sidebar tertutup secara bawaan; "Lepas cable" dari daftar dan tab Port & cable; "Sambungkan" dari port kosong; "Buat WO korektif" dan "Tambah maintenance plan" dari detail device; pemberitahuan perubahan port template; validasi tinggi rack di MOD-03; kelompok Tugas saya "7 hari ke depan"; keadaan standar komponen (§8.1) |
 | 0.4 | 11 Okt 2026 | Mengikuti PRD v0.4 (P1-P14). **Baru:** HAL-31 Akun saya (Should), MOD-11 Port (Should), MOD-12 Atur ulang password, varian MOD-06 hapus port. **Diubah:** KOM-34 peta room menampilkan satu room sekaligus dengan pemilih site dan chip room, rack wrap di desktop dan geser di HP; KOM-36 dihitung langsung, tampil juga di HAL-17 dan semua WO, label jalur daya diganti kalimat hipotesis berwarna peringatan; KOM-32, KOM-33, KOM-35 menampilkan estimasi daya dan kapasitas daya (Should); KOM-35 room tertutup bila lebih dari 5; KOM-39 pola rentang; KOM-46 tenggat maintenance plan; HAL-17 teks waktu pembuatan WO (7 hari) dan pengingat (3 hari); HAL-22/23/24 duplikat model; HAL-10 tambah/ubah/hapus port; HAL-26 atur ulang password; MOD-02/03 keterangan pindah induk dan kapasitas daya; menu user dan MOD-10 berisi Akun saya |
 | 0.5 | 11 Okt 2026 | **Identitas visual (§4) ditulis ulang** mengikuti design system SIRAMA: netral zinc, lencana lembut (hanya Terlambat pekat), Geist dan Geist Mono, nol bergaris untuk pengenal, angka tabular hanya untuk kolom angka, sudut 6/10/12/2 px, kontrol 36 px, baris tabel 40 px, bayangan dan blur latar modal, logo simbol lemari rack. **Navigasi:** sidebar berlatar `canvas`, menu aktif tanpa garis kiri, Ctrl K untuk pencarian global. **Pola:** format angka Indonesia (§6.5), fokus garis + cincin (§6.7, §8.1). **Komponen:** KOM-01, 03, 05, 09, 12, 13, 15, 20, 30, 31 disesuaikan; KOM-36 panel dampak memakai latar dan garis amber 1 px, bukan garis kiri tebal; pemetaan ke nama komponen design system (§8). **Lainnya:** jenis notifikasi HAL-05 diberi ikon dan nama device huruf kecil; penanda halaman HP diganti dari emoji menjadi [HP]; keputusan 31-36; salinan token di `specs/design-system/` |
+| 0.6 | 10 Nov 2026 | Mengikuti PRD v0.7: KOM-36 menelusuri dampak daya dan data secara berantai dengan keterangan "lewat [device]" dan label jalur cadangan untuk kedua kelompok; checkbox Uplink di port template (KOM-39) dan MOD-11; keterangan "uplink" di tabel port HAL-10. |

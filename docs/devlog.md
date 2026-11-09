@@ -6,7 +6,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design selesai menunggu review Technical Spec v0.1. UTS sudah didemokan; laporan Bab I-II siap dikumpulkan. Berikutnya: Build dimulai dari PR 1 (fondasi), target UAS R1 + R2.
+**Status saat ini:** Tahap Design selesai (PRD v0.7, Design Spec v0.6, Technical Spec v0.2). `CLAUDE.md` siap. UTS sudah didemokan; laporan Bab I-II siap dikumpulkan. Berikutnya: tahap Build di Claude Code, mulai PR 1 (fondasi), target UAS R1 + R2.
 
 ---
 
@@ -29,8 +29,13 @@ diambil beserta alasannya, dan langkah berikutnya.
 - Target UAS: R1 + R2.
 - Diputuskan saat menulis spec (bisa ditinjau ulang): status Maintenance tidak disimpan tetapi diturunkan dari WO Dikerjakan, agar BR-11 tidak butuh kode sinkronisasi; nomor asset tag dan WO dari tabel `counters` agar tidak ada nomor terlewat; driver `neon-serverless` karena `neon-http` tidak mendukung transaksi.
 
+- Setelah review, tech.md disetujui dengan satu perubahan: **impact analysis jalur data ikut berantai** lewat penanda port uplink (PRD v0.7: US-IMP-05, BR-22; design.md v0.6; tech.md v0.2). Alasannya, pada data demo maintenance core switch dengan satu lompatan hanya menampilkan switch ToR, padahal server di belakangnya ikut terputus. Daya dan data memakai satu fungsi `chainImpact`. Penelusuran fisik menembus patch panel tetap Could.
+- Kerja dibagi: coding di Claude Code (lokal), diskusi, review, dan laporan di sesi chat. `CLAUDE.md` dibuat sebagai konteks tetap untuk setiap sesi Claude Code; rencana per PR disimpan di `plans/`.
+
 **Berikutnya**
-- Review tech.md, lalu PR 1 (fondasi).
+- PR 1 (fondasi) di Claude Code, dimulai di plan mode.
+- Laporan Bab I-II perlu disesuaikan bila belum dikumpulkan: 1.2, 1.3 tujuan 4, 1.4 butir 4, 2.1.6, dan 2.4 butir 3 masih menyebut jalur data satu lompatan.
+- Mockup KOM-36 perlu diperbarui untuk baris tidak langsung pada kedua kelompok.
 
 ---
 

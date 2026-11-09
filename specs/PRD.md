@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Versi | 0.6 (penjadwal Vercel Cron Jobs; impact analysis daya berantai) |
+| Versi | 0.7 (impact analysis berantai untuk daya dan data) |
 | Tanggal | 8 November 2026 |
 | Sumber | [`intent/asset-maintenance.md`](../intent/asset-maintenance.md) |
 | Tahap SDLC | Design |
@@ -44,6 +44,7 @@ Aplikasi web untuk mengelola aset fisik ruang server data center kampus: lokasi 
 | **Peran** | Hak akses user di sistem: Admin, Teknisi, atau Viewer. |
 | **Device function** | Kegunaan device (Server, Switch, PDU, UPS, CRAC, dll.), masing-masing berkategori IT atau Fasilitas. Berbeda dengan peran user. |
 | **Port** | Titik sambung pada device. Jenisnya: data, power inlet (colokan masuk daya), power outlet (stopkontak keluar daya). |
+| **Uplink** | Penanda pada port data yang menghubungkan device ke perangkat hulunya (misalnya server ke switch ToR). Dipakai untuk menentukan arah penelusuran dampak jalur data. |
 | **Cable** | Sambungan antara dua port. |
 | **PDU** | Power Distribution Unit, "stopkontak cerdas" di rack yang membagi listrik ke device. |
 | **UPS** | Uninterruptible Power Supply, baterai cadangan saat listrik padam. |
@@ -96,7 +97,7 @@ Aplikasi web untuk mengelola aset fisik ruang server data center kampus: lokasi 
 | M1 | Waktu menemukan lokasi device | < 30 detik | Demo: pencarian atau pindai QR → halaman detail menampilkan site, room, rack, U |
 | M2 | Pemasangan device bertabrakan yang lolos | 0% | Unit test + E2E untuk semua skenario tabrakan |
 | M3 | Maintenance mendekati tenggat tanpa pengingat | 0 | Tes cron: WO preventif terbentuk 7 hari sebelum tenggat dan pengingat terkirim paling lambat 3 hari sebelum tenggat |
-| M4 | Kelengkapan impact analysis | 100% device terdampak tampil: terhubung langsung lewat cable data, dan seluruh device di hilir rantai daya beserta status jalur cadangan | Tes integrasi dengan data seed, termasuk skenario UPS → PDU → server |
+| M4 | Kelengkapan impact analysis | 100% device terdampak tampil: seluruh device di hilir rantai daya dan rantai data beserta status jalur cadangan | Tes integrasi dengan data seed, termasuk skenario UPS → PDU → server dan core switch → ToR → server |
 | M5 | Test case blackbox valid saat demo | 100% | Tabel Bab IV + laporan Playwright |
 | M6 | Waktu teknisi menyelesaikan WO dari HP | < 2 menit | Diukur saat uji coba: buka WO → Mulai → centang checklist → Selesai |
 
@@ -135,9 +136,9 @@ Memantau kondisi tanpa mengubah data, sering dari HP. Peran yang sama juga cocok
 
 | Prioritas | Fitur |
 |---|---|
-| **Must** | Login + peran; manajemen user; Site → Room → Rack; elevation rack; katalog Manufacturer/Model/Device function; device dengan validasi posisi; device tanpa rack (berdiri di lantai room); port otomatis dari model; cable data dan daya; estimasi daya per rack; maintenance plan berulang; WO preventif otomatis (cron) dan korektif manual; nomor WO otomatis; checklist; penugasan berdasarkan keahlian; notifikasi in-app untuk Teknisi dan Admin; Admin mengatur ulang password user; impact analysis (data satu lompatan, daya berantai, US-IMP-04); indikator jalur daya cadangan; QR per device; pencarian; dashboard; audit log; seed data; semua halaman tidak rusak di HP |
+| **Must** | Login + peran; manajemen user; Site → Room → Rack; elevation rack; katalog Manufacturer/Model/Device function; device dengan validasi posisi; device tanpa rack (berdiri di lantai room); port otomatis dari model; cable data dan daya; estimasi daya per rack; maintenance plan berulang; WO preventif otomatis (cron) dan korektif manual; nomor WO otomatis; checklist; penugasan berdasarkan keahlian; notifikasi in-app untuk Teknisi dan Admin; Admin mengatur ulang password user; impact analysis berantai untuk daya dan data (US-IMP-04, US-IMP-05); indikator jalur daya cadangan; QR per device; pencarian; dashboard; audit log; seed data; semua halaman tidak rusak di HP |
 | **Should** | Cetak label QR massal (satu lembar A4); kalender WO (termasuk tenggat maintenance plan yang belum menjadi WO); kapasitas daya rack dengan peringatan; pola rentang port template dan duplikat model; tambah/ubah/hapus port per device; user mengganti password sendiri |
-| **Could** | Kolom IP management per device; WO untuk rack atau room; daya per device yang berbeda dari modelnya; foto dampak saat pekerjaan dimulai; WO korektif lanjutan dari WO lain; foto bukti maintenance (Cloudinary); trace cable menembus patch panel; visual graf topologi; persetujuan WO; vendor sebagai data terpisah (bukan teks); import CSV; notifikasi email; impact analysis berantai untuk jalur data; pindahkan device ke device function lain saat menghapus device function; optimasi tampilan HP untuk semua halaman; simulasi pembacaan data device; mode gelap; pemindai QR di dalam aplikasi |
+| **Could** | Kolom IP management per device; WO untuk rack atau room; daya per device yang berbeda dari modelnya; foto dampak saat pekerjaan dimulai; WO korektif lanjutan dari WO lain; foto bukti maintenance (Cloudinary); trace cable menembus patch panel; visual graf topologi; persetujuan WO; vendor sebagai data terpisah (bukan teks); import CSV; notifikasi email; pindahkan device ke device function lain saat menghapus device function; optimasi tampilan HP untuk semua halaman; simulasi pembacaan data device; mode gelap; pemindai QR di dalam aplikasi |
 | **Won't** | IPAM penuh (prefix, VLAN, alokasi IP); virtualisasi; VPN; wireless; circuits; pembacaan data dari device fisik sungguhan (SNMP/IPMI/LLDP); pengadaan barang (status "Dipesan") |
 
 ---
@@ -362,8 +363,13 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 **US-IMP-04 (Must)** Sebagai Admin, saya ingin melihat seluruh device yang ikut mati di sepanjang rantai daya.
 - **AC1:** Given UPS-01 menyuplai PDU-A dan PDU-A menyuplai server, When UPS-01 dipilih di form WO, Then panel dampak kelompok Daya menampilkan PDU-A (langsung) dan server-server di belakang PDU-A (tidak langsung, dengan keterangan "lewat PDU-A").
 - **AC2:** Penelusuran mengikuti BR-21 sampai tidak ada device baru yang ikut mati. Device yang tetap menyala lewat jalur cadangan ditampilkan, tetapi penelusuran tidak dilanjutkan melewatinya.
-- **AC3:** Kelompok Data tetap satu lompatan (US-IMP-01), karena cable data tidak punya arah hulu dan hilir.
-- **AC4:** Device yang sama tidak muncul dua kali; bila terdampak dari beberapa jalur, ditampilkan sekali.
+- **AC3:** Device yang sama tidak muncul dua kali; bila terdampak dari beberapa jalur, ditampilkan sekali.
+
+**US-IMP-05 (Must)** Sebagai Admin, saya ingin melihat seluruh device yang ikut putus jaringannya di sepanjang rantai data.
+- **AC1:** Given core switch menjadi hulu switch ToR dan switch ToR menjadi hulu server, When core switch dipilih di form WO, Then panel dampak kelompok Data menampilkan switch ToR (langsung) dan server di belakangnya (tidak langsung, dengan keterangan "lewat [nama switch ToR]").
+- **AC2:** Arah hulu-hilir ditentukan oleh port **uplink** (BR-22). Penelusuran mengikuti algoritma yang sama dengan BR-21: device yang masih punya uplink lain ke device yang tidak terdampak ditandai "Tetap terhubung lewat jalur cadangan" dan penelusuran tidak dilanjutkan; selainnya "Ikut terputus, tanpa jalur cadangan".
+- **AC3:** Cable data yang kedua ujungnya uplink, atau kedua ujungnya bukan uplink, dianggap sambungan setara: device di ujung lain tetap tampil sebagai terhubung langsung, tetapi penelusuran tidak dilanjutkan lewat cable itu.
+- **AC4:** US-IMP-04 AC3 berlaku juga untuk kelompok Data.
 
 ### E8. QR code
 
@@ -432,7 +438,8 @@ Setiap acceptance criteria (AC) menjadi minimal satu test case blackbox di Bab I
 | BR-18 | WO preventif dibuat saat tenggat maintenance plan tinggal 7 hari atau kurang. Pengingat ke teknisi dikirim saat tenggat WO tinggal 3 hari atau kurang. |
 | BR-19 | Estimasi daya rack = jumlah daya maksimum model semua device di rack (termasuk 0U). Model tanpa data daya dihitung 0 dan dilaporkan jumlahnya. Melebihi kapasitas daya rack hanya memunculkan peringatan, tidak menolak. |
 | BR-20 | Port device adalah salinan port template saat device dibuat; setelah itu port device dan port template tidak saling memengaruhi. |
-| BR-21 | Impact analysis daya untuk device X: himpunan mati = {X}. Ulangi sampai tidak berubah: sebuah device ikut mati bila setiap power inlet-nya yang tersambung menerima daya dari device yang sudah mati; bila minimal satu inlet tersambung ke device mati tetapi inlet lain tersambung ke device yang tidak mati, device itu ditandai tetap menyala lewat jalur cadangan dan tidak diteruskan. Power inlet yang tidak tersambung diabaikan. |
+| BR-21 | Impact analysis berantai untuk device X (berlaku untuk daya dan data): himpunan mati = {X}. Ulangi sampai tidak berubah: sebuah device ikut mati bila setiap power inlet-nya yang tersambung menerima daya dari device yang sudah mati; bila minimal satu inlet tersambung ke device mati tetapi inlet lain tersambung ke device yang tidak mati, device itu ditandai tetap menyala lewat jalur cadangan dan tidak diteruskan. Power inlet yang tidak tersambung diabaikan. Untuk data, peran power inlet digantikan port uplink (BR-22). |
+| BR-22 | Arah cable data: bila tepat satu ujungnya port uplink, device di ujung yang bukan uplink adalah **hulu** dari device pemilik port uplink. Bila kedua ujung uplink atau kedua ujung bukan uplink, cable tidak punya arah dan tidak dipakai untuk penelusuran berantai. Port uplink hanya berlaku untuk jenis data. |
 
 ---
 
@@ -566,6 +573,7 @@ Area berikut paling mungkin salah tanpa terlihat, sehingga wajib diuji paling le
 | 41 | Penjadwal otomatis | Vercel Cron Jobs (stabil, GA). Vercel Schedules masih beta publik per Nov 2026, sehingga tidak dipakai. Cron Jobs ditandai legacy oleh Vercel; migrasi ke Schedules dipertimbangkan setelah Schedules stabil. Zona waktu UTC: `0 0 * * *` = 07.00-07.59 WIB. Endpoint dilindungi token rahasia (environment variable) |
 | 42 | Data demo | Disamakan dengan mockup Claude Design: 34 device, 46 cable, 19 maintenance plan, 16 WO |
 | 43 | Impact analysis | Jalur daya ditelusuri berantai (BR-21) beserta jalur cadangan (naik ke Must); jalur data tetap satu lompatan. Alasan: maintenance UPS adalah kasus nyata yang tidak tertangani satu lompatan, dan cable daya punya arah (outlet → inlet) |
+| 44 | Impact analysis data | Jalur data juga berantai lewat penanda port uplink (BR-22, US-IMP-05), memakai algoritma yang sama dengan daya. Alasan: pada data demo, maintenance core switch dengan satu lompatan hanya menampilkan switch ToR, padahal server di belakangnya ikut terputus. Penelusuran fisik menembus patch panel tetap Could karena data demo tidak memakainya |
 
 ---
 
@@ -620,6 +628,7 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 | Nama | W | Unik di dalam model yang sama |
 | Jenis | W | Data, power inlet, atau power outlet |
 | Tipe konektor | O | Misalnya RJ45, SFP+, C13, C14 |
+| Uplink | O | Ya/tidak; hanya untuk jenis data. Port yang menghubungkan device ke perangkat hulunya, misalnya port jaringan server ke switch ToR atau port uplink switch ToR ke core switch (BR-22) |
 
 ### Device
 | Field | Sifat | Keterangan |
@@ -645,6 +654,7 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 | Nama | W | Disalin dari port template; dapat diubah Admin. Unik di dalam device yang sama |
 | Jenis | W | Disalin dari port template; tidak dapat diubah selama tersambung cable |
 | Tipe konektor | O | Disalin dari port template; dapat diubah Admin |
+| Uplink | O | Disalin dari port template; dapat diubah Admin |
 | Ditambahkan manual | S | Ya bila port ditambahkan Admin, bukan dari port template |
 
 ### Cable
@@ -724,3 +734,4 @@ Satu-satunya acuan field. Design Spec merujuk lampiran ini untuk isi form dan mo
 | 0.4 | 11 Okt 2026 | Hasil review P1-P14. **Baru:** US-AUTH-04 ganti password sendiri (Should); US-RAK-03 kapasitas daya rack (Should); US-CAT-03 pola rentang dan duplikat model (Should); US-DEV-06 port per device (Should); BR-18 s.d. BR-20; glosarium estimasi daya, kapasitas daya, pola rentang. **AC baru:** reset password oleh Admin (US-AUTH-02 AC5); menu dan tombol disembunyikan per peran (US-AUTH-03 AC2); nama unik, ubah nama, dan pindah induk lokasi (US-LOC-01 AC4-6, US-RAK-01 AC5); estimasi daya rack (US-RAK-02 AC6); panel dampak di detail WO dan form maintenance plan, dihitung langsung (US-IMP-02 AC3-4); kalender menampilkan tenggat maintenance plan (US-CAL-01); peta rack satu room sekaligus (US-DASH-01 AC3). **Diubah:** WO preventif dibuat 7 hari sebelum tenggat (sebelumnya 3), pengingat tetap 3 hari (US-WO-01, BR-18); label jalur daya menjadi kalimat hipotesis (US-IMP-03); alasan BR-10 ditulis; Asumsi 6 diperjelas, Asumsi 7-8 ditambah; Lampiran C Rack dan Port. **Prioritas:** WO untuk rack/room, daya per device, dan foto dampak masuk Could |
 | 0.5 | 8 Nov 2026 | **Lampiran A** disamakan dengan mockup (34 device, katalog, 46 cable, 19 maintenance plan, 16 WO, garansi, tanggal relatif terhadap hari demo). **Penjadwal** cron memakai Vercel Schedules (glosarium, rilis R2, keputusan 41). Keputusan 42 |
 | 0.6 | 8 Nov 2026 | **Penjadwal** kembali ke Vercel Cron Jobs karena Schedules masih beta (glosarium, rilis R2, keputusan 41). **Impact analysis** jalur daya berantai: US-IMP-04 dan BR-21 baru, US-IMP-03 naik ke Must, M4 diperbarui, keputusan 43. |
+| 0.7 | 10 Nov 2026 | **Impact analysis data berantai:** US-IMP-05 dan BR-22 baru; BR-21 berlaku untuk daya dan data; field Uplink pada port template dan port (Lampiran C); M4 dan MoSCoW diperbarui; keputusan 44. |

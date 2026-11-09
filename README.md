@@ -23,11 +23,12 @@ Pencatatan aset di spreadsheet terpisah dari jadwal maintenance, posisi perangka
 
 | Bagian | Teknologi |
 |---|---|
-| Framework | Next.js |
+| Framework | Next.js 16, TypeScript, shadcn/ui + Tailwind |
 | ORM | Drizzle ORM |
 | Database | Neon Postgres |
 | Deploy & jadwal otomatis | Vercel (Vercel Cron Jobs untuk WO preventif dan pengingat) |
-| Testing | Vitest, React Testing Library, PGlite, Playwright |
+| Auth | Better Auth |
+| Testing | Vitest, Playwright, Neon branch untuk tes integrasi |
 
 ## Metode pengembangan
 
@@ -36,8 +37,8 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 | Tahap | Artefak | Status |
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
-| Design | [`specs/PRD.md`](specs/PRD.md) v0.6, [`specs/design.md`](specs/design.md) v0.5, [design system](specs/design-system/), [`specs/tech.md`](specs/tech.md) v0.1 (lihat [indeks](specs/README.md)) | ⏳ Berjalan |
-| Build | `plans/*.md`, `CLAUDE.md`, source code | — |
+| Design | [`specs/PRD.md`](specs/PRD.md) v0.7, [`specs/design.md`](specs/design.md) v0.6, [design system](specs/design-system/), [`specs/tech.md`](specs/tech.md) v0.2 (lihat [indeks](specs/README.md)) | ✅ Selesai |
+| Build | [`CLAUDE.md`](CLAUDE.md), `plans/*.md`, source code | ⏳ Berikutnya |
 | Test | Test suite + tabel blackbox testing | — |
 | Deploy | Vercel | — |
 | Maintain | Bug dan masukan → intent baru | — |
@@ -47,6 +48,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 ```
 .
 ├── README.md
+├── CLAUDE.md      # Aturan kerja untuk Claude Code (dibaca otomatis setiap sesi)
 ├── intent/        # Tahap Plan: masalah, tujuan, batasan
 ├── specs/         # Tahap Design: PRD, design spec, design system (token), technical spec
 ├── plans/         # Tahap Build: rencana per fitur
