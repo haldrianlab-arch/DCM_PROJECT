@@ -4,11 +4,12 @@
 /*
  * Token SIRAMA.
  * Sumber kebenaran: specs/design-system/tokens.json (mengalahkan angka di design.md §4).
+ * `static`: semua token selalu tersedia sebagai variabel CSS (juga untuk SVG dan style inline).
  * Setiap nilai di sini dicek tests/unit/tokens.test.ts. Bila token berubah, ubah tokens.json
  * dulu, lalu samakan berkas ini sampai tes lulus.
  */
 
-@theme {
+@theme static {
   /* Netral (zinc) */
   --color-ink: #18181b;
   --color-ink-muted: #6b6b73;

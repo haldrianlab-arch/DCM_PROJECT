@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import tokens from "../../specs/design-system/tokens.json";
+
 test.describe("smoke", () => {
   test("halaman token tampil tanpa error dan tanpa scroll horizontal", async ({ page }) => {
     const errors: string[] = [];
@@ -30,6 +32,16 @@ test.describe("smoke", () => {
     const button = page.getByRole("button", { name: "Tambah device" });
     await expect(button).toHaveCSS("background-color", "rgb(10, 108, 140)");
     await expect(button).toHaveCSS("border-radius", "6px");
+  });
+
+  test("setiap token warna tersedia sebagai variabel CSS di browser", async ({ page }) => {
+    await page.goto("/");
+    const names = tokens.color.tokens.map((t) => t.name);
+    const missing = await page.evaluate((list) => {
+      const style = getComputedStyle(document.documentElement);
+      return list.filter((n) => style.getPropertyValue(`--color-${n}`).trim() === "");
+    }, names);
+    expect(missing).toEqual([]);
   });
 
   test("halaman /dev/components tidak tersedia di build produksi", async ({ request }) => {
