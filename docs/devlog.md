@@ -25,7 +25,8 @@ diambil beserta alasannya, dan langkah berikutnya.
 - CI bertahap: tanpa database di PR 1; branch Neon + migrasi + tes integrasi ditambah di PR 3.
 - Halaman token sementara di `/` agar token bisa ditinjau di preview; diganti redirect per peran di PR 2.
 - Route cron stub dengan `CRON_SECRET` sejak PR 1, agar mekanisme keamanan cron teruji sejak awal.
-- Versi dikunci persis: Next.js 16.4.6, React 19.3.1, Tailwind 4.3.5, Drizzle ORM 0.45.4, drizzle-kit 0.31.11, @neondatabase/serverless 1.2.0, Vitest 5.1.0, Playwright 1.65.0, lucide-react 1.70.0. TypeScript 6.0.3 (bukan 7) dan ESLint 9.39.5 (bukan 10) karena `eslint-config-next` belum mendukung versi terbaru itu.
+- Versi dikunci persis: Next.js 16.4.5, React 19.3.1, Tailwind 4.3.5, Drizzle ORM 0.45.4, drizzle-kit 0.31.11, @neondatabase/serverless 1.2.0, Vitest 5.1.0, Playwright 1.65.0, lucide-react 1.70.0. TypeScript 6.0.3 (bukan 7) dan ESLint 9.39.5 (bukan 10) karena `eslint-config-next` belum mendukung versi terbaru itu.
+- Next.js 16.4.5, bukan 16.4.6: CI pertama gagal karena pnpm 12 menolak paket yang dirilis kurang dari 24 jam (`minimumReleaseAge`), dan 16.4.6 baru dirilis 1,5 jam sebelum dipasang. Aturan keamanan dipertahankan; naik ke 16.4.6 menyusul di PR terpisah (TR4).
 - Next.js 16.4 bawaan memakai Cache Components; dipertahankan karena itu default template resmi. PR 2 perlu mengikuti panduan `authentication-with-cache-components` di dokumentasi Next.
 - Tailwind `@theme static` agar semua token warna selalu tersedia sebagai variabel CSS (ditemukan saat meninjau screenshot: kotak warna yang tidak dipakai kelas tampil putih).
 - Koneksi database lewat `getDb()` (dibuat saat pertama dipakai) agar build tidak gagal tanpa `DATABASE_URL`.
