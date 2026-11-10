@@ -59,6 +59,7 @@ Bila menemukan pertentangan atau celah di dokumen, berhenti dan tanyakan. Jangan
 - Penamaan (PRD §2.1): nama entitas bahasa Inggris (Rack, Device, Cable, Work order), selebihnya bahasa Indonesia. Kode dan nama tabel bahasa Inggris.
 - Format angka dan tanggal Indonesia lewat `lib/format.ts` (5.250 W; 1,5 m; 5 Okt 2026).
 - Jangan menambah dependensi baru tanpa menyebut alasannya di rencana PR.
+- Sebelum menambah atau menaikkan paket, pastikan versinya dirilis lebih dari 24 jam (`minimumReleaseAge` pnpm menolak yang lebih baru dan CI gagal); bila belum, pakai versi sebelumnya.
 - Jangan menulis secret ke repo. Pakai `.env.local` (tidak di-commit) dan perbarui `.env.example`.
 
 ## Perintah
@@ -78,6 +79,8 @@ pnpm db:generate    # buat migrasi dari skema
 pnpm db:migrate
 pnpm db:seed        # kembalikan data demo (PRD Lampiran A); tersedia mulai PR 3
 ```
+
+Preview Vercel dilindungi login Vercel; uji dari terminal dengan `npx vercel curl <url-preview>/<path>`.
 
 Catatan versi: TypeScript dikunci 6.0.x dan ESLint 9.x karena `eslint-config-next` belum mendukung TypeScript 7 dan ESLint 10. Next.js 16.4 memakai Cache Components (`next.config.ts`); baca `node_modules/next/dist/docs/` sebelum memakai API Next.js (lihat `AGENTS.md`).
 

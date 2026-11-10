@@ -6,7 +6,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Build dimulai. PR 1 (fondasi) dibuka di branch `feat/01-fondasi`, menunggu CI, preview Vercel, dan tinjauan tim. Berikutnya: PR 2 (auth) dan PR 3 (skema + seed awal), target UAS R1 + R2.
+**Status saat ini:** Tahap Build. PR 1 (fondasi) selesai dan di-merge ke `main` (10 Nov 2026); produksi Vercel dan CI di `main` hijau. Berikutnya: PR 2 (auth) di sesi baru, lalu PR 3 (skema + seed awal). Target UAS R1 + R2.
 
 ---
 
@@ -35,7 +35,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 - Koneksi database lewat `getDb()` (dibuat saat pertama dipakai) agar build tidak gagal tanpa `DATABASE_URL`.
 
 **Berikutnya**
-- Tim meninjau preview Vercel, lalu merge PR 1.
+- PR 1 di-merge (squash) ke `main` pada 10 Nov 2026; produksi Vercel dan CI di `main` berhasil.
 - Siapkan `BETTER_AUTH_SECRET` dan `BETTER_AUTH_URL` untuk PR 2; `SEED_PASSWORD`, `NEON_API_KEY`, `NEON_PROJECT_ID` untuk PR 3.
 - Aktifkan proteksi branch `main` (wajib PR + CI hijau) setelah CI pertama jalan.
 
