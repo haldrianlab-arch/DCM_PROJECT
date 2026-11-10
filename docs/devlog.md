@@ -6,7 +6,38 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Design selesai (PRD v0.7, Design Spec v0.6, Technical Spec v0.2). `CLAUDE.md` siap. UTS sudah didemokan; laporan Bab I-II siap dikumpulkan. Berikutnya: tahap Build di Claude Code, mulai PR 1 (fondasi), target UAS R1 + R2.
+**Status saat ini:** Tahap Build dimulai. PR 1 (fondasi) dibuka di branch `feat/01-fondasi`, menunggu CI, preview Vercel, dan tinjauan tim. Berikutnya: PR 2 (auth) dan PR 3 (skema + seed awal), target UAS R1 + R2.
+
+---
+
+## Sesi 13: PR 1 Fondasi (Tahap Build)
+
+**Dikerjakan**
+- Rencana `plans/01-fondasi.md` dibuat di plan mode dan disetujui.
+- Next.js 16 + TypeScript strict + pnpm; token `tokens.json` dipasang di Tailwind v4 (`globals.css`), font Geist dari paket resmi `geist`, komponen shadcn Button dan Badge, logo dan favicon.
+- Halaman `/` sementara untuk meninjau token; `/dev/components` hanya aktif di development.
+- Koneksi Drizzle ke Neon (`neon-serverless`, `getDb()`), `drizzle.config.ts`, skema masih kosong.
+- `vercel.json` dengan cron harian + route `/api/cron/daily` yang hanya memeriksa `CRON_SECRET`.
+- Vitest (tes token, larangan warna di luar token, cron, koneksi database) dan Playwright (smoke desktop + HP 375 px).
+- ESLint + Prettier; aturan impor menjaga `src/domain/` tetap murni. CI GitHub Actions.
+
+**Keputusan**
+- CI bertahap: tanpa database di PR 1; branch Neon + migrasi + tes integrasi ditambah di PR 3.
+- Halaman token sementara di `/` agar token bisa ditinjau di preview; diganti redirect per peran di PR 2.
+- Route cron stub dengan `CRON_SECRET` sejak PR 1, agar mekanisme keamanan cron teruji sejak awal.
+- Versi dikunci persis: Next.js 16.4.5, React 19.3.1, Tailwind 4.3.5, Drizzle ORM 0.45.4, drizzle-kit 0.31.11, @neondatabase/serverless 1.2.0, Vitest 5.1.0, Playwright 1.65.0, lucide-react 1.70.0. TypeScript 6.0.3 (bukan 7) dan ESLint 9.39.5 (bukan 10) karena `eslint-config-next` belum mendukung versi terbaru itu.
+- Next.js 16.4.5, bukan 16.4.6: CI pertama gagal karena pnpm 12 menolak paket yang dirilis kurang dari 24 jam (`minimumReleaseAge`), dan 16.4.6 baru dirilis 1,5 jam sebelum dipasang. Aturan keamanan dipertahankan; naik ke 16.4.6 menyusul di PR terpisah (TR4).
+- Next.js 16.4 bawaan memakai Cache Components; dipertahankan karena itu default template resmi. PR 2 perlu mengikuti panduan `authentication-with-cache-components` di dokumentasi Next.
+- Tailwind `@theme static` agar semua token warna selalu tersedia sebagai variabel CSS (ditemukan saat meninjau screenshot: kotak warna yang tidak dipakai kelas tampil putih).
+- `vercel.json` menetapkan `"framework": "nextjs"`: project Vercel diimpor saat repo belum berisi aplikasi sehingga preset terdeteksi sebagai situs statis, dan preview pertama gagal. Pengaturan disimpan di repo, bukan hanya di dashboard.
+- Preview Vercel dilindungi Vercel Authentication (bawaan). Diuji dengan `vercel curl`: `/` 200, cron tanpa secret 401, cron dengan secret 200, `/dev/components` 404. Koneksi Neon branch `dev` dari lokal teruji (112 tes lulus).
+- Video tes Playwright selalu direkam (keputusan tim): setiap tes yang membuka halaman menghasilkan `.webm` (desktop 1280 x 720, HP 375 x 812), dilampirkan di laporan HTML, dan diunggah CI sebagai artefak `playwright-report` (14 hari). Bahan dokumentasi Bab IV dan presentasi.
+- Koneksi database lewat `getDb()` (dibuat saat pertama dipakai) agar build tidak gagal tanpa `DATABASE_URL`.
+
+**Berikutnya**
+- Tim meninjau preview Vercel, lalu merge PR 1.
+- Siapkan `BETTER_AUTH_SECRET` dan `BETTER_AUTH_URL` untuk PR 2; `SEED_PASSWORD`, `NEON_API_KEY`, `NEON_PROJECT_ID` untuk PR 3.
+- Aktifkan proteksi branch `main` (wajib PR + CI hijau) setelah CI pertama jalan.
 
 ---
 

@@ -63,18 +63,23 @@ Bila menemukan pertentangan atau celah di dokumen, berhenti dan tanyakan. Jangan
 
 ## Perintah
 
-Diisi saat PR 1 (fondasi) selesai.
+Node 22, pnpm. Salin `.env.example` ke `.env.local` lalu isi nilainya.
 
 ```
-pnpm dev            # server lokal
-pnpm typecheck
-pnpm lint
-pnpm test           # unit + integrasi
-pnpm test:e2e       # Playwright
+pnpm install
+pnpm dev            # server lokal (http://localhost:3000)
+pnpm typecheck      # next typegen + tsc
+pnpm lint           # ESLint (termasuk aturan impor src/domain/)
+pnpm format         # Prettier; CI memakai pnpm format:check
+pnpm test           # Vitest unit + integrasi (integrasi dilewati bila DATABASE_URL kosong)
+pnpm test:e2e       # Playwright desktop + HP 375 px; pertama kali: pnpm exec playwright install chromium
+pnpm build
 pnpm db:generate    # buat migrasi dari skema
 pnpm db:migrate
-pnpm db:seed        # kembalikan data demo (PRD Lampiran A)
+pnpm db:seed        # kembalikan data demo (PRD Lampiran A); tersedia mulai PR 3
 ```
+
+Catatan versi: TypeScript dikunci 6.0.x dan ESLint 9.x karena `eslint-config-next` belum mendukung TypeScript 7 dan ESLint 10. Next.js 16.4 memakai Cache Components (`next.config.ts`); baca `node_modules/next/dist/docs/` sebelum memakai API Next.js (lihat `AGENTS.md`).
 
 ## Commit
 
