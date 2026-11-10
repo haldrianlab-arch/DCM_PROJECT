@@ -31,6 +31,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 - Tailwind `@theme static` agar semua token warna selalu tersedia sebagai variabel CSS (ditemukan saat meninjau screenshot: kotak warna yang tidak dipakai kelas tampil putih).
 - `vercel.json` menetapkan `"framework": "nextjs"`: project Vercel diimpor saat repo belum berisi aplikasi sehingga preset terdeteksi sebagai situs statis, dan preview pertama gagal. Pengaturan disimpan di repo, bukan hanya di dashboard.
 - Preview Vercel dilindungi Vercel Authentication (bawaan). Diuji dengan `vercel curl`: `/` 200, cron tanpa secret 401, cron dengan secret 200, `/dev/components` 404. Koneksi Neon branch `dev` dari lokal teruji (112 tes lulus).
+- Video tes Playwright selalu direkam (keputusan tim): setiap tes yang membuka halaman menghasilkan `.webm` (desktop 1280 x 720, HP 375 x 812), dilampirkan di laporan HTML, dan diunggah CI sebagai artefak `playwright-report` (14 hari). Bahan dokumentasi Bab IV dan presentasi.
 - Koneksi database lewat `getDb()` (dibuat saat pertama dipakai) agar build tidak gagal tanpa `DATABASE_URL`.
 
 **Berikutnya**

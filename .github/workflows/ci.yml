@@ -53,7 +53,8 @@ jobs:
       - name: E2E
         run: pnpm test:e2e
 
-      - name: Unggah laporan Playwright
+      # Laporan HTML berisi hasil tiap tes beserta videonya (dibuka dengan: pnpm exec playwright show-report <folder>).
+      - name: Unggah laporan dan video Playwright
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
