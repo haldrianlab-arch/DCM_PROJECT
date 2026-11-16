@@ -26,6 +26,9 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Semua halaman kecuali login, endpoint API (auth, cron, QR), aset Next.js, dan berkas statis.
-  matcher: ["/((?!login|api/|_next/|dev/|favicon|icon\.svg|.*\.[a-z0-9]+$).*)"],
+  // Semua halaman kecuali login, endpoint API (auth, cron, QR), aset Next.js, /dev, dan berkas
+  // statis. Backslash ganda wajib: "\\." di string menjadi "\." (titik harfiah) di regex.
+  matcher: [
+    "/((?!login|api/|_next/|dev/|.*\\.(?:svg|png|jpg|ico|txt|xml|webmanifest|js|css|map)$).*)",
+  ],
 };

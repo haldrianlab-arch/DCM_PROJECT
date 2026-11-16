@@ -28,17 +28,17 @@ export function UserMenu({ name, roleLabel }: { name: string; roleLabel: string 
           sideOffset={4}
           className="z-50 min-w-48 rounded-card border border-line bg-surface p-1 shadow-float"
         >
-          <form action={signOut}>
-            <DropdownMenu.Item asChild>
-              <button
-                type="submit"
-                className="flex h-control-height w-full items-center gap-2 rounded-control px-2 text-body text-ink outline-none data-[highlighted]:bg-muted"
-              >
-                <LogOut className="size-icon-inline" aria-hidden />
-                Keluar
-              </button>
-            </DropdownMenu.Item>
-          </form>
+          {/* Server action dipanggil langsung saat item dipilih: menu tertutup (dan isinya
+              dilepas dari halaman) begitu item dipilih, jadi form di dalamnya tidak sempat terkirim. */}
+          <DropdownMenu.Item
+            onSelect={() => {
+              void signOut();
+            }}
+            className="flex h-control-height w-full cursor-pointer items-center gap-2 rounded-control px-2 text-body text-ink outline-none data-[highlighted]:bg-muted"
+          >
+            <LogOut className="size-icon-inline" aria-hidden />
+            Keluar
+          </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
