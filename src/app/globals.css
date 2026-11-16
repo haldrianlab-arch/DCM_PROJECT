@@ -185,6 +185,15 @@
   --color-danger-active: color-mix(in oklab, var(--color-status-red) 78%, black);
   --shadow-ring-focus-gap:
     0 0 0 2px var(--color-surface), 0 0 0 3px var(--color-air), 0 0 0 6px var(--color-air-ring);
+  /* Fokus input dengan error: garis merah + cincin merah lembut (design.md §8.1). */
+  --shadow-ring-error: 0 0 0 1px var(--color-status-red), 0 0 0 4px var(--color-status-red-soft);
+
+  /*
+   * Isi input di HP 16 px agar browser HP tidak memperbesar halaman saat kolom difokuskan
+   * (tokens.json size.breakpoint-mobile: "isi input 16 px"; design.md §4.4).
+   */
+  --text-input-mobile: 16px;
+  --text-input-mobile--line-height: 24px;
 
   --radius-sm: var(--radius-rack);
   --radius-md: var(--radius-control);
