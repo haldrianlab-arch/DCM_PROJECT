@@ -6,7 +6,39 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Build. PR 1 (fondasi) selesai dan di-merge ke `main` (10 Nov 2026); produksi Vercel dan CI di `main` hijau. Berikutnya: PR 2 (auth) di sesi baru, lalu PR 3 (skema + seed awal). Target UAS R1 + R2.
+**Status saat ini:** Tahap Build. PR 1 selesai. PR 2 (auth) dikerjakan di branch `feat/02-auth`: kode dan tes selesai lokal, menunggu pengaturan Neon/Vercel/GitHub Secrets sebelum push dan PR. Berikutnya: PR 3 (sisa skema + seed lokasi). Target UAS R1 + R2.
+
+---
+
+## Sesi 14: PR 2 Auth (Tahap Build)
+
+**Dikerjakan**
+- Rencana `plans/02-auth.md` disetujui di plan mode (dua celah urutan PR dan dua temuan dibahas dengan pilihan ganda).
+- Better Auth 1.7.25: login email + password tanpa pendaftaran mandiri, plugin admin (peran admin, technician, viewer), sesi di database, ID uuid.
+- Tabel auth (`user`, `session`, `account`, `verification`) + migrasi pertama; CHECK keahlian wajib untuk Teknisi. `pnpm db:seed` membuat 4 akun demo (andi, rina, joko, sari `@kampus.ac.id`).
+- Login HAL-01 (pesan tunggal "Email atau password salah." untuk semua kegagalan), proxy ke `/login?next=`, `requireUser`/`requireRole`/`authorize`, HAL-29 (403) dan HAL-30 (404).
+- Layout: sidebar (KOM-26, grup dan ciut diingat browser), header dengan menu user (KOM-27), bar bawah (KOM-28) dan menu HP (MOD-10). Halaman sementara `/dashboard` dan `/my-tasks`; halaman token pindah ke `/dev/components`.
+- Tes: unit peran/navigasi/`isSafeNextPath`; integrasi login, akun nonaktif, pendaftaran ditolak, `authorize`, seed; E2E semua AC US-AUTH-01 dan US-AUTH-03 AC2 di desktop dan HP (direkam video). Lokal: 183 tes Vitest dan 46 tes E2E lulus.
+- CI memakai branch Neon sementara (dibuat, dimigrasi, di-seed, dihapus); build Vercel menjalankan migrasi.
+
+**Keputusan**
+- Tabel auth dan seed akun demo dibawa PR 2 (hash password hanya lewat Better Auth); PR 3 menambah sisa skema.
+- Branch Neon di CI dimajukan ke PR 2 agar AC login terbukti otomatis di setiap PR.
+- `DATABASE_URL` preview ternyata sama dengan produksi. Diputuskan: preview branching Neon + migrasi saat build Vercel (tech.md T17, §4.4 diperbarui).
+- Cache Components dimatikan (tech.md T16): halaman bersesi tidak perlu `<Suspense>`; lebih mudah dijelaskan.
+- Header hanya menu user (pencarian di PR 8, lonceng di PR 11). Menu yang halamannya belum ada tetap tampil dan mengarah ke HAL-30.
+- Login memakai `useActionState` (tanpa react-hook-form; dipasang di PR 4). `forbidden()` memakai `experimental.authInterrupts` (status 403).
+- Email akun demo mengikuti wireframe HAL-01 (`andi@kampus.ac.id`).
+
+**Temuan saat build**
+- Ikon `history` (Audit log) bernama `RotateCcwClock` di lucide-react 1.70.
+- Tombol Keluar di menu dropdown tidak terkirim karena menu Radix menutup dan melepas form sebelum submit; diperbaiki dengan memanggil server action dari `onSelect`. Tertangkap tes E2E.
+- Matcher proxy salah tulis (`\.` menjadi `.`), sehingga proxy tidak berjalan di halaman mana pun; tertangkap tes E2E AC4 dan diperbaiki.
+- Tes integrasi yang berbagi satu database harus berjalan berurutan (Vitest dibagi proyek unit dan integrasi).
+
+**Berikutnya**
+- Kamu: aktifkan preview branching Neon di Vercel, isi GitHub Secrets `NEON_API_KEY` dan `NEON_PROJECT_ID`, isi `BETTER_AUTH_SECRET` (Production + Preview) dan `BETTER_AUTH_URL` (Production) di Vercel, isi `SEED_PASSWORD` di `.env.local`.
+- Setelah itu: push `feat/02-auth`, buka PR, cek CI dan preview. Setelah merge: seed produksi (dengan persetujuan).
 
 ---
 

@@ -1,6 +1,12 @@
+import { existsSync } from "node:fs";
+
 import { defineConfig, devices } from "@playwright/test";
 
+// Tes membaca SEED_PASSWORD (password akun demo) dari .env.local lokal atau environment CI.
+if (existsSync(".env.local")) process.loadEnvFile(".env.local");
+
 const PORT = 3100;
+const BASE_URL = `http://localhost:${PORT}`;
 const isCI = !!process.env.CI;
 
 /**
@@ -19,7 +25,7 @@ export default defineConfig({
     ? [["html", { open: "never" }], ["github"]]
     : [["html", { open: "never" }], ["list"]],
   use: {
-    baseURL: `http://localhost:${PORT}`,
+    baseURL: BASE_URL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     locale: "id-ID",
@@ -46,8 +52,10 @@ export default defineConfig({
   ],
   webServer: {
     command: isCI ? `pnpm start --port ${PORT}` : `pnpm dev --port ${PORT}`,
-    url: `http://localhost:${PORT}`,
+    url: BASE_URL,
     reuseExistingServer: !isCI,
     timeout: 120_000,
+    // Better Auth hanya mempercayai origin dari BETTER_AUTH_URL; server tes berjalan di port 3100.
+    env: { BETTER_AUTH_URL: BASE_URL },
   },
 });

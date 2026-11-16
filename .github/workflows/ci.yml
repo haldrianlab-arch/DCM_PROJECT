@@ -1,5 +1,6 @@
-# CI per PR (tech.md §13). PR 1: tanpa database.
-# Langkah branch Neon + migrasi + seed + tes integrasi ditambahkan di PR 3.
+# CI per PR (tech.md §13). Setiap job memakai branch Neon sementara yang dibuat dari branch
+# produksi, dimigrasi, di-seed, dipakai untuk tes integrasi dan E2E, lalu dihapus.
+# Butuh GitHub Secrets: NEON_API_KEY dan NEON_PROJECT_ID.
 name: CI
 
 on:
@@ -18,7 +19,7 @@ jobs:
   check:
     name: Typecheck, lint, tes, build, E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
 
@@ -41,6 +42,42 @@ jobs:
       - name: Format
         run: pnpm format:check
 
+      # Secret khusus job ini: dibuat acak, disamarkan di log, tidak pernah disimpan.
+      - name: Siapkan secret sementara
+        run: |
+          auth_secret=$(openssl rand -base64 32)
+          seed_password=$(openssl rand -base64 18)
+          echo "::add-mask::$auth_secret"
+          echo "::add-mask::$seed_password"
+          {
+            echo "BETTER_AUTH_SECRET=$auth_secret"
+            echo "SEED_PASSWORD=$seed_password"
+            echo "BETTER_AUTH_URL=http://localhost:3100"
+            echo "CRON_SECRET=$(openssl rand -hex 16)"
+            echo "BRANCH_EXPIRES_AT=$(date -u -d '+2 hours' +%Y-%m-%dT%H:%M:%SZ)"
+          } >> "$GITHUB_ENV"
+
+      # Pengaman bila langkah hapus gagal: branch kedaluwarsa sendiri setelah 2 jam.
+      - name: Buat branch Neon sementara
+        id: neon
+        uses: neondatabase/create-branch-action@v6
+        with:
+          api_key: ${{ secrets.NEON_API_KEY }}
+          project_id: ${{ secrets.NEON_PROJECT_ID }}
+          branch_name: ci-${{ github.run_id }}-${{ github.run_attempt }}
+          expires_at: ${{ env.BRANCH_EXPIRES_AT }}
+
+      - name: Pakai branch Neon sementara
+        run: |
+          echo "DATABASE_URL=${{ steps.neon.outputs.db_url_pooled }}" >> "$GITHUB_ENV"
+          echo "DATABASE_URL_UNPOOLED=${{ steps.neon.outputs.db_url }}" >> "$GITHUB_ENV"
+
+      - name: Migrasi
+        run: pnpm db:migrate
+
+      - name: Seed
+        run: pnpm db:seed
+
       - name: Unit dan integrasi
         run: pnpm test
 
@@ -49,6 +86,10 @@ jobs:
 
       - name: Instal browser Playwright
         run: pnpm exec playwright install --with-deps chromium
+
+      # Tes integrasi mengosongkan tabel auth; seed ulang agar E2E mulai dari data demo.
+      - name: Seed ulang untuk E2E
+        run: pnpm db:seed
 
       - name: E2E
         run: pnpm test:e2e
@@ -61,3 +102,11 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+      - name: Hapus branch Neon sementara
+        if: ${{ always() && steps.neon.outputs.branch_id != '' }}
+        uses: neondatabase/delete-branch-action@v3
+        with:
+          api_key: ${{ secrets.NEON_API_KEY }}
+          project_id: ${{ secrets.NEON_PROJECT_ID }}
+          branch: ${{ steps.neon.outputs.branch_id }}

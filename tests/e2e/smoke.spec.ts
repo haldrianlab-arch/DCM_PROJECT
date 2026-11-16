@@ -10,21 +10,18 @@ test.describe("smoke halaman", () => {
     if (page.url() !== "about:blank") await page.waitForTimeout(500);
   });
 
-  test("halaman token tampil tanpa error dan tanpa scroll horizontal", async ({ page }) => {
+  test("halaman login tampil tanpa error dan tanpa scroll horizontal", async ({ page }) => {
     const errors: string[] = [];
     page.on("console", (msg) => {
       if (msg.type() === "error") errors.push(msg.text());
     });
     page.on("pageerror", (err) => errors.push(err.message));
 
-    const response = await page.goto("/");
+    const response = await page.goto("/login");
     expect(response?.status()).toBe(200);
 
-    await expect(page).toHaveTitle("SIRAMA");
+    await expect(page).toHaveTitle("Masuk · SIRAMA");
     await expect(page.locator("html")).toHaveAttribute("lang", "id");
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Token design system" }),
-    ).toBeVisible();
     await expect(page.getByText("SIRAMA", { exact: true }).first()).toBeVisible();
 
     const overflow = await page.evaluate(
@@ -38,9 +35,8 @@ test.describe("smoke halaman", () => {
     page,
     isMobile,
   }) => {
-    await page.goto("/");
-    const button = page.getByRole("button", { name: "Tambah device" });
-    await button.scrollIntoViewIfNeeded();
+    await page.goto("/login");
+    const button = page.getByRole("button", { name: "Masuk" });
     await expect(button).toHaveCSS("background-color", "rgb(10, 108, 140)");
     await expect(button).toHaveCSS("border-radius", "6px");
 
@@ -52,7 +48,7 @@ test.describe("smoke halaman", () => {
   });
 
   test("setiap token warna tersedia sebagai variabel CSS di browser", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/login");
     const names = tokens.color.tokens.map((t) => t.name);
     const missing = await page.evaluate((list) => {
       const style = getComputedStyle(document.documentElement);
