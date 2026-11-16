@@ -77,12 +77,14 @@ pnpm test:e2e       # Playwright desktop + HP 375 px; pertama kali: pnpm exec pl
 pnpm build
 pnpm db:generate    # buat migrasi dari skema
 pnpm db:migrate
-pnpm db:seed        # kembalikan data demo (PRD Lampiran A); tersedia mulai PR 3
+pnpm db:seed        # kembalikan data demo (PRD Lampiran A); PR 2: akun demo saja
 ```
 
 Preview Vercel dilindungi login Vercel; uji dari terminal dengan `npx vercel curl <url-preview>/<path>`.
 
-Catatan versi: TypeScript dikunci 6.0.x dan ESLint 9.x karena `eslint-config-next` belum mendukung TypeScript 7 dan ESLint 10. Next.js 16.4 memakai Cache Components (`next.config.ts`); baca `node_modules/next/dist/docs/` sebelum memakai API Next.js (lihat `AGENTS.md`).
+Akun demo setelah `pnpm db:seed`: andi (Admin), rina dan joko (Teknisi), sari (Viewer) `@kampus.ac.id`, password = `SEED_PASSWORD`. Tes integrasi dan E2E auth memakai akun ini dan mengosongkan tabel auth.
+
+Catatan versi: TypeScript dikunci 6.0.x dan ESLint 9.x karena `eslint-config-next` belum mendukung TypeScript 7 dan ESLint 10. Cache Components Next.js tidak dipakai (tech.md T16). Baca `node_modules/next/dist/docs/` sebelum memakai API Next.js (lihat `AGENTS.md`).
 
 ## Commit
 
