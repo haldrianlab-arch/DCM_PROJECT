@@ -44,6 +44,12 @@ diambil beserta alasannya, dan langkah berikutnya.
 - Ditemukan `dev` lokal berada di project Neon terpisah (Singapura), sedangkan produksi dan CI di project us-east-2. `dev` dipindah menjadi branch di project produksi (sesuai tech.md §13); project Singapura tidak dipakai lagi dan boleh dihapus. Tes lokal ke us-east-2: Vitest 40 detik, E2E 23 detik.
 - `engines.node` dikunci `22.x` agar Vercel (sebelumnya Node 26) memakai versi yang sama dengan lokal dan CI.
 
+**Dokumentasi untuk tim (atas permintaan tim)**
+- `pnpm test:evidence` (`scripts/test-evidence.mjs`): menjalankan semua pemeriksaan lalu menulis `docs/testing/` (README ringkasan, tabel setiap tes dengan AC dan PR asalnya, 42 video E2E bernama jelas). Diputuskan: bukti di-commit ke repo agar bisa dibuka di GitHub dan dipakai untuk Bab IV.
+- PR asal setiap tes ditentukan otomatis dari git (judul squash merge "PR N: ..." atau nama branch `feat/NN-`), sehingga judul PR wajib diawali "PR N:".
+- `docs/penjelasan/`: penjelasan PR 1, PR 2, dan setiap environment variable dengan bahasa presentasi.
+- CLAUDE.md: alur PR ditambah langkah `test:evidence`, dokumen penjelasan, judul PR, dan pembaruan README; tabel "Dokumen yang dirawat selama Build".
+
 **Berikutnya**
 - Tim meninjau PR #3 di preview (akun demo, password = `SEED_PASSWORD`), lalu merge.
 - Hapus project Neon Singapura bila belum.

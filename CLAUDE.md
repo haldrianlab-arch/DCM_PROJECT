@@ -35,9 +35,25 @@ Bila menemukan pertentangan atau celah di dokumen, berhenti dan tanyakan. Jangan
 2. **Plan mode dulu:** tulis `plans/NN-nama.md` berisi tujuan, user story dan AC yang dicakup, berkas yang dibuat/diubah, tes yang akan ditulis, dan pertanyaan terbuka. Minta persetujuan sebelum menulis kode.
 3. Buat branch `feat/NN-nama` dari `main`.
 4. Tulis kode dan tes. Aturan BR wajib punya unit test sebelum fiturnya dianggap selesai.
-5. Jalankan pemeriksaan lokal (lihat Perintah) sampai semua hijau.
-6. Commit kecil dan bermakna. Buka PR berisi ringkasan, daftar AC yang dicakup, dan cara meninjau di preview.
-7. Setelah merge: tambahkan entri sesi di `docs/devlog.md` (dikerjakan, keputusan, berikutnya) dan perbarui baris "Status saat ini".
+5. Jalankan pemeriksaan lokal (lihat Perintah) sampai semua hijau, lalu `pnpm test:evidence` untuk memperbarui bukti testing di `docs/testing/`.
+6. Tulis `docs/penjelasan/pr-NN-nama.md` (bahasa presentasi, ikuti pola PR 1 dan PR 2) dan perbarui dokumen lain di tabel "Dokumen yang dirawat" bila terdampak.
+7. Commit kecil dan bermakna. Buka PR berjudul `PR N: ...` (judul squash merge dipakai `test:evidence` untuk menandai PR asal setiap tes), berisi ringkasan, daftar AC yang dicakup, dan cara meninjau di preview.
+8. Setelah merge: tambahkan entri sesi di `docs/devlog.md` (dikerjakan, keputusan, berikutnya), perbarui baris "Status saat ini", dan perbarui baris Build di tabel tahap `README.md`.
+
+**Dokumen yang dirawat selama Build:**
+
+| Dokumen | Diperbarui saat |
+|---|---|
+| `plans/NN-nama.md` | Awal setiap PR (plan mode) |
+| `docs/devlog.md` | Setiap sesi, dan setelah merge (termasuk "Status saat ini") |
+| `docs/testing/` | Sebelum PR dibuka (`pnpm test:evidence`) |
+| `docs/penjelasan/pr-NN-nama.md` | Setiap PR, sebelum dibuka |
+| `docs/penjelasan/environment-variable.md` dan `.env.example` | Ada variabel env baru atau berubah |
+| `specs/tech.md` (naikkan versi, isi riwayat revisi) | Keputusan teknis baru atau berubah |
+| `specs/PRD.md`, `specs/design.md` | Hanya bila perilaku atau tampilan diputuskan berubah (tanya tim dulu) |
+| `README.md` (tabel tahap, struktur repo) dan `specs/README.md` (versi dokumen) | Versi spec berubah, folder baru, atau setelah merge |
+| `CLAUDE.md` | Ada perintah, aturan, atau pelajaran baru yang perlu diingat setiap sesi |
+| `docs/laporan/`, `docs/demo-script.md` | Saat menyusun laporan dan menjelang demo (bukan setiap PR) |
 
 **Kebiasaan sesi:**
 - Satu sesi Claude Code untuk satu PR. Setelah PR selesai, tim memulai sesi baru atau `/clear`.

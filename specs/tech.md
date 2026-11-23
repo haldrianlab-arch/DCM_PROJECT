@@ -100,6 +100,8 @@ db/
   seed/                         data demo PRD Lampiran A
 tests/
   unit/  integration/  e2e/
+scripts/
+  test-evidence.mjs             `pnpm test:evidence`: semua pemeriksaan + bukti ke docs/testing/
 ```
 
 Aturan lapisan: `domain/` tidak boleh mengimpor database atau Next.js. `server/actions` boleh memakai `domain/` dan `server/db`. Komponen tidak mengakses database langsung, kecuali Server Component yang memanggil fungsi di `server/queries`.
@@ -364,7 +366,7 @@ export async function placeDevice(input: unknown) {
 
 **Definisi selesai sebuah fitur:** semua AC user story terkait punya tes otomatis yang lulus, aturan BR terkait punya unit test, `tsc` dan lint bersih, dan sudah ditinjau di preview.
 
-Hasil Playwright (laporan HTML) menjadi bahan tabel blackbox Bab IV (PRD M5).
+Bukti testing dibuat dengan `pnpm test:evidence` ke `docs/testing/` (ikut di-commit setiap PR): README berisi hasil setiap pemeriksaan, tabel setiap tes unit, integrasi, dan E2E beserta AC yang dicakup dan PR asalnya, serta video setiap skenario E2E (desktop dan HP). Tabel E2E menjadi bahan tabel blackbox Bab IV (PRD M5). Laporan HTML Playwright lengkap tetap tersedia sebagai artefak CI.
 
 ---
 
@@ -449,4 +451,4 @@ Setiap PR dimulai dengan rencana singkat di `plans/NN-nama.md` (AI-Native SDLC t
 |---|---|---|
 | 0.1 | 10 Nov 2026 | Draf pertama dari keputusan sesi 12 |
 | 0.2 | 10 Nov 2026 | Disetujui. Impact analysis data ikut berantai lewat port uplink (PRD v0.7): `chainImpact` untuk daya dan data, kolom `is_uplink`, kasus uji data |
-| 0.3 | 17 Nov 2026 | Keputusan PR 2: T16 Cache Components tidak dipakai; T17 branch Neon per preview + migrasi saat build Vercel (§4.4, §13); PR 2 membawa tabel auth, seed akun demo, dan CI Neon (§15) |
+| 0.3 | 17 Nov 2026 | `scripts/` (§3) dan bukti testing `docs/testing/` (§12). Keputusan PR 2: T16 Cache Components tidak dipakai; T17 branch Neon per preview + migrasi saat build Vercel (§4.4, §13); PR 2 membawa tabel auth, seed akun demo, dan CI Neon (§15) |
