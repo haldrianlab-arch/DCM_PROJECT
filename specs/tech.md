@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Versi | 0.2 |
-| Tanggal | 10 Nov 2026 |
-| Tahap | Design (dokumen terakhir sebelum Build) |
+| Versi | 0.3 |
+| Tanggal | 17 Nov 2026 |
+| Tahap | Build (diperbarui dari keputusan PR 2) |
 | Acuan | [`PRD.md`](PRD.md) v0.7 (apa yang dibangun), [`design.md`](design.md) v0.6 (bagaimana user mengalaminya) |
 
 Dokumen ini menjelaskan **bagaimana SIRAMA dibangun**: stack, struktur kode, skema database, logika inti, keamanan, pengujian, dan urutan pengerjaan. Field entitas tetap mengacu ke PRD Lampiran C; halaman dan URL mengacu ke design.md §5.1. Bila dokumen ini bertentangan dengan PRD tentang perilaku, PRD yang benar dan dokumen ini diperbaiki.
@@ -32,6 +32,8 @@ Diputuskan pada sesi 12 (10 Nov 2026) dengan pilihan ganda; alasan lengkap di §
 | T13 | Git | Satu fitur satu branch dan satu PR; CI wajib hijau; preview Vercel untuk ditinjau; merge ke `main` = deploy produksi |
 | T14 | Status Maintenance | Tidak disimpan; diturunkan dari WO berstatus Dikerjakan (lihat §5.3) |
 | T15 | Nomor berurutan | Asset tag dan nomor WO dari tabel `counters` yang dikunci dalam transaksi, sehingga tidak ada nomor yang terlewat |
+| T16 | Rendering | Cache Components Next.js tidak dipakai: halaman bersesi dirender per permintaan tanpa `<Suspense>` wajib (PR 2) |
+| T17 | Migrasi dan database preview | Setiap preview Vercel punya branch Neon sendiri; build Vercel menjalankan `pnpm db:migrate` sebelum `next build`, untuk preview dan produksi (PR 2) |
 
 ---
 
@@ -98,6 +100,8 @@ db/
   seed/                         data demo PRD Lampiran A
 tests/
   unit/  integration/  e2e/
+scripts/
+  test-evidence.mjs             `pnpm test:evidence`: semua pemeriksaan + bukti ke docs/testing/
 ```
 
 Aturan lapisan: `domain/` tidak boleh mengimpor database atau Next.js. `server/actions` boleh memakai `domain/` dan `server/db`. Komponen tidak mengakses database langsung, kecuali Server Component yang memanggil fungsi di `server/queries`.
@@ -190,7 +194,7 @@ Foreign key memakai `ON DELETE RESTRICT`, kecuali port milik device dan item che
 
 ### 4.4 Migrasi
 
-`drizzle-kit generate` menghasilkan berkas SQL di `db/migrations/` yang ikut di-commit dan ditinjau di PR. Migrasi dijalankan oleh CI ke branch Neon tujuan; `drizzle-kit push` tidak dipakai di produksi.
+`drizzle-kit generate` menghasilkan berkas SQL di `db/migrations/` yang ikut di-commit dan ditinjau di PR. Migrasi dijalankan oleh build Vercel (`vercel.json` `buildCommand`: `pnpm db:migrate && pnpm build`) ke branch Neon milik deployment itu, dan oleh CI ke branch sementaranya. Migrasi memakai `DATABASE_URL_UNPOOLED` (tanpa pooler) bila tersedia. `drizzle-kit push` tidak dipakai.
 
 ---
 
@@ -362,7 +366,7 @@ export async function placeDevice(input: unknown) {
 
 **Definisi selesai sebuah fitur:** semua AC user story terkait punya tes otomatis yang lulus, aturan BR terkait punya unit test, `tsc` dan lint bersih, dan sudah ditinjau di preview.
 
-Hasil Playwright (laporan HTML) menjadi bahan tabel blackbox Bab IV (PRD M5).
+Bukti testing dibuat dengan `pnpm test:evidence` ke `docs/testing/` (ikut di-commit setiap PR): README berisi hasil setiap pemeriksaan, tabel setiap tes unit, integrasi, dan E2E beserta AC yang dicakup dan PR asalnya, serta video setiap skenario E2E (desktop dan HP). Tabel E2E menjadi bahan tabel blackbox Bab IV (PRD M5). Laporan HTML Playwright lengkap tetap tersedia sebagai artefak CI.
 
 ---
 
@@ -372,12 +376,14 @@ Hasil Playwright (laporan HTML) menjadi bahan tabel blackbox Bab IV (PRD M5).
 |---|---|---|
 | Lokal | branch `dev` | Pengembangan sehari-hari |
 | CI | branch sementara dari `main`, dibuat dan dihapus per job | Migrasi + tes integrasi + E2E |
-| Preview | branch per PR (integrasi Neon-Vercel) | Peninjauan oleh tim |
+| Preview | branch `preview/<git-branch>` per preview deployment, dibuat integrasi Neon-Vercel dari `main` dan dimigrasi saat build; terhapus otomatis bersama deployment-nya | Peninjauan oleh tim |
 | Produksi | branch `main` | Demo UAS |
 
-**Environment variable:** `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CRON_SECRET`, `SEED_PASSWORD`. Contohnya di `.env.example` tanpa nilai rahasia.
+**Satu project Neon** (`neon-cinnabar-globe`, AWS us-east-2) berisi semua branch: `main` (produksi), `dev` (lokal), `preview/...` (Vercel), `ci-...` (CI). Branch per preview diatur di Vercel > Storage > `neon-cinnabar-globe` > tab Projects > `dcm_project` > menu titik tiga > Update Project Connection > Create Database Branch For Deployment: Preview (Production tidak dicentang).
 
-**GitHub Actions per PR:** install → `tsc` → lint → unit test → buat branch Neon → migrasi → seed → tes integrasi → build → E2E → hapus branch.
+**Environment variable:** `DATABASE_URL`, `DATABASE_URL_UNPOOLED` (opsional, untuk migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` (lokal dan produksi; preview memakai URL otomatis Vercel), `CRON_SECRET`, `SEED_PASSWORD`. Contohnya di `.env.example` tanpa nilai rahasia. CI butuh GitHub Secrets `NEON_API_KEY` dan `NEON_PROJECT_ID`.
+
+**GitHub Actions per PR (mulai PR 2):** install → `tsc` → lint → format → buat branch Neon sementara → migrasi → seed → unit + integrasi → build → seed ulang → E2E (dengan video) → hapus branch.
 
 **Alur kerja:** branch `feat/<epic>-<ringkas>` → PR dengan ringkasan dan daftar AC → CI hijau → tim meninjau preview → merge (squash) → produksi otomatis.
 
@@ -408,8 +414,8 @@ Target UAS: R1 + R2 (semua Must). Should dikerjakan setelah semua Must lulus (ri
 | No | PR | Isi | Bergantung pada |
 |---|---|---|---|
 | 1 | Fondasi | Inisialisasi Next.js, Tailwind + token, shadcn, Drizzle + Neon, CI, `vercel.json` | |
-| 2 | Auth | Better Auth, login (HAL-01), proxy, `requireRole`, layout aplikasi (sidebar, header), HAL-29/30 | 1 |
-| 3 | Skema + seed awal | Seluruh skema §4, migrasi, `counters`, `writeAudit`, seed user dan lokasi | 1 |
+| 2 | Auth | Better Auth, login (HAL-01), proxy, `requireRole`, layout aplikasi (sidebar, header), HAL-29/30; tabel auth + migrasi pertama, seed akun demo, branch Neon di CI | 1 |
+| 3 | Skema + seed awal | Sisa skema §4, migrasi, `counters`, `writeAudit`, seed lokasi (memperluas seed PR 2) | 1, 2 |
 | 4 | Lokasi dan rack | E2: site, room, rack (modal), HAL-06, HAL-07 dengan elevation (KOM-32) | 2, 3 |
 | 5 | Katalog | E3: manufacturer, device function, model + port template | 3 |
 | 6 | Device | E4: form device dengan pratinjau dan validasi (KOM-33), detail, status, hapus | 4, 5 |
@@ -445,3 +451,4 @@ Setiap PR dimulai dengan rencana singkat di `plans/NN-nama.md` (AI-Native SDLC t
 |---|---|---|
 | 0.1 | 10 Nov 2026 | Draf pertama dari keputusan sesi 12 |
 | 0.2 | 10 Nov 2026 | Disetujui. Impact analysis data ikut berantai lewat port uplink (PRD v0.7): `chainImpact` untuk daya dan data, kolom `is_uplink`, kasus uji data |
+| 0.3 | 17 Nov 2026 | `scripts/` (§3) dan bukti testing `docs/testing/` (§12). Keputusan PR 2: T16 Cache Components tidak dipakai; T17 branch Neon per preview + migrasi saat build Vercel (§4.4, §13); PR 2 membawa tabel auth, seed akun demo, dan CI Neon (§15) |

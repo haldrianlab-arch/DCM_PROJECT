@@ -9,7 +9,9 @@ export default defineConfig({
   schema: "./src/server/db/schema.ts",
   out: "./db/migrations",
   dbCredentials: {
-    url: process.env.DATABASE_URL ?? "",
+    // Migrasi lewat koneksi langsung (tanpa pooler) bila tersedia; integrasi Neon-Vercel
+    // menyediakan DATABASE_URL_UNPOOLED. Lokal cukup DATABASE_URL.
+    url: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "",
   },
   strict: true,
   verbose: true,

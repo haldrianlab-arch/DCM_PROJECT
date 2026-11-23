@@ -35,9 +35,25 @@ Bila menemukan pertentangan atau celah di dokumen, berhenti dan tanyakan. Jangan
 2. **Plan mode dulu:** tulis `plans/NN-nama.md` berisi tujuan, user story dan AC yang dicakup, berkas yang dibuat/diubah, tes yang akan ditulis, dan pertanyaan terbuka. Minta persetujuan sebelum menulis kode.
 3. Buat branch `feat/NN-nama` dari `main`.
 4. Tulis kode dan tes. Aturan BR wajib punya unit test sebelum fiturnya dianggap selesai.
-5. Jalankan pemeriksaan lokal (lihat Perintah) sampai semua hijau.
-6. Commit kecil dan bermakna. Buka PR berisi ringkasan, daftar AC yang dicakup, dan cara meninjau di preview.
-7. Setelah merge: tambahkan entri sesi di `docs/devlog.md` (dikerjakan, keputusan, berikutnya) dan perbarui baris "Status saat ini".
+5. Jalankan pemeriksaan lokal (lihat Perintah) sampai semua hijau, lalu `pnpm test:evidence` untuk memperbarui bukti testing di `docs/testing/`.
+6. Tulis `docs/penjelasan/pr-NN-nama.md` (bahasa presentasi, ikuti pola PR 1 dan PR 2) dan perbarui dokumen lain di tabel "Dokumen yang dirawat" bila terdampak.
+7. Commit kecil dan bermakna. Buka PR berjudul `PR N: ...` (judul squash merge dipakai `test:evidence` untuk menandai PR asal setiap tes), berisi ringkasan, daftar AC yang dicakup, dan cara meninjau di preview.
+8. Setelah merge: tambahkan entri sesi di `docs/devlog.md` (dikerjakan, keputusan, berikutnya), perbarui baris "Status saat ini", dan perbarui baris Build di tabel tahap `README.md`.
+
+**Dokumen yang dirawat selama Build:**
+
+| Dokumen | Diperbarui saat |
+|---|---|
+| `plans/NN-nama.md` | Awal setiap PR (plan mode) |
+| `docs/devlog.md` | Setiap sesi, dan setelah merge (termasuk "Status saat ini") |
+| `docs/testing/` | Sebelum PR dibuka (`pnpm test:evidence`) |
+| `docs/penjelasan/pr-NN-nama.md` | Setiap PR, sebelum dibuka |
+| `docs/penjelasan/environment-variable.md` dan `.env.example` | Ada variabel env baru atau berubah |
+| `specs/tech.md` (naikkan versi, isi riwayat revisi) | Keputusan teknis baru atau berubah |
+| `specs/PRD.md`, `specs/design.md` | Hanya bila perilaku atau tampilan diputuskan berubah (tanya tim dulu) |
+| `README.md` (tabel tahap, struktur repo) dan `specs/README.md` (versi dokumen) | Versi spec berubah, folder baru, atau setelah merge |
+| `CLAUDE.md` | Ada perintah, aturan, atau pelajaran baru yang perlu diingat setiap sesi |
+| `docs/laporan/`, `docs/demo-script.md` | Saat menyusun laporan dan menjelang demo (bukan setiap PR) |
 
 **Kebiasaan sesi:**
 - Satu sesi Claude Code untuk satu PR. Setelah PR selesai, tim memulai sesi baru atau `/clear`.
@@ -74,15 +90,18 @@ pnpm lint           # ESLint (termasuk aturan impor src/domain/)
 pnpm format         # Prettier; CI memakai pnpm format:check
 pnpm test           # Vitest unit + integrasi (integrasi dilewati bila DATABASE_URL kosong)
 pnpm test:e2e       # Playwright desktop + HP 375 px; pertama kali: pnpm exec playwright install chromium
+pnpm test:evidence  # semua pemeriksaan + bukti testing (README + video) ke docs/testing/; jalankan sebelum PR dibuka
 pnpm build
 pnpm db:generate    # buat migrasi dari skema
 pnpm db:migrate
-pnpm db:seed        # kembalikan data demo (PRD Lampiran A); tersedia mulai PR 3
+pnpm db:seed        # kembalikan data demo (PRD Lampiran A); PR 2: akun demo saja
 ```
 
 Preview Vercel dilindungi login Vercel; uji dari terminal dengan `npx vercel curl <url-preview>/<path>`.
 
-Catatan versi: TypeScript dikunci 6.0.x dan ESLint 9.x karena `eslint-config-next` belum mendukung TypeScript 7 dan ESLint 10. Next.js 16.4 memakai Cache Components (`next.config.ts`); baca `node_modules/next/dist/docs/` sebelum memakai API Next.js (lihat `AGENTS.md`).
+Akun demo setelah `pnpm db:seed`: andi (Admin), rina dan joko (Teknisi), sari (Viewer) `@kampus.ac.id`, password = `SEED_PASSWORD`. Tes integrasi dan E2E auth memakai akun ini dan mengosongkan tabel auth.
+
+Catatan versi: TypeScript dikunci 6.0.x dan ESLint 9.x karena `eslint-config-next` belum mendukung TypeScript 7 dan ESLint 10. Cache Components Next.js tidak dipakai (tech.md T16). Baca `node_modules/next/dist/docs/` sebelum memakai API Next.js (lihat `AGENTS.md`).
 
 ## Commit
 

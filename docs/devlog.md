@@ -6,7 +6,54 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Build. PR 1 (fondasi) selesai dan di-merge ke `main` (10 Nov 2026); produksi Vercel dan CI di `main` hijau. Berikutnya: PR 2 (auth) di sesi baru, lalu PR 3 (skema + seed awal). Target UAS R1 + R2.
+**Status saat ini:** Tahap Build. PR 1 selesai. PR 2 (auth) terbuka sebagai PR #3: CI hijau, preview berjalan dengan branch Neon sendiri, produksi sudah di-seed akun demo; menunggu tinjauan tim lalu merge. Berikutnya: PR 3 (sisa skema + seed lokasi). Target UAS R1 + R2.
+
+---
+
+## Sesi 14: PR 2 Auth (Tahap Build)
+
+**Dikerjakan**
+- Rencana `plans/02-auth.md` disetujui di plan mode (dua celah urutan PR dan dua temuan dibahas dengan pilihan ganda).
+- Better Auth 1.7.25: login email + password tanpa pendaftaran mandiri, plugin admin (peran admin, technician, viewer), sesi di database, ID uuid.
+- Tabel auth (`user`, `session`, `account`, `verification`) + migrasi pertama; CHECK keahlian wajib untuk Teknisi. `pnpm db:seed` membuat 4 akun demo (andi, rina, joko, sari `@kampus.ac.id`).
+- Login HAL-01 (pesan tunggal "Email atau password salah." untuk semua kegagalan), proxy ke `/login?next=`, `requireUser`/`requireRole`/`authorize`, HAL-29 (403) dan HAL-30 (404).
+- Layout: sidebar (KOM-26, grup dan ciut diingat browser), header dengan menu user (KOM-27), bar bawah (KOM-28) dan menu HP (MOD-10). Halaman sementara `/dashboard` dan `/my-tasks`; halaman token pindah ke `/dev/components`.
+- Tes: unit peran/navigasi/`isSafeNextPath`; integrasi login, akun nonaktif, pendaftaran ditolak, `authorize`, seed; E2E semua AC US-AUTH-01 dan US-AUTH-03 AC2 di desktop dan HP (direkam video). Lokal: 183 tes Vitest dan 46 tes E2E lulus.
+- CI memakai branch Neon sementara (dibuat, dimigrasi, di-seed, dihapus); build Vercel menjalankan migrasi.
+
+**Keputusan**
+- Tabel auth dan seed akun demo dibawa PR 2 (hash password hanya lewat Better Auth); PR 3 menambah sisa skema.
+- Branch Neon di CI dimajukan ke PR 2 agar AC login terbukti otomatis di setiap PR.
+- `DATABASE_URL` preview ternyata sama dengan produksi. Diputuskan: preview branching Neon + migrasi saat build Vercel (tech.md T17, §4.4 diperbarui).
+- Cache Components dimatikan (tech.md T16): halaman bersesi tidak perlu `<Suspense>`; lebih mudah dijelaskan.
+- Header hanya menu user (pencarian di PR 8, lonceng di PR 11). Menu yang halamannya belum ada tetap tampil dan mengarah ke HAL-30.
+- Login memakai `useActionState` (tanpa react-hook-form; dipasang di PR 4). `forbidden()` memakai `experimental.authInterrupts` (status 403).
+- Email akun demo mengikuti wireframe HAL-01 (`andi@kampus.ac.id`).
+
+**Temuan saat build**
+- Ikon `history` (Audit log) bernama `RotateCcwClock` di lucide-react 1.70.
+- Tombol Keluar di menu dropdown tidak terkirim karena menu Radix menutup dan melepas form sebelum submit; diperbaiki dengan memanggil server action dari `onSelect`. Tertangkap tes E2E.
+- Matcher proxy salah tulis (`\.` menjadi `.`), sehingga proxy tidak berjalan di halaman mana pun; tertangkap tes E2E AC4 dan diperbaiki.
+- Tes integrasi yang berbagi satu database harus berjalan berurutan (Vitest dibagi proyek unit dan integrasi).
+
+**Penyiapan lingkungan (setelah kode selesai)**
+- GitHub Secrets `NEON_API_KEY` dan `NEON_PROJECT_ID` diisi; CI pertama dengan branch Neon sementara hijau.
+- Preview pertama PR #3 ternyata masih memakai database produksi (preview branching belum aktif), sehingga migrasi auth sempat masuk ke produksi. Dampaknya hanya 4 tabel auth kosong yang memang akan ditambahkan saat merge.
+- Produksi di-seed akun demo sebelum merge (disetujui tim), agar login bisa ditinjau di preview.
+- Preview branching diaktifkan lewat Claude desktop (Computer use): Vercel > Storage > `neon-cinnabar-globe` > Projects > `dcm_project` > Update Project Connection > Create Database Branch For Deployment: Preview. Hasil: branch `preview/feat/02-auth` muncul di Neon. Bukti isolasi: user uji yang dibuat lewat preview tidak ada di produksi.
+- Ditemukan `dev` lokal berada di project Neon terpisah (Singapura), sedangkan produksi dan CI di project us-east-2. `dev` dipindah menjadi branch di project produksi (sesuai tech.md §13); project Singapura tidak dipakai lagi dan boleh dihapus. Tes lokal ke us-east-2: Vitest 40 detik, E2E 23 detik.
+- `engines.node` dikunci `22.x` agar Vercel (sebelumnya Node 26) memakai versi yang sama dengan lokal dan CI.
+
+**Dokumentasi untuk tim (atas permintaan tim)**
+- `pnpm test:evidence` (`scripts/test-evidence.mjs`): menjalankan semua pemeriksaan lalu menulis `docs/testing/` (README ringkasan, tabel setiap tes dengan AC dan PR asalnya, 42 video E2E bernama jelas). Diputuskan: bukti di-commit ke repo agar bisa dibuka di GitHub dan dipakai untuk Bab IV.
+- PR asal setiap tes ditentukan otomatis dari git (judul squash merge "PR N: ..." atau nama branch `feat/NN-`), sehingga judul PR wajib diawali "PR N:".
+- `docs/penjelasan/`: penjelasan PR 1, PR 2, dan setiap environment variable dengan bahasa presentasi.
+- CLAUDE.md: alur PR ditambah langkah `test:evidence`, dokumen penjelasan, judul PR, dan pembaruan README; tabel "Dokumen yang dirawat selama Build".
+
+**Berikutnya**
+- Tim meninjau PR #3 di preview (akun demo, password = `SEED_PASSWORD`), lalu merge.
+- Hapus project Neon Singapura bila belum.
+- PR 3: sisa skema dan seed lokasi.
 
 ---
 

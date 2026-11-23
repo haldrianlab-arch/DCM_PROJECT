@@ -37,9 +37,9 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 | Tahap | Artefak | Status |
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
-| Design | [`specs/PRD.md`](specs/PRD.md) v0.7, [`specs/design.md`](specs/design.md) v0.6, [design system](specs/design-system/), [`specs/tech.md`](specs/tech.md) v0.2 (lihat [indeks](specs/README.md)) | ✅ Selesai |
-| Build | [`CLAUDE.md`](CLAUDE.md), [`plans/`](plans/), source code | ⏳ Berjalan (PR 1 fondasi) |
-| Test | Test suite + tabel blackbox testing | — |
+| Design | [`specs/PRD.md`](specs/PRD.md) v0.7, [`specs/design.md`](specs/design.md) v0.6, [design system](specs/design-system/), [`specs/tech.md`](specs/tech.md) v0.3 (lihat [indeks](specs/README.md)) | ✅ Selesai (tech.md diperbarui selama Build) |
+| Build | [`CLAUDE.md`](CLAUDE.md), [`plans/`](plans/), source code, [`docs/penjelasan/`](docs/penjelasan/) | ⏳ Berjalan: PR 1 selesai, PR 2 (auth) ditinjau |
+| Test | Test suite + [bukti testing](docs/testing/README.md) (tabel blackbox + video), berjalan di setiap PR | ⏳ Berjalan bersama Build |
 | Deploy | Vercel | — |
 | Maintain | Bug dan masukan → intent baru | — |
 
@@ -53,7 +53,7 @@ cp .env.example .env.local   # isi DATABASE_URL (Neon branch dev) dan CRON_SECRE
 pnpm dev
 ```
 
-Perintah lain (tes, lint, migrasi) ada di [`CLAUDE.md`](CLAUDE.md) bagian Perintah.
+Perintah lain (tes, lint, migrasi) ada di [`CLAUDE.md`](CLAUDE.md) bagian Perintah. Bukti testing terbaru (hasil semua tes dan video E2E): [`docs/testing/`](docs/testing/README.md). Penjelasan setiap PR untuk tim: [`docs/penjelasan/`](docs/penjelasan/).
 
 ## Struktur repo
 
@@ -63,9 +63,15 @@ Perintah lain (tes, lint, migrasi) ada di [`CLAUDE.md`](CLAUDE.md) bagian Perint
 ├── CLAUDE.md      # Aturan kerja untuk Claude Code (dibaca otomatis setiap sesi)
 ├── intent/        # Tahap Plan: masalah, tujuan, batasan
 ├── specs/         # Tahap Design: PRD, design spec, design system (token), technical spec
-├── plans/         # Tahap Build: rencana per fitur
+├── plans/         # Tahap Build: rencana per PR
+├── src/           # Kode aplikasi (struktur: specs/tech.md §3)
+├── db/            # Migrasi database dan seed data demo
+├── tests/         # Tes unit, integrasi, E2E
+├── scripts/       # Skrip bantu (test-evidence.mjs)
 └── docs/
     ├── devlog.md                          # Jurnal proses pengembangan per sesi
+    ├── penjelasan/                        # Penjelasan setiap PR dan environment variable untuk tim
+    ├── testing/                           # Bukti testing: hasil semua tes + video E2E
     ├── rangkuman-diskusi-proyek-dcim.md   # Rangkuman riset dan keputusan awal
     ├── diagrams/                          # Flowchart dan use case
     ├── wireframes/                        # Wireframe ASCII semua halaman (internal tim)
