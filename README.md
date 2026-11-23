@@ -53,7 +53,7 @@ cp .env.example .env.local   # isi DATABASE_URL (Neon branch dev) dan CRON_SECRE
 pnpm dev
 ```
 
-Perintah lain (tes, lint, migrasi) ada di [`CLAUDE.md`](CLAUDE.md) bagian Perintah.
+Perintah lain (tes, lint, migrasi) ada di [`CLAUDE.md`](CLAUDE.md) bagian Perintah. Bukti testing terbaru (hasil semua tes dan video E2E): [`docs/testing/`](docs/testing/README.md). Penjelasan setiap PR untuk tim: [`docs/penjelasan/`](docs/penjelasan/).
 
 ## Struktur repo
 

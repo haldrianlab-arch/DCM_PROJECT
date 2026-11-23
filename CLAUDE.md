@@ -74,6 +74,7 @@ pnpm lint           # ESLint (termasuk aturan impor src/domain/)
 pnpm format         # Prettier; CI memakai pnpm format:check
 pnpm test           # Vitest unit + integrasi (integrasi dilewati bila DATABASE_URL kosong)
 pnpm test:e2e       # Playwright desktop + HP 375 px; pertama kali: pnpm exec playwright install chromium
+pnpm test:evidence  # semua pemeriksaan + bukti testing (README + video) ke docs/testing/; jalankan sebelum PR dibuka
 pnpm build
 pnpm db:generate    # buat migrasi dari skema
 pnpm db:migrate
