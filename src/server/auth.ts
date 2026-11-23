@@ -5,6 +5,7 @@ import { admin } from "better-auth/plugins/admin";
 import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
 import { createAccessControl } from "better-auth/plugins/access";
 
+import { resolveBaseUrl, resolveTrustedOrigins } from "./base-url";
 import { getDb } from "./db/client";
 import * as schema from "./db/schema";
 
@@ -24,29 +25,11 @@ const roles = {
   viewer: ac.newRole({}),
 };
 
-/**
- * URL dasar aplikasi. Lokal dan produksi memakai BETTER_AUTH_URL; preview Vercel
- * berganti URL setiap deploy, jadi diambil dari variabel bawaan Vercel.
- */
-export function resolveBaseUrl(env: NodeJS.ProcessEnv = process.env): string | undefined {
-  if (env.BETTER_AUTH_URL) return env.BETTER_AUTH_URL;
-  const host = env.VERCEL_BRANCH_URL ?? env.VERCEL_URL;
-  return host ? `https://${host}` : undefined;
-}
-
-function trustedOrigins(env: NodeJS.ProcessEnv = process.env): string[] {
-  const hosts = [env.VERCEL_URL, env.VERCEL_BRANCH_URL, env.VERCEL_PROJECT_PRODUCTION_URL];
-  const origins = hosts.filter((h): h is string => !!h).map((h) => `https://${h}`);
-  const base = resolveBaseUrl(env);
-  if (base) origins.push(new URL(base).origin);
-  return [...new Set(origins)];
-}
-
 function createAuth() {
   return betterAuth({
     appName: "SIRAMA",
     baseURL: resolveBaseUrl(),
-    trustedOrigins: trustedOrigins(),
+    trustedOrigins: resolveTrustedOrigins(),
     database: drizzleAdapter(getDb(), { provider: "pg", schema }),
     advanced: {
       database: { generateId: "uuid" },

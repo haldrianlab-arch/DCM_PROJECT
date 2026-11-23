@@ -105,4 +105,5 @@ Berkas ini hanya dibaca bila sengaja dipanggil (misalnya `pnpm exec tsx --env-fi
 | Login selalu gagal di laptop | Database `dev` belum di-seed dengan `SEED_PASSWORD` yang sekarang: jalankan `pnpm db:seed` |
 | Tes integrasi dan E2E auth "dilewati" | `SEED_PASSWORD` kosong di `.env.local` |
 | Cron menjawab "Tidak diizinkan." | `CRON_SECRET` tidak diisi atau kunci yang dikirim berbeda |
+| Build produksi gagal "Invalid URL" (sebelum perbaikan) | `BETTER_AUTH_URL` tidak ditulis lengkap. Isi persis `https://dcmproject.vercel.app`, tanpa spasi atau tanda kutip. Sejak perbaikan PR 2, nilai yang kurang lengkap dirapikan otomatis |
 | CI gagal di langkah "Buat branch Neon sementara" | Secret `NEON_API_KEY` atau `NEON_PROJECT_ID` salah atau kedaluwarsa |
