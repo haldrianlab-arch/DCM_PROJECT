@@ -2,7 +2,8 @@ import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { DEMO_USERS, seedUsers } from "../../db/seed/users";
-import { getAuth, resolveBaseUrl } from "@/server/auth";
+import { getAuth } from "@/server/auth";
+import { resolveBaseUrl } from "@/server/base-url";
 import { getDb } from "@/server/db/client";
 import { session, user } from "@/server/db/schema";
 import { attemptSignIn, LOGIN_FAILED } from "@/server/sign-in";

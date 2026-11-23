@@ -109,6 +109,7 @@ Setiap keputusan dibahas dengan pilihan ganda sebelum kode ditulis (plan mode), 
 | Preview memakai database produksi | Pemeriksaan pengaturan Vercel | Pengaturan "Create Database Branch For Deployment: Preview" diaktifkan; dibuktikan dengan membuat user lewat preview dan memastikan user itu tidak ada di produksi |
 | Database lokal (`dev`) ada di project Neon lain (Singapura) | Perbandingan alamat server database | `dev` dipindah menjadi branch di project produksi (Amerika), sesuai tech.md |
 | Vercel memakai Node 26, sedangkan lokal dan CI Node 22 | Peringatan di log build | Versi dikunci ke Node 22 |
+| Deploy produksi pertama setelah merge gagal ("Invalid URL") | Log build Vercel produksi | `BETTER_AUTH_URL` di Vercel tidak berbentuk URL lengkap. Kode sekarang merapikan nilai itu (menambah `https://`, membuang spasi dan tanda kutip) dan, bila tetap rusak, memakai domain produksi bawaan Vercel. Diuji di `tests/unit/base-url.test.ts`. Situs tidak mati: Vercel tetap menayangkan versi sebelumnya sampai deploy baru berhasil. |
 
 Dua masalah pertama adalah bug sungguhan yang **tertangkap oleh tes otomatis sebelum sampai ke user**. Ini contoh nyata manfaat testing yang bisa diceritakan saat presentasi.
 

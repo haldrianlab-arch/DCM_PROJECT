@@ -50,6 +50,10 @@ diambil beserta alasannya, dan langkah berikutnya.
 - `docs/penjelasan/`: penjelasan PR 1, PR 2, dan setiap environment variable dengan bahasa presentasi.
 - CLAUDE.md: alur PR ditambah langkah `test:evidence`, dokumen penjelasan, judul PR, dan pembaruan README; tabel "Dokumen yang dirawat selama Build".
 
+**Setelah merge PR #3**
+- Deploy produksi gagal: `TypeError: Invalid URL` saat build `/dashboard`. Penyebab: `BETTER_AUTH_URL` (hanya di Production) tidak berbentuk URL lengkap, dan kode langsung memanggil `new URL(...)`. Preview tidak kena karena tidak memakai variabel itu. Produksi tetap menayangkan deploy sebelumnya.
+- Perbaikan di branch `feat/02-auth-base-url`: `src/server/base-url.ts` merapikan nilai env dan kembali ke domain produksi Vercel bila nilainya rusak; 23 tes unit baru. Nilai di Vercel juga diminta dibetulkan menjadi `https://dcmproject.vercel.app`.
+
 **Berikutnya**
 - Tim meninjau PR #3 di preview (akun demo, password = `SEED_PASSWORD`), lalu merge.
 - Hapus project Neon Singapura bila belum.
