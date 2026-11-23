@@ -9,7 +9,7 @@
  * (build produksi, desktop + HP 375 px) → seed ulang. Butuh .env.local berisi DATABASE_URL
  * (branch Neon `dev`) dan SEED_PASSWORD. Tabel auth di `dev` di-reset ke akun demo.
  */
-import { execSync, spawnSync } from "node:child_process";
+import { execFileSync, execSync, spawnSync } from "node:child_process";
 import {
   copyFileSync,
   existsSync,
@@ -110,13 +110,56 @@ function slug(text) {
     .replace(/-+$/g, "");
 }
 
+// ---------------------------------------------------------------------------
+// PR asal setiap tes (urutan Build tech.md §15), dari riwayat git
+// ---------------------------------------------------------------------------
+
+const git = (...args) => {
+  try {
+    return execFileSync("git", args, {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "";
+  }
+};
+const MAIN = git("rev-parse", "--verify", "--quiet", "origin/main") ? "origin/main" : "main";
+const branchPr = git("rev-parse", "--abbrev-ref", "HEAD").match(/^feat\/(\d+)-/)?.[1];
+
+/**
+ * Nomor PR sebuah commit. Di main, setiap PR di-squash menjadi satu commit berjudul
+ * "PR N: ..." (CLAUDE.md). Commit yang belum di-merge milik branch feat/NN-nama saat ini.
+ */
+function prOfCommit(sha) {
+  if (!sha) return null;
+  const onMain = spawnSync("git", ["merge-base", "--is-ancestor", sha, MAIN]).status === 0;
+  if (onMain) return git("log", "-1", "--format=%s", sha).match(/^PR (\d+):/)?.[1] ?? null;
+  return branchPr ?? null;
+}
+
+const fileCache = new Map();
+/** PR yang pertama menambahkan judul tes ini; bila judul memuat nilai variabel, PR berkasnya. */
+function prOfTest(file, title) {
+  const exact = git("log", "--reverse", "--format=%H", "-S", title, "--", file).split("\n")[0];
+  if (exact) return prOfCommit(exact);
+  if (!fileCache.has(file)) {
+    const added = git("log", "--reverse", "--format=%H", "--diff-filter=A", "--", file);
+    fileCache.set(file, prOfCommit(added.split("\n")[0]));
+  }
+  return fileCache.get(file);
+}
+const prLabel = (n) => (n ? `PR ${Number(n)}` : "—");
+
 // Playwright: satu baris per tes, kolom desktop dan HP.
 const e2eRows = [];
 function walk(suite, parents) {
   const titles = suite.title && !suite.title.endsWith(".ts") ? [...parents, suite.title] : parents;
   for (const spec of suite.specs ?? []) {
+    const file = `tests/e2e/${suite.file ?? spec.file}`.replace(/\\/g, "/");
     const row = {
-      file: suite.file ?? spec.file,
+      file,
+      pr: prOfTest(file, spec.title),
       group: titles.join(" › "),
       title: spec.title,
       runs: {},
@@ -151,15 +194,19 @@ e2eRows.forEach((row, i) => {
 });
 
 // Vitest: dikelompokkan per berkas.
-const vitestFiles = (vitest?.testResults ?? []).map((f) => ({
-  file: relative(ROOT, f.name).replace(/\\/g, "/"),
-  tests: f.assertionResults.map((a) => ({
-    group: a.ancestorTitles.join(" › "),
-    title: a.title,
-    status: a.status,
-    ms: Math.round(a.duration ?? 0),
-  })),
-}));
+const vitestFiles = (vitest?.testResults ?? []).map((f) => {
+  const file = relative(ROOT, f.name).replace(/\\/g, "/");
+  return {
+    file,
+    tests: f.assertionResults.map((a) => ({
+      group: a.ancestorTitles.join(" › "),
+      title: a.title,
+      status: a.status,
+      ms: Math.round(a.duration ?? 0),
+      pr: prOfTest(file, a.title),
+    })),
+  };
+});
 
 // ---------------------------------------------------------------------------
 // Tulis README
@@ -218,6 +265,28 @@ lines.push(
   "",
 );
 
+// Jumlah tes per PR asal.
+const perPr = new Map();
+const tally = (pr, kind) => {
+  const key = pr ? Number(pr) : 0;
+  const entry = perPr.get(key) ?? { unit: 0, integrasi: 0, e2e: 0 };
+  entry[kind] += 1;
+  perPr.set(key, entry);
+};
+for (const f of unitFiles) for (const t of f.tests) tally(t.pr, "unit");
+for (const f of integFiles) for (const t of f.tests) tally(t.pr, "integrasi");
+for (const r of e2eRows) tally(r.pr, "e2e");
+lines.push("## Tes per PR", "");
+lines.push(
+  'Kolom **PR** di setiap tabel menunjukkan PR (urutan Build di `specs/tech.md` §15) yang pertama menambahkan tes itu, atau yang terakhir mengganti judulnya. Ditentukan otomatis dari riwayat git: commit di `main` dibaca dari judul squash merge "PR N: ...", commit yang belum di-merge dari nama branch `feat/NN-...`.',
+  "",
+);
+lines.push("| PR | Unit | Integrasi | Skenario E2E |", "|---|---|---|---|");
+for (const [pr, e] of [...perPr].sort((a, b) => a[0] - b[0])) {
+  lines.push(`| ${prLabel(pr)} | ${e.unit} | ${e.integrasi} | ${e.e2e} |`);
+}
+lines.push("");
+
 lines.push("## Jenis pemeriksaan", "");
 lines.push("| Jenis | Alat | Yang dibuktikan | Bukti |", "|---|---|---|---|");
 lines.push(
@@ -239,12 +308,12 @@ lines.push("");
 lines.push("## E2E (Playwright)", "");
 lines.push('Satu baris = satu skenario. Klik "video" untuk melihat rekamannya.', "");
 lines.push(
-  "| No | Kelompok | Skenario | Mencakup | Desktop | HP 375 px |",
-  "|---|---|---|---|---|---|",
+  "| No | PR | Kelompok | Skenario | Mencakup | Desktop | HP 375 px |",
+  "|---|---|---|---|---|---|---|",
 );
 for (const r of e2eRows) {
   lines.push(
-    `| ${r.no} | ${r.group} | ${r.title.replace(/\|/g, "\\|")} | ${coverage(r.group, r.title)} | ${cell(r.runs.desktop)} | ${cell(r.runs.hp)} |`,
+    `| ${r.no} | ${prLabel(r.pr)} | ${r.group} | ${r.title.replace(/\|/g, "\\|")} | ${coverage(r.group, r.title)} | ${cell(r.runs.desktop)} | ${cell(r.runs.hp)} |`,
   );
 }
 lines.push("");
@@ -252,10 +321,10 @@ lines.push("");
 const testTable = (files) => {
   for (const f of files) {
     lines.push(`### \`${f.file}\``, "");
-    lines.push("| Kelompok | Tes | Hasil | Durasi |", "|---|---|---|---|");
+    lines.push("| PR | Kelompok | Tes | Hasil | Durasi |", "|---|---|---|---|---|");
     for (const t of f.tests) {
       lines.push(
-        `| ${t.group} | ${t.title.replace(/\|/g, "\\|")} | ${label(t.status)} | ${t.ms} ms |`,
+        `| ${prLabel(t.pr)} | ${t.group} | ${t.title.replace(/\|/g, "\\|")} | ${label(t.status)} | ${t.ms} ms |`,
       );
     }
     lines.push("");
