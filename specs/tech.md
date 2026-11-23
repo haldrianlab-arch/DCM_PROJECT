@@ -374,8 +374,10 @@ Hasil Playwright (laporan HTML) menjadi bahan tabel blackbox Bab IV (PRD M5).
 |---|---|---|
 | Lokal | branch `dev` | Pengembangan sehari-hari |
 | CI | branch sementara dari `main`, dibuat dan dihapus per job | Migrasi + tes integrasi + E2E |
-| Preview | branch per preview deployment (preview branching integrasi Neon-Vercel), dimigrasi saat build | Peninjauan oleh tim |
+| Preview | branch `preview/<git-branch>` per preview deployment, dibuat integrasi Neon-Vercel dari `main` dan dimigrasi saat build; terhapus otomatis bersama deployment-nya | Peninjauan oleh tim |
 | Produksi | branch `main` | Demo UAS |
+
+**Satu project Neon** (`neon-cinnabar-globe`, AWS us-east-2) berisi semua branch: `main` (produksi), `dev` (lokal), `preview/...` (Vercel), `ci-...` (CI). Branch per preview diatur di Vercel > Storage > `neon-cinnabar-globe` > tab Projects > `dcm_project` > menu titik tiga > Update Project Connection > Create Database Branch For Deployment: Preview (Production tidak dicentang).
 
 **Environment variable:** `DATABASE_URL`, `DATABASE_URL_UNPOOLED` (opsional, untuk migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` (lokal dan produksi; preview memakai URL otomatis Vercel), `CRON_SECRET`, `SEED_PASSWORD`. Contohnya di `.env.example` tanpa nilai rahasia. CI butuh GitHub Secrets `NEON_API_KEY` dan `NEON_PROJECT_ID`.
 

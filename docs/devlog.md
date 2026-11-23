@@ -6,7 +6,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Build. PR 1 selesai. PR 2 (auth) dikerjakan di branch `feat/02-auth`: kode dan tes selesai lokal, menunggu pengaturan Neon/Vercel/GitHub Secrets sebelum push dan PR. Berikutnya: PR 3 (sisa skema + seed lokasi). Target UAS R1 + R2.
+**Status saat ini:** Tahap Build. PR 1 selesai. PR 2 (auth) terbuka sebagai PR #3: CI hijau, preview berjalan dengan branch Neon sendiri, produksi sudah di-seed akun demo; menunggu tinjauan tim lalu merge. Berikutnya: PR 3 (sisa skema + seed lokasi). Target UAS R1 + R2.
 
 ---
 
@@ -36,9 +36,18 @@ diambil beserta alasannya, dan langkah berikutnya.
 - Matcher proxy salah tulis (`\.` menjadi `.`), sehingga proxy tidak berjalan di halaman mana pun; tertangkap tes E2E AC4 dan diperbaiki.
 - Tes integrasi yang berbagi satu database harus berjalan berurutan (Vitest dibagi proyek unit dan integrasi).
 
+**Penyiapan lingkungan (setelah kode selesai)**
+- GitHub Secrets `NEON_API_KEY` dan `NEON_PROJECT_ID` diisi; CI pertama dengan branch Neon sementara hijau.
+- Preview pertama PR #3 ternyata masih memakai database produksi (preview branching belum aktif), sehingga migrasi auth sempat masuk ke produksi. Dampaknya hanya 4 tabel auth kosong yang memang akan ditambahkan saat merge.
+- Produksi di-seed akun demo sebelum merge (disetujui tim), agar login bisa ditinjau di preview.
+- Preview branching diaktifkan lewat Claude desktop (Computer use): Vercel > Storage > `neon-cinnabar-globe` > Projects > `dcm_project` > Update Project Connection > Create Database Branch For Deployment: Preview. Hasil: branch `preview/feat/02-auth` muncul di Neon. Bukti isolasi: user uji yang dibuat lewat preview tidak ada di produksi.
+- Ditemukan `dev` lokal berada di project Neon terpisah (Singapura), sedangkan produksi dan CI di project us-east-2. `dev` dipindah menjadi branch di project produksi (sesuai tech.md §13); project Singapura tidak dipakai lagi dan boleh dihapus. Tes lokal ke us-east-2: Vitest 40 detik, E2E 23 detik.
+- `engines.node` dikunci `22.x` agar Vercel (sebelumnya Node 26) memakai versi yang sama dengan lokal dan CI.
+
 **Berikutnya**
-- Kamu: aktifkan preview branching Neon di Vercel, isi GitHub Secrets `NEON_API_KEY` dan `NEON_PROJECT_ID`, isi `BETTER_AUTH_SECRET` (Production + Preview) dan `BETTER_AUTH_URL` (Production) di Vercel, isi `SEED_PASSWORD` di `.env.local`.
-- Setelah itu: push `feat/02-auth`, buka PR, cek CI dan preview. Setelah merge: seed produksi (dengan persetujuan).
+- Tim meninjau PR #3 di preview (akun demo, password = `SEED_PASSWORD`), lalu merge.
+- Hapus project Neon Singapura bila belum.
+- PR 3: sisa skema dan seed lokasi.
 
 ---
 
