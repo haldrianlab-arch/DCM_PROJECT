@@ -4,8 +4,8 @@ Dibuat otomatis oleh `pnpm test:evidence` (`scripts/test-evidence.mjs`). Jangan 
 
 | | |
 |---|---|
-| Waktu | 24 Nov 2026, 04.18 WIB |
-| Commit | `ca5f6f7` (branch `feat/02-auth`) |
+| Waktu | 24 Nov 2026, 04.42 WIB |
+| Commit | `4315b43` (branch `feat/02-auth-base-url`) |
 | Node | v22.16.0 |
 | Database | Neon branch `dev` (akun demo dari `pnpm db:seed`) |
 | E2E | Build produksi (`next start`), Chromium desktop 1280 x 720 dan HP 375 x 812 |
@@ -17,13 +17,13 @@ Dibuat otomatis oleh `pnpm test:evidence` (`scripts/test-evidence.mjs`). Jangan 
 | Typecheck | Lulus | 3 detik |
 | Lint | Lulus | 4 detik |
 | Format | Lulus | 1 detik |
-| Unit + integrasi (Vitest) | Lulus | 40 detik |
-| Build produksi | Lulus | 8 detik |
+| Unit + integrasi (Vitest) | Lulus | 39 detik |
+| Build produksi | Lulus | 7 detik |
 | E2E (Playwright) | Lulus | 23 detik |
 
 | Jenis tes | Jumlah | Lulus | Gagal | Dilewati |
 |---|---|---|---|---|
-| Unit (Vitest) | 164 | 164 | 0 | 0 |
+| Unit (Vitest) | 188 | 188 | 0 | 0 |
 | Integrasi (Vitest + Neon) | 19 | 19 | 0 | 0 |
 | E2E (Playwright, desktop + HP) | 54 | 46 | 0 | 8 |
 
@@ -35,8 +35,8 @@ Kolom **PR** di setiap tabel menunjukkan PR (urutan Build di `specs/tech.md` §1
 
 | PR | Unit | Integrasi | Skenario E2E |
 |---|---|---|---|
-| PR 1 | 138 | 2 | 4 |
-| PR 2 | 26 | 17 | 23 |
+| PR 1 | 139 | 2 | 4 |
+| PR 2 | 49 | 17 | 23 |
 
 ## Jenis pemeriksaan
 
@@ -89,17 +89,17 @@ Satu baris = satu skenario. Klik "video" untuk melihat rekamannya.
 
 | PR | Kelompok | Tes | Hasil | Durasi |
 |---|---|---|---|---|
-| PR 2 | login (US-AUTH-01) | AC1: andi@kampus.ac.id login berhasil dengan peran admin | Lulus | 1104 ms |
-| PR 2 | login (US-AUTH-01) | AC1: rina@kampus.ac.id login berhasil dengan peran technician | Lulus | 1022 ms |
-| PR 2 | login (US-AUTH-01) | AC1: joko@kampus.ac.id login berhasil dengan peran technician | Lulus | 1028 ms |
-| PR 2 | login (US-AUTH-01) | AC1: sari@kampus.ac.id login berhasil dengan peran viewer | Lulus | 1025 ms |
-| PR 2 | login (US-AUTH-01) | AC1: email tidak peka huruf besar dan spasi | Lulus | 1025 ms |
-| PR 2 | login (US-AUTH-01) | AC2: password salah → pesan umum | Lulus | 555 ms |
+| PR 2 | login (US-AUTH-01) | AC1: andi@kampus.ac.id login berhasil dengan peran admin | Lulus | 1096 ms |
+| PR 2 | login (US-AUTH-01) | AC1: rina@kampus.ac.id login berhasil dengan peran technician | Lulus | 1011 ms |
+| PR 2 | login (US-AUTH-01) | AC1: joko@kampus.ac.id login berhasil dengan peran technician | Lulus | 1016 ms |
+| PR 2 | login (US-AUTH-01) | AC1: sari@kampus.ac.id login berhasil dengan peran viewer | Lulus | 1020 ms |
+| PR 2 | login (US-AUTH-01) | AC1: email tidak peka huruf besar dan spasi | Lulus | 1015 ms |
+| PR 2 | login (US-AUTH-01) | AC2: password salah → pesan umum | Lulus | 552 ms |
 | PR 2 | login (US-AUTH-01) | AC2: email tidak terdaftar dan isian tidak valid → pesan yang sama | Lulus | 326 ms |
-| PR 2 | login (US-AUTH-01) | AC3: akun dinonaktifkan → ditolak dengan pesan yang sama dan sesinya berakhir | Lulus | 5957 ms |
-| PR 2 | login (US-AUTH-01) | AC5: pendaftaran mandiri ditolak | Lulus | 245 ms |
-| PR 2 | tabel user dan seed | Teknisi wajib punya keahlian (CHECK user_technician_skill) | Lulus | 230 ms |
-| PR 2 | tabel user dan seed | seed dapat dijalankan berulang dan selalu menghasilkan 4 akun demo | Lulus | 7659 ms |
+| PR 2 | login (US-AUTH-01) | AC3: akun dinonaktifkan → ditolak dengan pesan yang sama dan sesinya berakhir | Lulus | 5981 ms |
+| PR 2 | login (US-AUTH-01) | AC5: pendaftaran mandiri ditolak | Lulus | 244 ms |
+| PR 2 | tabel user dan seed | Teknisi wajib punya keahlian (CHECK user_technician_skill) | Lulus | 239 ms |
+| PR 2 | tabel user dan seed | seed dapat dijalankan berulang dan selalu menghasilkan 4 akun demo | Lulus | 7652 ms |
 | PR 2 | tabel user dan seed | seed menolak password pendek | Lulus | 0 ms |
 
 ### `tests/integration/authz.test.ts`
@@ -107,19 +107,47 @@ Satu baris = satu skenario. Klik "video" untuk melihat rekamannya.
 | PR | Kelompok | Tes | Hasil | Durasi |
 |---|---|---|---|---|
 | PR 2 | authorize (US-AUTH-03) | tanpa sesi → unauthenticated | Lulus | 3 ms |
-| PR 2 | authorize (US-AUTH-03) | aksi khusus Admin ditolak untuk technician, walau dikirim langsung ke server | Lulus | 478 ms |
-| PR 2 | authorize (US-AUTH-03) | aksi khusus Admin ditolak untuk viewer, walau dikirim langsung ke server | Lulus | 474 ms |
-| PR 2 | authorize (US-AUTH-03) | Admin diizinkan dan menerima data user | Lulus | 478 ms |
-| PR 2 | authorize (US-AUTH-03) | aksi untuk beberapa peran: Teknisi diizinkan, Viewer tidak | Lulus | 940 ms |
+| PR 2 | authorize (US-AUTH-03) | aksi khusus Admin ditolak untuk technician, walau dikirim langsung ke server | Lulus | 486 ms |
+| PR 2 | authorize (US-AUTH-03) | aksi khusus Admin ditolak untuk viewer, walau dikirim langsung ke server | Lulus | 486 ms |
+| PR 2 | authorize (US-AUTH-03) | Admin diizinkan dan menerima data user | Lulus | 499 ms |
+| PR 2 | authorize (US-AUTH-03) | aksi untuk beberapa peran: Teknisi diizinkan, Viewer tidak | Lulus | 992 ms |
 
 ### `tests/integration/db.test.ts`
 
 | PR | Kelompok | Tes | Hasil | Durasi |
 |---|---|---|---|---|
-| PR 1 | koneksi database | select 1 | Lulus | 996 ms |
-| PR 1 | koneksi database | transaksi interaktif tersedia | Lulus | 715 ms |
+| PR 1 | koneksi database | select 1 | Lulus | 989 ms |
+| PR 1 | koneksi database | transaksi interaktif tersedia | Lulus | 710 ms |
 
 ## Unit (Vitest)
+
+### `tests/unit/base-url.test.ts`
+
+| PR | Kelompok | Tes | Hasil | Durasi |
+|---|---|---|---|---|
+| PR 2 | normalizeOrigin | "https://dcmproject.vercel.app" → https://dcmproject.vercel.app | Lulus | 2 ms |
+| PR 2 | normalizeOrigin | "https://dcmproject.vercel.app/" → https://dcmproject.vercel.app | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | "https://dcmproject.vercel.app/login" → https://dcmproject.vercel.app | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | "dcmproject.vercel.app" → https://dcmproject.vercel.app | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | "  dcmproject.vercel.app  " → https://dcmproject.vercel.app | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | "\"https://dcmproject.vercel.app\"" → https://dcmproject.vercel.app | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | "'dcmproject.vercel.app'" → https://dcmproject.vercel.app | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | "http://localhost:3000" → http://localhost:3000 | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | "localhost:3100" → http://localhost:3100 | Lulus | 1 ms |
+| PR 2 | normalizeOrigin | "HTTPS://DCMPROJECT.VERCEL.APP" → https://dcmproject.vercel.app | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | nilai rusak undefined → null | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | nilai rusak "" → null | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | nilai rusak "   " → null | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | nilai rusak "\"\"" → null | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | nilai rusak "https://" → null | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | nilai rusak "bukan url sama sekali" → null | Lulus | 0 ms |
+| PR 2 | normalizeOrigin | nilai rusak "http://a b.com" → null | Lulus | 0 ms |
+| PR 2 | resolveBaseUrl | memakai BETTER_AUTH_URL bila valid (lokal dan produksi) | Lulus | 0 ms |
+| PR 2 | resolveBaseUrl | preview tanpa BETTER_AUTH_URL memakai URL branch dari Vercel | Lulus | 0 ms |
+| PR 2 | resolveBaseUrl | BETTER_AUTH_URL rusak tidak menggagalkan build: kembali ke URL Vercel | Lulus | 0 ms |
+| PR 2 | resolveBaseUrl | produksi dengan BETTER_AUTH_URL rusak memakai domain utama, bukan alamat branch | Lulus | 0 ms |
+| PR 2 | resolveBaseUrl | tanpa sumber apa pun → undefined (Better Auth memakai origin permintaan) | Lulus | 0 ms |
+| PR 2 | resolveTrustedOrigins | menggabungkan semua sumber yang valid tanpa duplikat dan tanpa nilai rusak | Lulus | 1 ms |
 
 ### `tests/unit/cron-route.test.ts`
 
@@ -129,7 +157,7 @@ Satu baris = satu skenario. Klik "video" untuk melihat rekamannya.
 | PR 1 | isAuthorizedCron | menolak tanpa header | Lulus | 0 ms |
 | PR 1 | isAuthorizedCron | menolak secret salah atau tanpa awalan Bearer | Lulus | 0 ms |
 | PR 1 | isAuthorizedCron | menerima header yang benar | Lulus | 0 ms |
-| PR 1 | GET /api/cron/daily | 401 tanpa header Authorization | Lulus | 16 ms |
+| PR 1 | GET /api/cron/daily | 401 tanpa header Authorization | Lulus | 17 ms |
 | PR 1 | GET /api/cron/daily | 401 dengan secret salah | Lulus | 1 ms |
 | PR 1 | GET /api/cron/daily | 200 dengan secret benar | Lulus | 1 ms |
 
@@ -174,6 +202,7 @@ Satu baris = satu skenario. Klik "video" untuk melihat rekamannya.
 | PR 1 | tidak ada warna atau ukuran di luar token | src\server\auth.ts | Lulus | 0 ms |
 | PR 1 | tidak ada warna atau ukuran di luar token | src\server\authz-constants.ts | Lulus | 0 ms |
 | PR 1 | tidak ada warna atau ukuran di luar token | src\server\authz.ts | Lulus | 0 ms |
+| PR 1 | tidak ada warna atau ukuran di luar token | src\server\base-url.ts | Lulus | 0 ms |
 | PR 1 | tidak ada warna atau ukuran di luar token | src\server\cron\auth.ts | Lulus | 0 ms |
 | PR 1 | tidak ada warna atau ukuran di luar token | src\server\db\client.ts | Lulus | 0 ms |
 | PR 1 | tidak ada warna atau ukuran di luar token | src\server\db\schema.ts | Lulus | 0 ms |
@@ -207,14 +236,14 @@ Satu baris = satu skenario. Klik "video" untuk melihat rekamannya.
 | PR 2 | bottomNavFor (design.md §5.4) | isi bar bawah per peran, kiri ke kanan | Lulus | 0 ms |
 | PR 2 | bottomNavFor (design.md §5.4) | Viewer tidak punya Notifikasi (tidak menerima notifikasi, PRD §5) | Lulus | 0 ms |
 | PR 2 | menu aktif dan grup terbuka | halaman turunan mengaktifkan menu induknya | Lulus | 0 ms |
-| PR 2 | menu aktif dan grup terbuka | detail rack mengaktifkan menu Lokasi (wireframe 00-kerangka) | Lulus | 1 ms |
+| PR 2 | menu aktif dan grup terbuka | detail rack mengaktifkan menu Lokasi (wireframe 00-kerangka) | Lulus | 0 ms |
 | PR 2 | menu aktif dan grup terbuka | grup yang berisi halaman aktif terbuka otomatis | Lulus | 0 ms |
 
 ### `tests/unit/tokens.test.ts`
 
 | PR | Kelompok | Tes | Hasil | Durasi |
 |---|---|---|---|---|
-| PR 1 | token design system di globals.css | warna ink | Lulus | 1 ms |
+| PR 1 | token design system di globals.css | warna ink | Lulus | 2 ms |
 | PR 1 | token design system di globals.css | warna ink-muted | Lulus | 0 ms |
 | PR 1 | token design system di globals.css | warna surface | Lulus | 0 ms |
 | PR 1 | token design system di globals.css | warna canvas | Lulus | 0 ms |
@@ -222,7 +251,7 @@ Satu baris = satu skenario. Klik "video" untuk melihat rekamannya.
 | PR 1 | token design system di globals.css | warna muted | Lulus | 0 ms |
 | PR 1 | token design system di globals.css | warna line | Lulus | 0 ms |
 | PR 1 | token design system di globals.css | warna line-strong | Lulus | 0 ms |
-| PR 1 | token design system di globals.css | warna air | Lulus | 0 ms |
+| PR 1 | token design system di globals.css | warna air | Lulus | 1 ms |
 | PR 1 | token design system di globals.css | warna air-soft | Lulus | 0 ms |
 | PR 1 | token design system di globals.css | warna air-ring | Lulus | 0 ms |
 | PR 1 | token design system di globals.css | warna on-fill | Lulus | 0 ms |
