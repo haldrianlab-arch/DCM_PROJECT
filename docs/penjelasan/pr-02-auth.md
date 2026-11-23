@@ -1,6 +1,6 @@
 # Penjelasan PR 2: Login dan hak akses
 
-Dokumen ini untuk tim (Haldrian, Calvin, Christian) agar bisa memahami dan menjelaskan PR 2 ke dosen. Detail teknis lengkap ada di [`plans/02-auth.md`](../../plans/02-auth.md), keputusan di [`docs/devlog.md`](../devlog.md) sesi 14, dan bukti testing di [`docs/testing/`](../testing/README.md).
+Dokumen ini untuk tim (Haldrian, Calvin, Christian) agar bisa memahami dan menjelaskan PR 2 ke dosen. Detail teknis lengkap ada di [`plans/02-auth.md`](../../plans/02-auth.md), keputusan di [`docs/devlog.md`](../devlog.md) sesi 14, bukti testing di [`docs/testing/`](../testing/README.md) (baris bertanda **PR 2**), dan penjelasan setiap variabel env di [`environment-variable.md`](environment-variable.md).
 
 ---
 
