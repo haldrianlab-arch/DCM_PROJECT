@@ -38,7 +38,7 @@ Proyek ini dikembangkan dengan **AI-Native SDLC** (Anthropic, 2026) bersama Clau
 |---|---|---|
 | Plan | [`intent/asset-maintenance.md`](intent/asset-maintenance.md) | ✅ Selesai |
 | Design | [`specs/PRD.md`](specs/PRD.md) v0.7, [`specs/design.md`](specs/design.md) v0.6, [design system](specs/design-system/), [`specs/tech.md`](specs/tech.md) v0.3 (lihat [indeks](specs/README.md)) | ✅ Selesai (tech.md diperbarui selama Build) |
-| Build | [`CLAUDE.md`](CLAUDE.md), [`plans/`](plans/), source code, [`docs/penjelasan/`](docs/penjelasan/) | ⏳ Berjalan: PR 1 selesai, PR 2 (auth) ditinjau |
+| Build | [`CLAUDE.md`](CLAUDE.md), [`plans/`](plans/), source code, [`docs/penjelasan/`](docs/penjelasan/) | ⏳ Berjalan: PR 1 dan PR 2 (auth) selesai, berikutnya PR 3 (skema + seed) |
 | Test | Test suite + [bukti testing](docs/testing/README.md) (tabel blackbox + video), berjalan di setiap PR | ⏳ Berjalan bersama Build |
 | Deploy | Vercel | — |
 | Maintain | Bug dan masukan → intent baru | — |

@@ -6,7 +6,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 
 **Alur AI-Native SDLC:** Plan → Design → Build → Test → Deploy → Maintain (berulang).
 
-**Status saat ini:** Tahap Build. PR 1 selesai. PR 2 (auth) terbuka sebagai PR #3: CI hijau, preview berjalan dengan branch Neon sendiri, produksi sudah di-seed akun demo; menunggu tinjauan tim lalu merge. Berikutnya: PR 3 (sisa skema + seed lokasi). Target UAS R1 + R2.
+**Status saat ini:** Tahap Build. PR 1 dan PR 2 (auth) selesai dan di-merge ke `main` (PR #3 dan perbaikan #4, 24 Nov 2026). Produksi https://dcmproject.vercel.app: login, peran, dan menu berjalan dengan 4 akun demo. Berikutnya: PR 3 (sisa skema §4 + seed lokasi) di sesi baru. Target UAS R1 + R2.
 
 ---
 
@@ -53,6 +53,7 @@ diambil beserta alasannya, dan langkah berikutnya.
 **Setelah merge PR #3**
 - Deploy produksi gagal: `TypeError: Invalid URL` saat build `/dashboard`. Penyebab: `BETTER_AUTH_URL` (hanya di Production) tidak berbentuk URL lengkap, dan kode langsung memanggil `new URL(...)`. Preview tidak kena karena tidak memakai variabel itu. Produksi tetap menayangkan deploy sebelumnya.
 - Perbaikan di branch `feat/02-auth-base-url`: `src/server/base-url.ts` merapikan nilai env dan kembali ke domain produksi Vercel bila nilainya rusak; 23 tes unit baru. Nilai di Vercel juga diminta dibetulkan menjadi `https://dcmproject.vercel.app`.
+- PR #4 di-merge; nilai `BETTER_AUTH_URL` di Vercel dibetulkan. Deploy produksi berhasil. Diuji di produksi: `/` tanpa login dialihkan ke login, login salah 401, login Andi berhasil ke Dashboard, `/my-tasks` sebagai Admin 403, cron tanpa kunci 401, `/dev/components` 404.
 
 **Berikutnya**
 - Tim meninjau PR #3 di preview (akun demo, password = `SEED_PASSWORD`), lalu merge.
